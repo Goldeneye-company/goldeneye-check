@@ -10,6 +10,8 @@ import os
 import platform
 import stat
 import tarfile
+import time
+import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -70,10 +72,28 @@ def engine_path(name: str) -> Path:
     return engines_dir() / exe_name(name)
 
 
-def _download(url: str) -> bytes:
+RETRIES = 3
+RETRY_PAUSE = 5  # секунд; растёт с каждой попыткой
+
+
+def _download(url: str, log=print) -> bytes:
+    """Скачать файл. Временные сбои GitHub (5xx, обрыв сети) повторяем, а не падаем с трассировкой."""
     req = urllib.request.Request(url, headers={"User-Agent": "goldeneye-check-installer"})
-    with urllib.request.urlopen(req, timeout=300) as resp:
-        return resp.read()
+    for attempt in range(1, RETRIES + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=300) as resp:
+                return resp.read()
+        except urllib.error.HTTPError as e:
+            if e.code < 500 and e.code != 429:
+                raise SystemExit(f"Не удалось скачать {url}: HTTP {e.code}") from None
+            reason = f"HTTP {e.code}"
+        except (urllib.error.URLError, OSError) as e:
+            reason = str(getattr(e, "reason", e))
+        if attempt == RETRIES:
+            raise SystemExit(f"Не удалось скачать {url.rsplit('/', 1)[1]} после {RETRIES} попыток ({reason}). "
+                             "Проверьте интернет и запустите «gecheck install» ещё раз.")
+        log(f"    сбой загрузки ({reason}), повтор через {RETRY_PAUSE * attempt} с…")
+        time.sleep(RETRY_PAUSE * attempt)
 
 
 def _unpack(blob: bytes, kind: str, name: str) -> bytes:
@@ -99,7 +119,7 @@ def install(names=NAMES, force=False, log=print) -> None:
             continue
         url, sha, kind = ENGINES[(name, plat)]
         log(f"  {name}: скачиваю {url.rsplit('/', 1)[1]}")
-        blob = _download(url)
+        blob = _download(url, log)
         got = hashlib.sha256(blob).hexdigest()
         if got != sha:
             raise SystemExit(f"{name}: контрольная сумма не совпала ({got}), установка прервана")

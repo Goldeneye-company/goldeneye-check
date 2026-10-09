@@ -37,6 +37,50 @@ class TempProject(unittest.TestCase):
         p.write_text(text, encoding="utf-8")
 
 
+class DownloadRetryTest(unittest.TestCase):
+    """Временный сбой GitHub при скачивании движков не должен ронять установку."""
+
+    def setUp(self):
+        from gecheck import install
+        self.install = install
+        self.saved = (install.urllib.request.urlopen, install.RETRY_PAUSE)
+        install.RETRY_PAUSE = 0
+
+    def tearDown(self):
+        self.install.urllib.request.urlopen, self.install.RETRY_PAUSE = self.saved
+
+    def fake(self, codes):
+        import io
+        import urllib.error
+        calls = []
+
+        def urlopen(req, timeout=None):
+            code = codes[len(calls)]
+            calls.append(code)
+            if code != 200:
+                raise urllib.error.HTTPError(req.full_url, code, "err", {}, io.BytesIO(b""))
+            return io.BytesIO(b"engine")
+        self.install.urllib.request.urlopen = urlopen
+        return calls
+
+    def test_retries_server_errors(self):
+        calls = self.fake([500, 502, 200])
+        self.assertEqual(self.install._download("https://x/engine", log=lambda *_: None), b"engine")
+        self.assertEqual(calls, [500, 502, 200])
+
+    def test_gives_up_with_message(self):
+        self.fake([500, 500, 500])
+        with self.assertRaises(SystemExit) as ctx:
+            self.install._download("https://x/engine", log=lambda *_: None)
+        self.assertIn("после 3 попыток", str(ctx.exception))
+
+    def test_client_error_is_not_retried(self):
+        calls = self.fake([404, 200])
+        with self.assertRaises(SystemExit):
+            self.install._download("https://x/engine", log=lambda *_: None)
+        self.assertEqual(calls, [404])
+
+
 class MaskTest(unittest.TestCase):
     def test_secret_never_printed_whole(self):
         secret = "sk_live_" + "A" * 24

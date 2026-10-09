@@ -1,0 +1,192 @@
+<!doctype html><html lang="kk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>GoldenEye Check — fixture</title><style>
+:root{--bg:#F4F3EF;--card:#FFFFFF;--ink:#15191C;--muted:#5B625E;--rule:#DDDAD2;--green:#24584A;--gold:#B8913F;
+--crit:#A3302A;--high:#B8641E;--med:#8A7A1F;--low:#4F6B78;--code:#F1EFE9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121619;--card:#1A1F23;--ink:#E9E7E1;--muted:#A3AAA6;--rule:#2C3338;
+--green:#6FAE95;--gold:#D4AC57;--crit:#E0726B;--high:#E39A5B;--med:#CDBB5A;--low:#8FB0BF;--code:#22282D;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 56px;overflow-wrap:anywhere}
+.summary>*,.f{min-width:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.2em;font-size:13px}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block}
+h1{font-size:clamp(24px,3.2vw,34px);font-weight:500;margin:18px 0 4px;line-height:1.15}
+.meta{color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.summary{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:16px;margin:28px 0}
+@media (max-width:720px){.summary{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--rule);padding:20px 22px}
+.score{display:flex;align-items:baseline;gap:12px}.score b{font-size:56px;font-weight:500;line-height:1}
+.score span{color:var(--muted)}.grade{display:inline-grid;place-items:center;width:44px;height:44px;border:2px solid var(--ink);
+font-size:22px;font-weight:600;margin-left:auto}
+.label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media (max-width:520px){.counts{grid-template-columns:repeat(2,1fr)}}
+.count{border-top:3px solid;padding-top:8px}.count b{font-size:28px;font-weight:500;display:block}.count small{color:var(--muted)}
+.c-critical{border-color:var(--crit)}.c-high{border-color:var(--high)}.c-medium{border-color:var(--med)}.c-low{border-color:var(--low)}
+ol.top{margin:6px 0 0;padding-left:20px}ol.top li{margin:4px 0}
+h2{font-size:20px;font-weight:500;margin:36px 0 12px;display:flex;align-items:center;gap:10px}
+h2 .dot{width:12px;height:12px;border-radius:50%}
+.f{background:var(--card);border:1px solid var(--rule);border-left:4px solid;padding:16px 20px;margin:0 0 10px}
+.f h3{margin:0 0 6px;font-size:16px;font-weight:600;line-height:1.35}
+.f .loc{font:13px/1.4 ui-monospace,Consolas,monospace;color:var(--muted);word-break:break-all}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{font-size:12px;border:1px solid var(--rule);padding:1px 8px;color:var(--muted)}
+.tag.hist{border-color:var(--gold);color:var(--gold)}
+pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.fix{margin:8px 0 0}.fix b{color:var(--green)}
+.note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
+.cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
+.cta a{color:var(--gold);font-weight:600}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+@media print{body{background:#fff}.f,.card{break-inside:avoid}}
+</style></head><body><main class="wrap">
+<div class="brand"><i></i>GOLDENEYE CHECK</div>
+<h1>Кодты тексеру есебі</h1>
+<div class="meta"><span>Жоба: <b>fixture</b></span>
+<span>Күні: 2026-10-04</span>
+<span>Коммит: f9071f7</span>
+</div>
+<section class="summary">
+<div class="card"><p class="label">Қорғалу индексі</p>
+<div class="score"><b>0</b><span>/ 100</span><span class="grade" title="Баға">F</span></div></div>
+<div class="card"><p class="label">Барлық табылғандар: 33</p><div class="counts"><div class='count c-critical'><b>16</b><small>Сыни</small></div><div class='count c-high'><b>12</b><small>Жоғары</small></div><div class='count c-medium'><b>5</b><small>Орташа</small></div><div class='count c-low'><b>0</b><small>Төмен</small></div></div>
+<p class='label' style='margin-top:18px'>Алдымен түзету керек</p><ol class='top'><li>Құпиялары бар .env файлы git-те сақталады — <span class='loc'>.env</span></li><li>Кодтағы құпия: Stripe secret key — <span class='loc'>.env:1</span></li><li>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жалпыға ашық айнымалысындағы құпия — <span class='loc'>.env.local:1</span></li></ol>
+</div></section>
+<h2><span class='dot' style='background:var(--crit)'></span>Сыни · 16</h2>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Құпиялары бар .env файлы git-те сақталады</h3><div class="loc">.env</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/538.html' rel='noopener'>CWE-538</a><span class='tag'>builtin</span></div><p class='note'>файлда нақты құпиясөздер мен кілттерге ұқсас мәндер бар</p>
+<p class="fix"><b>Қалай түзетуге болады:</b> git rm --cached .env орындап, .env* жолын .gitignore-ға қосыңыз және файлдағы барлық кілттерді қайта шығарыңыз — олар тарихта қалды.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Кодтағы құпия: Stripe secret key</h3><div class="loc">.env:1</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>мәні sk_liv…Wc</p>
+<p class="fix"><b>Қалай түзетуге болады:</b> Кілтті сервис консолінде дереу қайта шығарыңыз — оны ұрланған деп санаңыз. Содан кейін кодтан орта айнымалысына немесе құпиялар менеджеріне көшіріңіз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жалпыға ашық айнымалысындағы құпия</h3><div class="loc">.env.local:1</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…bO</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> NEXT_PUBLIC_, VITE_, REACT_APP_, EXPO_PUBLIC_ префикстері мәнді әр келуші жүктейтін кодқа салады. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция — сұраныс жолды пішімдеу арқылы құрастырылған</h3><div class="loc">api/main.py:19</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>return sqlite3.connect(&quot;db&quot;).execute(&quot;SELECT * FROM orders WHERE id=%s&quot; % oid).fetchall()  # GE:V12</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Мәндерді екінші аргумент ретінде беріңіз: cursor.execute(&#x27;... WHERE id = %s&#x27;, (oid,)). SQL-де f-жол, % және + қолдануға болмайды.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Қауіпті десериализация — pickle/yaml бөтен кодты орындауы мүмкін</h3><div class="loc">api/main.py:29</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/502.html' rel='noopener'>CWE-502</a><span class='tag'>opengrep</span></div><pre>return pickle.loads(await req.body())  # GE:V13</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Сырттан келген деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle — тек өзіңіздің сенімді файлдарыңыз үшін.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>ЖИ шығындары</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Пайдаланушыны тексеруді (Depends(get_current_user), @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Командаларды енгізу — shell-команда айнымалылардан құрастырылады</h3><div class="loc">api/main.py:47</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>return subprocess.run(&quot;nslookup &quot; + host, shell=True, capture_output=True).stdout  # GE:V15</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> subprocess.run([...]) аргументтер тізімімен және shell=True-сыз қолданыңыз; мәндерді рұқсат етілген тізім бойынша тексеріңіз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>ЖИ шығындары</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен, middleware) және бір пайдаланушыға сұраныс шегін қойыңыз. Әйтпесе бюджетті кез келген адам жұмсап жібереді.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Firebase: firestore.rules ережелері деректерді барлығына ашады</h3><div class="loc">firestore.rules:5</div>
+<div class="tags"><span class='tag'>Деректерге қол жеткізу</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Қалай түзетуге болады:</b> Тек кірген пайдаланушыларға және тек өз деректеріне рұқсат беріңіз: allow read, write: if request.auth != null &amp;&amp; request.auth.uid == resource.data.owner;</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция — форма деректері тікелей сұранысқа түседі</h3><div class="loc">public/contact.php:3</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Дайындалған сұраныстарды қолданыңыз: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>git тарихындағы құпия: OpenAI API key</h3><div class="loc">src/config.js (git тарихында, 700e32a2)</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит 700e32a2, мәні sk-pro…lq</p>
+<p class="fix"><b>Қалай түзетуге болады:</b> Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>git тарихындағы құпия: Stripe secret key</h3><div class="loc">src/payments.js (git тарихында, 700e32a2)</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит 700e32a2, мәні sk_liv…az</p>
+<p class="fix"><b>Қалай түзетуге болады:</b> Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған</h3><div class="loc">src/server/users.js:9</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const rows = await db.query(`SELECT * FROM users WHERE id = ${req.params.id}`); // GE:V01</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Мәндерді параметр ретінде беріңіз: db.query(&#x27;... WHERE id = $1&#x27;, [id]). Оларды сұраныс жолына ешқашан қоспаңыз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған</h3><div class="loc">src/server/users.js:19</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const r = await db.query(&quot;SELECT * FROM items WHERE name = &#x27;&quot; + req.query.name + &quot;&#x27;&quot;); // GE:V02</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Мәндерді параметр ретінде беріңіз: db.query(&#x27;... WHERE id = $1&#x27;, [id]). Оларды сұраныс жолына ешқашан қоспаңыз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Командаларды енгізу — сервер командасы пайдаланушы деректерінен құрастырылған</h3><div class="loc">src/server/users.js:26</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/ping&quot;, (req, res) =&gt; exec(&quot;ping -c 1 &quot; + req.query.host, (e, out) =&gt; res.json({ out }))); // GE:V04</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Пайдаланушы деректерімен shell іске қоспаңыз. Аргументтер тізімімен execFile/spawn қолданып, мәнді рұқсат етілген тізім бойынша тексеріңіз.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Бөтен кодты орындау — пайдаланушы деректерінен eval/Function</h3><div class="loc">src/server/users.js:46</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/95.html' rel='noopener'>CWE-95</a><span class='tag'>opengrep</span></div><pre>app.post(&quot;/calc&quot;, (req, res) =&gt; res.json({ result: eval(req.body.expr) })); // GE:V10</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> eval және new Function алып тастаңыз. Деректер үшін JSON.parse, логика үшін алдын ала белгілі нұсқалардан нақты таңдауды қолданыңыз.</p></article>
+<h2><span class='dot' style='background:var(--high)'></span>Жоғары · 12</h2>
+<article class="f" style="border-left-color:var(--high)">
+<h3>docker-compose: дерекқордың әдепкі құпиясөзі (POSTGRES_PASSWORD)</h3><div class="loc">docker-compose.yml:5</div>
+<div class="tags"><span class='tag'>Баптаулар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1393.html' rel='noopener'>CWE-1393</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Қалай түзетуге болады:</b> Ұзын құпиясөз жасап, оны .env арқылы беріңіз (коммиттемей) және бұл файл іске қосылған барлық серверлерде ауыстырыңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Осал тәуелділік: lodash 4.17.15</h3><div class="loc">package-lock.json</div>
+<div class="tags"><span class='tag'>Тәуелділіктер</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1395.html' rel='noopener'>CWE-1395</a><span class='tag'>osv-scanner</span></div><p class='note'>осалдықтар: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465</p>
+<p class="fix"><b>Қалай түзетуге болады:</b> lodash пакетін 4.18.0 нұсқасына немесе жаңарағына дейін жаңартып, lock-файлды қайта жинаңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>XSS — пайдаланушы деректері бетке экрандаусыз шығарылады</h3><div class="loc">public/contact.php:4</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>echo &quot;&lt;p&gt;Результаты для &quot; . $_GET[&#x27;email&#x27;] . &quot;&lt;/p&gt;&quot;; // GE:V18</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> htmlspecialchars($value, ENT_QUOTES, &#x27;UTF-8&#x27;) арқылы шығарыңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Хат тақырыптарын енгізу — форманы спам таратуға пайдалануға болады</h3><div class="loc">public/contact.php:7</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/93.html' rel='noopener'>CWE-93</a><span class='tag'>opengrep</span></div><pre>mail(&quot;info@example.kz&quot;, &quot;Заявка с сайта&quot;, $_POST[&#x27;message&#x27;], $headers); // GE:V19</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Енгізілген деректі хат тақырыптарына қоспаңыз. Мекенжайды filter_var(..., FILTER_VALIDATE_EMAIL) арқылы тексеріп, жол ауыстыруларды алып тастаңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>XSS — пайдаланушы деректері HTML-ге экрандаусыз шығарылады</h3><div class="loc">src/server/users.js:23</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/hello&quot;, (req, res) =&gt; res.send(&quot;&lt;h1&gt;Hi &quot; + req.query.name + &quot;&lt;/h1&gt;&quot;)); // GE:V03</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Шығысты экрандаңыз (автоэкрандайтын шаблонизатор, escape-html) немесе JSON қайтарыңыз. Пайдаланушы HTML-і үшін — DOMPurify.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>JWT қолтаңбаны тексерусіз оқылады (jwt.decode)</h3><div class="loc">src/server/users.js:29</div>
+<div class="tags"><span class='tag'>Кіру және құқықтар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/347.html' rel='noopener'>CWE-347</a><span class='tag'>opengrep</span></div><pre>const user = jwt.decode(req.headers.authorization); // GE:V05</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> jwt.decode токенді тек оқиды — оны кез келген адам жасай алады. Кіру мен құқықтар үшін jwt.verify(token, secret, { algorithms: [&#x27;HS256&#x27;] }) қолданыңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Каталогтарды айналып өту — файл жолы сұраныстан алынады</h3><div class="loc">src/server/users.js:33</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/22.html' rel='noopener'>CWE-22</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/file&quot;, (req, res) =&gt; res.sendFile(&quot;/srv/files/&quot; + req.query.name)); // GE:V06</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Тек файл атын алыңыз (path.basename), оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде қалатынына көз жеткізіңіз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Құпиясөз немесе кілт тікелей кодқа жазылған</h3><div class="loc">src/server/users.js:35</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>opengrep</span></div><pre>const ADMIN_PASSWORD = &quot;Qwerty…6!&quot;; // GE:V07</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз және құпияларды репозиторийде сақтамаңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>SSRF — сервер пайдаланушы жіберген мекенжайға сұраныс жасайды</h3><div class="loc">src/server/users.js:40</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/918.html' rel='noopener'>CWE-918</a><span class='tag'>opengrep</span></div><pre>const page = await fetch(req.query.url); // GE:V08</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Тек алдын ала белгілі домендерге рұқсат беріп, ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>NoSQL-инъекция — $where ішіне мәндер қойылады, дерекқор оларды JavaScript ретінде орындайды</h3><div class="loc">src/server/users.js:49</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/943.html' rel='noopener'>CWE-943</a><span class='tag'>opengrep</span></div><pre>const docs = await stocks.find({ $where: `this.price &gt; ${req.query.min}` }).toArray(); // GE:V27</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> $where алып тастап, қарапайым сұраныс операторларын қолданыңыз: { userId: id, stocks: { $gt: threshold } }, мәндерді алдын ала санға айналдырыңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Шаблондардың автоэкрандауы өшірулі — деректерді кез келген шығару XSS-ке айналады</h3><div class="loc">src/server/users.js:53</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>swig.setDefaults({ autoescape: false }); // GE:V28</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> autoescape: true қайтарыңыз. HTML қажет жерде оны нақты белгілеп (safe сүзгісі), DOMPurify арқылы тазалаңыз.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Supabase: public.profiles кестесінде RLS қосылмаған</h3><div class="loc">supabase/migrations/001_init.sql:1</div>
+<div class="tags"><span class='tag'>Деректерге қол жеткізу</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Қалай түзетуге болады:</b> RLS болмаса, кестені сайтыңыздағы жалпыға ашық anon-кілті бар кез келген адам оқып, өзгерте алады. alter table public.profiles enable row level security; және өз жолдарына қол жеткізу саясаттарын қосыңыз.</p></article>
+<h2><span class='dot' style='background:var(--med)'></span>Орташа · 5</h2>
+<article class="f" style="border-left-color:var(--med)">
+<h3>ЖИ жауабының шегі тым үлкен — бір сұраныс қымбатқа түсуі мүмкін</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>ЖИ шығындары</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> max_tokens мәнін нақты қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қойыңыз.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Түзету режимі қосулы — қателер мен ішкі құрылым сыртқа көрінеді</h3><div class="loc">api/main.py:53</div>
+<div class="tags"><span class='tag'>Баптаулар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/489.html' rel='noopener'>CWE-489</a><span class='tag'>opengrep</span></div><pre>flask_app.run(host=&quot;0.0.0.0&quot;, debug=True)  # GE:V16</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Өндірісте debug өшіріп, оны орта айнымалысынан алыңыз. Flask-те debug=True код орындайтын консоль береді.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Ақылы ЖИ-ге жауап ұзындығына шектеусіз сұраныс</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>ЖИ шығындары</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Тапсырмаға сай max_tokens (немесе max_completion_tokens) орнатыңыз — әдетте 500–2000 — және кіріс мәтінінің ұзындығын шектеңіз.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>docker-compose: дерекқордың 5432 порты сыртқа ашық</h3><div class="loc">docker-compose.yml:7</div>
+<div class="tags"><span class='tag'>Баптаулар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/668.html' rel='noopener'>CWE-668</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Қалай түзетуге болады:</b> Портты жіберуді алып тастаңыз немесе оны localhost-қа байлаңыз: &quot;127.0.0.1:5432:5432&quot;. Дерекқорға интернеттен қол жеткізу қажет емес.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Ашық қайта бағыттау — өту мекенжайы сұраныстан алынады</h3><div class="loc">src/server/users.js:44</div>
+<div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/601.html' rel='noopener'>CWE-601</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/go&quot;, (req, res) =&gt; res.redirect(req.query.next)); // GE:V09</pre>
+<p class="fix"><b>Қалай түзетуге болады:</b> Тек өз жолдарыңызға (&#x27;/&#x27; басталатын, бірақ &#x27;//&#x27; емес) немесе рұқсат етілген домендерге бағыттаңыз. Әйтпесе сілтемеңіз фишингке пайдаланылады.</p></article>
+<h2>Сканер нені тексермейді</h2><p class="note">Қол жеткізу құқықтарының логикасын (А пайдаланушы Б пайдаланушының деректерін аша ала ма), бұлттық консольдер мен төлем жүйелерінің баптауларын, сайттың жүктеме кезіндегі жұмысын. Код сіздің компьютеріңізде тексерілді және ешқайда жіберілмеді; тәуелділіктерді тексеру үшін OSV базасына тек пакет атаулары мен нұсқалары жіберілді.</p>
+<section class="cta"><h2>Тереңірек тексеру керек пе?</h2><p>GoldenEye мамандары қол жеткізу логикасын, сервер мен бұлт баптауларын қолмен тексеріп, табылған мәселелерді жабуға көмектеседі.</p>
+<p><a href="https://goldeneye.kz/kk/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>
+<footer>GoldenEye Check жасаған 0.1.0 · rules 2026.10.0 · Немен тексерілді: gitleaks 8.30.1, osv-scanner 2.6.0, opengrep 1.30.0, builtin 0.1.0 · 3.7 s</footer>
+</main></body></html>

@@ -1,0 +1,841 @@
+{
+  "schema": "goldeneye-check/report@1",
+  "tool": {
+    "name": "GoldenEye Check",
+    "version": "0.1.0",
+    "rules": "2026.10.0",
+    "engines": {
+      "gitleaks": {
+        "version": "8.30.1",
+        "status": "ok",
+        "findings": 4
+      },
+      "osv-scanner": {
+        "version": "2.6.0",
+        "status": "ok",
+        "findings": 1
+      },
+      "opengrep": {
+        "version": "1.30.0",
+        "status": "ok",
+        "findings": 23
+      },
+      "builtin": {
+        "version": "0.1.0",
+        "status": "ok",
+        "findings": 6
+      }
+    }
+  },
+  "scan": {
+    "started_at": "2026-10-04T08:22:56+00:00",
+    "duration_s": 4.0,
+    "project": {
+      "id": "f16d05ec6b29248d",
+      "name": "fixture"
+    },
+    "git": {
+      "commit": "f9071f7",
+      "branch": "master"
+    },
+    "options": {
+      "history": true,
+      "deps": true,
+      "offline": false,
+      "snippets": false
+    }
+  },
+  "summary": {
+    "score": 0,
+    "grade": "F",
+    "total": 33,
+    "counts": {
+      "critical": 16,
+      "high": 12,
+      "medium": 5,
+      "low": 0
+    }
+  },
+  "warnings": [],
+  "findings": [
+    {
+      "fingerprint": "00f9255d1633831167d8b471",
+      "rule": "ge.config.env-in-git",
+      "engine": "builtin",
+      "severity": "critical",
+      "category": "secrets",
+      "cwe": "CWE-538",
+      "file": ".env",
+      "line": null,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Файл .env с секретами хранится в git",
+        "kk": "Құпиялары бар .env файлы git-те сақталады",
+        "en": ".env with secrets is committed to git"
+      },
+      "fix": {
+        "ru": "Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите все ключи из файла — они уже в истории.",
+        "kk": "git rm --cached .env орындап, .env* жолын .gitignore-ға қосыңыз және файлдағы барлық кілттерді қайта шығарыңыз — олар тарихта қалды.",
+        "en": "Run git rm --cached .env, add .env* to .gitignore and rotate every key in the file — they are already in history."
+      },
+      "detail": {
+        "ru": "в файле есть значения, похожие на настоящие пароли и ключи",
+        "kk": "файлда нақты құпиясөздер мен кілттерге ұқсас мәндер бар",
+        "en": "the file holds values that look like real passwords and keys"
+      }
+    },
+    {
+      "fingerprint": "139b40c522f2e34a3e441a69",
+      "rule": "gitleaks.stripe-access-token",
+      "engine": "gitleaks",
+      "severity": "critical",
+      "category": "secrets",
+      "cwe": "CWE-798",
+      "file": ".env",
+      "line": 1,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Секрет в коде: Stripe secret key",
+        "kk": "Кодтағы құпия: Stripe secret key",
+        "en": "Secret in code: Stripe secret key"
+      },
+      "fix": {
+        "ru": "Сразу перевыпустите ключ в консоли сервиса — считайте его украденным. Затем уберите из кода в переменную окружения или менеджер секретов.",
+        "kk": "Кілтті сервис консолінде дереу қайта шығарыңыз — оны ұрланған деп санаңыз. Содан кейін кодтан орта айнымалысына немесе құпиялар менеджеріне көшіріңіз.",
+        "en": "Rotate the key in the service console right away — treat it as stolen. Then move it out of the code into an environment variable or a secrets manager."
+      },
+      "detail": {
+        "ru": "значение sk_liv…Wc",
+        "kk": "мәні sk_liv…Wc",
+        "en": "value sk_liv…Wc"
+      }
+    },
+    {
+      "fingerprint": "5b0d14cc0a9b57e2669b3bd3",
+      "rule": "ge.config.public-env-secret",
+      "engine": "builtin",
+      "severity": "critical",
+      "category": "secrets",
+      "cwe": "CWE-200",
+      "file": ".env.local",
+      "line": 1,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY",
+        "kk": "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жалпыға ашық айнымалысындағы құпия",
+        "en": "Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY"
+      },
+      "fix": {
+        "ru": "Префиксы NEXT_PUBLIC_, VITE_, REACT_APP_, EXPO_PUBLIC_ кладут значение в код, который скачивает каждый посетитель. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.",
+        "kk": "NEXT_PUBLIC_, VITE_, REACT_APP_, EXPO_PUBLIC_ префикстері мәнді әр келуші жүктейтін кодқа салады. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.",
+        "en": "NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ put the value into code every visitor downloads. Drop the prefix, use the value only on the server and rotate the key."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "8df82f145874406f25c05a76",
+      "rule": "ge.py.sql-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-89",
+      "file": "api/main.py",
+      "line": 19,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "SQL injection — query built with string formatting",
+        "kk": "SQL-инъекция — сұраныс жолды пішімдеу арқылы құрастырылған",
+        "ru": "SQL-инъекция — запрос собран форматированием строки"
+      },
+      "fix": {
+        "en": "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). No f-strings, % or + in SQL.",
+        "kk": "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-де f-жол, % және + қолдануға болмайды.",
+        "ru": "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). f-строки, % и + в SQL недопустимы."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "aa13a608e9ae928fec7f4ba3",
+      "rule": "ge.py.unsafe-deserialization",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-502",
+      "file": "api/main.py",
+      "line": 29,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Unsafe deserialization — pickle/yaml can execute foreign code",
+        "kk": "Қауіпті десериализация — pickle/yaml бөтен кодты орындауы мүмкін",
+        "ru": "Небезопасная десериализация — pickle/yaml могут выполнить чужой код"
+      },
+      "fix": {
+        "en": "Use JSON or yaml.safe_load for external data. pickle only for your own trusted files.",
+        "kk": "Сырттан келген деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle — тек өзіңіздің сенімді файлдарыңыз үшін.",
+        "ru": "Для данных извне используйте JSON или yaml.safe_load. pickle — только для собственных доверенных файлов."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "248d4ca4034f1312ddd76036",
+      "rule": "ge.py.llm-endpoint-without-auth",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "ai-cost",
+      "cwe": "CWE-306",
+      "file": "api/main.py",
+      "line": 36,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Open AI endpoint — paid model reachable without login",
+        "kk": "Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді",
+        "ru": "Открытый ИИ-эндпоинт — платная модель доступна без входа"
+      },
+      "fix": {
+        "en": "Add a user check (Depends(get_current_user), @login_required) and a per-user rate limit.",
+        "kk": "Пайдаланушыны тексеруді (Depends(get_current_user), @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз.",
+        "ru": "Добавьте проверку пользователя (Depends(get_current_user), @login_required) и лимит запросов на пользователя."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "def7cee9a05de6809d8c846d",
+      "rule": "ge.py.command-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-78",
+      "file": "api/main.py",
+      "line": 47,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Command injection — shell command built from variables",
+        "kk": "Командаларды енгізу — shell-команда айнымалылардан құрастырылады",
+        "ru": "Внедрение команд — shell-команда собирается из переменных"
+      },
+      "fix": {
+        "en": "Use subprocess.run([...]) with an argument list and no shell=True; check values against an allowlist.",
+        "kk": "subprocess.run([...]) аргументтер тізімімен және shell=True-сыз қолданыңыз; мәндерді рұқсат етілген тізім бойынша тексеріңіз.",
+        "ru": "Используйте subprocess.run([...]) со списком аргументов и без shell=True; значения проверяйте по белому списку."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "0aedd6be628061ccc49ad6d6",
+      "rule": "ge.js.llm-endpoint-without-auth",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "ai-cost",
+      "cwe": "CWE-306",
+      "file": "app/api/chat/route.ts",
+      "line": 7,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Open AI endpoint — paid model reachable without login",
+        "kk": "Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді",
+        "ru": "Открытый ИИ-эндпоинт — платная модель доступна без входа"
+      },
+      "fix": {
+        "en": "Check the user before calling the model (session, token, middleware) and add a per-user rate limit. Otherwise anyone can burn your budget.",
+        "kk": "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен, middleware) және бір пайдаланушыға сұраныс шегін қойыңыз. Әйтпесе бюджетті кез келген адам жұмсап жібереді.",
+        "ru": "Проверяйте пользователя до вызова модели (сессия, токен, middleware) и ставьте лимит запросов на пользователя. Иначе бюджет может сжечь любой."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "64f551c0ed0c70272c6cda5c",
+      "rule": "ge.config.firebase-open",
+      "engine": "builtin",
+      "severity": "critical",
+      "category": "data-access",
+      "cwe": "CWE-284",
+      "file": "firestore.rules",
+      "line": 5,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Firebase: правила firestore.rules открывают данные всем",
+        "kk": "Firebase: firestore.rules ережелері деректерді барлығына ашады",
+        "en": "Firebase: firestore.rules rules open data to everyone"
+      },
+      "fix": {
+        "ru": "Разрешайте доступ только вошедшим и только к своим данным: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
+        "kk": "Тек кірген пайдаланушыларға және тек өз деректеріне рұқсат беріңіз: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
+        "en": "Allow access only to signed-in users and only to their own data: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;"
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "7594b17c0bab6fca7d9d2fcd",
+      "rule": "ge.php.sql-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-89",
+      "file": "public/contact.php",
+      "line": 3,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "SQL injection — form data goes straight into the query",
+        "kk": "SQL-инъекция — форма деректері тікелей сұранысқа түседі",
+        "ru": "SQL-инъекция — данные формы попадают прямо в запрос"
+      },
+      "fix": {
+        "en": "Use prepared statements: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id]).",
+        "kk": "Дайындалған сұраныстарды қолданыңыз: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id]).",
+        "ru": "Используйте подготовленные запросы: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id])."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "11a40eeae2f9c0d0ac98dd1e",
+      "rule": "gitleaks.openai-api-key",
+      "engine": "gitleaks",
+      "severity": "critical",
+      "category": "secrets",
+      "cwe": "CWE-798",
+      "file": "src/config.js",
+      "line": null,
+      "in_history": true,
+      "commit": "700e32a2",
+      "title": {
+        "ru": "Секрет в истории git: OpenAI API key",
+        "kk": "git тарихындағы құпия: OpenAI API key",
+        "en": "Secret in git history: OpenAI API key"
+      },
+      "fix": {
+        "ru": "Файл уже удалён, но ключ остался в истории — его достанет любой, у кого есть копия репозитория. Перевыпустите ключ; историю можно почистить git filter-repo, но это не заменяет перевыпуск.",
+        "kk": "Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.",
+        "en": "The file is gone but the key stays in history — anyone with a copy of the repo can get it. Rotate the key; you can scrub history with git filter-repo, but that does not replace rotation."
+      },
+      "detail": {
+        "ru": "коммит 700e32a2, значение sk-pro…lq",
+        "kk": "коммит 700e32a2, мәні sk-pro…lq",
+        "en": "commit 700e32a2, value sk-pro…lq"
+      }
+    },
+    {
+      "fingerprint": "d1cdcb78495569c0d2df9973",
+      "rule": "gitleaks.stripe-access-token",
+      "engine": "gitleaks",
+      "severity": "critical",
+      "category": "secrets",
+      "cwe": "CWE-798",
+      "file": "src/payments.js",
+      "line": null,
+      "in_history": true,
+      "commit": "700e32a2",
+      "title": {
+        "ru": "Секрет в истории git: Stripe secret key",
+        "kk": "git тарихындағы құпия: Stripe secret key",
+        "en": "Secret in git history: Stripe secret key"
+      },
+      "fix": {
+        "ru": "Файл уже удалён, но ключ остался в истории — его достанет любой, у кого есть копия репозитория. Перевыпустите ключ; историю можно почистить git filter-repo, но это не заменяет перевыпуск.",
+        "kk": "Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.",
+        "en": "The file is gone but the key stays in history — anyone with a copy of the repo can get it. Rotate the key; you can scrub history with git filter-repo, but that does not replace rotation."
+      },
+      "detail": {
+        "ru": "коммит 700e32a2, значение sk_liv…az",
+        "kk": "коммит 700e32a2, мәні sk_liv…az",
+        "en": "commit 700e32a2, value sk_liv…az"
+      }
+    },
+    {
+      "fingerprint": "a3fcc3f392c1f1b1dc43d1f8",
+      "rule": "ge.js.sql-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-89",
+      "file": "src/server/users.js",
+      "line": 9,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "SQL injection — database query built from user input",
+        "kk": "SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған",
+        "ru": "SQL-инъекция — запрос к базе собран из данных пользователя"
+      },
+      "fix": {
+        "en": "Pass values as parameters: db.query('... WHERE id = $1', [id]). Never splice them into the query string.",
+        "kk": "Мәндерді параметр ретінде беріңіз: db.query('... WHERE id = $1', [id]). Оларды сұраныс жолына ешқашан қоспаңыз.",
+        "ru": "Передавайте значения параметрами: db.query('... WHERE id = $1', [id]). Никогда не вставляйте их в строку запроса."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "f161e00fc6f5b774d69fda82",
+      "rule": "ge.js.sql-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-89",
+      "file": "src/server/users.js",
+      "line": 19,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "SQL injection — database query built from user input",
+        "kk": "SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған",
+        "ru": "SQL-инъекция — запрос к базе собран из данных пользователя"
+      },
+      "fix": {
+        "en": "Pass values as parameters: db.query('... WHERE id = $1', [id]). Never splice them into the query string.",
+        "kk": "Мәндерді параметр ретінде беріңіз: db.query('... WHERE id = $1', [id]). Оларды сұраныс жолына ешқашан қоспаңыз.",
+        "ru": "Передавайте значения параметрами: db.query('... WHERE id = $1', [id]). Никогда не вставляйте их в строку запроса."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "fd39b8a0d344eeb683347422",
+      "rule": "ge.js.command-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-78",
+      "file": "src/server/users.js",
+      "line": 26,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Command injection — server command built from user input",
+        "kk": "Командаларды енгізу — сервер командасы пайдаланушы деректерінен құрастырылған",
+        "ru": "Внедрение команд — команда сервера собрана из данных пользователя"
+      },
+      "fix": {
+        "en": "Never run a shell with user data. Use execFile/spawn with an argument list and check the value against an allowlist.",
+        "kk": "Пайдаланушы деректерімен shell іске қоспаңыз. Аргументтер тізімімен execFile/spawn қолданып, мәнді рұқсат етілген тізім бойынша тексеріңіз.",
+        "ru": "Не запускайте shell с пользовательскими данными. Используйте execFile/spawn со списком аргументов и проверяйте значение по белому списку."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "5b9775688eb467a89eb27a86",
+      "rule": "ge.js.code-injection",
+      "engine": "opengrep",
+      "severity": "critical",
+      "category": "injection",
+      "cwe": "CWE-95",
+      "file": "src/server/users.js",
+      "line": 46,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Code injection — eval/Function on user input",
+        "kk": "Бөтен кодты орындау — пайдаланушы деректерінен eval/Function",
+        "ru": "Выполнение чужого кода — eval/Function от данных пользователя"
+      },
+      "fix": {
+        "en": "Remove eval and new Function. Use JSON.parse for data and an explicit choice among known options for logic.",
+        "kk": "eval және new Function алып тастаңыз. Деректер үшін JSON.parse, логика үшін алдын ала белгілі нұсқалардан нақты таңдауды қолданыңыз.",
+        "ru": "Уберите eval и new Function. Для данных используйте JSON.parse, для логики — явный выбор из заранее известных вариантов."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "343741a2e8f6e4653bfa64af",
+      "rule": "ge.config.compose-default-password",
+      "engine": "builtin",
+      "severity": "high",
+      "category": "config",
+      "cwe": "CWE-1393",
+      "file": "docker-compose.yml",
+      "line": 5,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "docker-compose: пароль базы по умолчанию (POSTGRES_PASSWORD)",
+        "kk": "docker-compose: дерекқордың әдепкі құпиясөзі (POSTGRES_PASSWORD)",
+        "en": "docker-compose: default database password (POSTGRES_PASSWORD)"
+      },
+      "fix": {
+        "ru": "Сгенерируйте длинный пароль, передавайте его через .env (не коммитя) и смените на всех серверах, где этот файл уже запускался.",
+        "kk": "Ұзын құпиясөз жасап, оны .env арқылы беріңіз (коммиттемей) және бұл файл іске қосылған барлық серверлерде ауыстырыңыз.",
+        "en": "Generate a long password, pass it through .env (not committed) and change it on every server where this file already ran."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "b0c3c337d1281ee6f29dfaa8",
+      "rule": "osv.npm",
+      "engine": "osv-scanner",
+      "severity": "high",
+      "category": "dependencies",
+      "cwe": "CWE-1395",
+      "file": "package-lock.json",
+      "line": null,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Уязвимая зависимость: lodash 4.17.15",
+        "kk": "Осал тәуелділік: lodash 4.17.15",
+        "en": "Vulnerable dependency: lodash 4.17.15"
+      },
+      "fix": {
+        "ru": "Обновите lodash до версии 4.18.0 или новее и пересоберите lock-файл.",
+        "kk": "lodash пакетін 4.18.0 нұсқасына немесе жаңарағына дейін жаңартып, lock-файлды қайта жинаңыз.",
+        "en": "Upgrade lodash to 4.18.0 or later and regenerate the lock file."
+      },
+      "detail": {
+        "ru": "уязвимости: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465",
+        "kk": "осалдықтар: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465",
+        "en": "vulnerabilities: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465"
+      }
+    },
+    {
+      "fingerprint": "60a37ebb04d2777d6ad75ad8",
+      "rule": "ge.php.xss",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-79",
+      "file": "public/contact.php",
+      "line": 4,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "XSS — user input printed to the page without escaping",
+        "kk": "XSS — пайдаланушы деректері бетке экрандаусыз шығарылады",
+        "ru": "XSS — данные пользователя выводятся на страницу без экранирования"
+      },
+      "fix": {
+        "en": "Print through htmlspecialchars($value, ENT_QUOTES, 'UTF-8').",
+        "kk": "htmlspecialchars($value, ENT_QUOTES, 'UTF-8') арқылы шығарыңыз.",
+        "ru": "Выводите через htmlspecialchars($value, ENT_QUOTES, 'UTF-8')."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "71e47ab75fe34598473c8736",
+      "rule": "ge.php.mail-header-injection",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-93",
+      "file": "public/contact.php",
+      "line": 7,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Mail header injection — the form can be abused to send spam",
+        "kk": "Хат тақырыптарын енгізу — форманы спам таратуға пайдалануға болады",
+        "ru": "Внедрение заголовков письма — форму можно использовать для рассылки спама"
+      },
+      "fix": {
+        "en": "Keep input out of mail headers. Validate addresses with filter_var(..., FILTER_VALIDATE_EMAIL) and strip line breaks.",
+        "kk": "Енгізілген деректі хат тақырыптарына қоспаңыз. Мекенжайды filter_var(..., FILTER_VALIDATE_EMAIL) арқылы тексеріп, жол ауыстыруларды алып тастаңыз.",
+        "ru": "Не подставляйте ввод в заголовки письма. Адрес проверяйте filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "c80a6b1bab645e06e19f10bc",
+      "rule": "ge.js.xss",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-79",
+      "file": "src/server/users.js",
+      "line": 23,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "XSS — user input rendered into HTML without escaping",
+        "kk": "XSS — пайдаланушы деректері HTML-ге экрандаусыз шығарылады",
+        "ru": "XSS — данные пользователя выводятся в HTML без экранирования"
+      },
+      "fix": {
+        "en": "Escape output (auto-escaping templates, escape-html) or return JSON. For user-supplied HTML use DOMPurify.",
+        "kk": "Шығысты экрандаңыз (автоэкрандайтын шаблонизатор, escape-html) немесе JSON қайтарыңыз. Пайдаланушы HTML-і үшін — DOMPurify.",
+        "ru": "Экранируйте вывод (шаблонизатор с автоэкранированием, escape-html) или отдавайте JSON. Для HTML от пользователя — DOMPurify."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "6ae1a0c4caecf201719568a5",
+      "rule": "ge.js.jwt-decode-without-verify",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "auth",
+      "cwe": "CWE-347",
+      "file": "src/server/users.js",
+      "line": 29,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "JWT read without signature check (jwt.decode)",
+        "kk": "JWT қолтаңбаны тексерусіз оқылады (jwt.decode)",
+        "ru": "JWT читается без проверки подписи (jwt.decode)"
+      },
+      "fix": {
+        "en": "jwt.decode only reads the token — anyone can forge it. For login and permissions use jwt.verify(token, secret, { algorithms: ['HS256'] }).",
+        "kk": "jwt.decode токенді тек оқиды — оны кез келген адам жасай алады. Кіру мен құқықтар үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз.",
+        "ru": "jwt.decode только читает токен — подделать его может любой. Для входа и прав используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "ef3c7f7fe0571f5aacf479ae",
+      "rule": "ge.js.path-traversal",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-22",
+      "file": "src/server/users.js",
+      "line": 33,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Path traversal — file path taken from the request",
+        "kk": "Каталогтарды айналып өту — файл жолы сұраныстан алынады",
+        "ru": "Обход каталогов — путь к файлу берётся из запроса"
+      },
+      "fix": {
+        "en": "Take only the file name (path.basename), check it against an allowlist and make sure the final path stays inside the intended folder.",
+        "kk": "Тек файл атын алыңыз (path.basename), оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде қалатынына көз жеткізіңіз.",
+        "ru": "Берите только имя файла (path.basename), проверяйте его по белому списку и убедитесь, что итоговый путь остаётся внутри нужной папки."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "fcfe29b5ce62c8bcf63c971a",
+      "rule": "ge.js.hardcoded-credential",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "secrets",
+      "cwe": "CWE-798",
+      "file": "src/server/users.js",
+      "line": 35,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Password or key hardcoded in source",
+        "kk": "Құпиясөз немесе кілт тікелей кодқа жазылған",
+        "ru": "Пароль или ключ записан прямо в коде"
+      },
+      "fix": {
+        "en": "Move the value to an environment variable (process.env), rotate the password or key and keep secrets out of the repository.",
+        "kk": "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз және құпияларды репозиторийде сақтамаңыз.",
+        "ru": "Перенесите значение в переменную окружения (process.env), смените пароль или ключ и не храните секреты в репозитории."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "288e0e109c7f262cf666e9c2",
+      "rule": "ge.js.ssrf",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-918",
+      "file": "src/server/users.js",
+      "line": 40,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "SSRF — server fetches a URL supplied by the user",
+        "kk": "SSRF — сервер пайдаланушы жіберген мекенжайға сұраныс жасайды",
+        "ru": "SSRF — сервер запрашивает адрес, который прислал пользователь"
+      },
+      "fix": {
+        "en": "Allow only known domains and block internal addresses (localhost, 10.x, 169.254.169.254) and redirects.",
+        "kk": "Тек алдын ала белгілі домендерге рұқсат беріп, ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз.",
+        "ru": "Разрешайте только заранее известные домены, запрещайте внутренние адреса (localhost, 10.x, 169.254.169.254) и редиректы."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "cddba877de5aa402b826dd87",
+      "rule": "ge.js.nosql-where",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-943",
+      "file": "src/server/users.js",
+      "line": 49,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "NoSQL injection — values are spliced into $where and run as JavaScript by the database",
+        "kk": "NoSQL-инъекция — $where ішіне мәндер қойылады, дерекқор оларды JavaScript ретінде орындайды",
+        "ru": "NoSQL-инъекция — в $where подставляются значения, база выполнит их как JavaScript"
+      },
+      "fix": {
+        "en": "Drop $where and use regular query operators: { userId: id, stocks: { $gt: threshold } }, converting values to numbers first.",
+        "kk": "$where алып тастап, қарапайым сұраныс операторларын қолданыңыз: { userId: id, stocks: { $gt: threshold } }, мәндерді алдын ала санға айналдырыңыз.",
+        "ru": "Уберите $where и используйте обычные операторы запроса: { userId: id, stocks: { $gt: threshold } }, предварительно приведя значения к числам."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "b636bfd7c675ce4760a6d019",
+      "rule": "ge.js.template-autoescape-off",
+      "engine": "opengrep",
+      "severity": "high",
+      "category": "injection",
+      "cwe": "CWE-79",
+      "file": "src/server/users.js",
+      "line": 53,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Template auto-escaping is off — every data output becomes XSS",
+        "kk": "Шаблондардың автоэкрандауы өшірулі — деректерді кез келген шығару XSS-ке айналады",
+        "ru": "Выключено автоэкранирование шаблонов — любой вывод данных становится XSS"
+      },
+      "fix": {
+        "en": "Set autoescape: true again. Where HTML is needed, mark it explicitly (safe filter) and clean it with DOMPurify.",
+        "kk": "autoescape: true қайтарыңыз. HTML қажет жерде оны нақты белгілеп (safe сүзгісі), DOMPurify арқылы тазалаңыз.",
+        "ru": "Верните autoescape: true. Где нужен HTML, отмечайте его явно (filter safe) и очищайте через DOMPurify."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "b0281b7c6840a73a782a4fca",
+      "rule": "ge.config.supabase-no-rls",
+      "engine": "builtin",
+      "severity": "high",
+      "category": "data-access",
+      "cwe": "CWE-284",
+      "file": "supabase/migrations/001_init.sql",
+      "line": 1,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "Supabase: у таблицы public.profiles не включён RLS",
+        "kk": "Supabase: public.profiles кестесінде RLS қосылмаған",
+        "en": "Supabase: table public.profiles has no RLS"
+      },
+      "fix": {
+        "ru": "Без RLS таблицу читает и меняет любой, у кого есть публичный anon-ключ из вашего сайта. Добавьте alter table public.profiles enable row level security; и политики доступа к своим строкам.",
+        "kk": "RLS болмаса, кестені сайтыңыздағы жалпыға ашық anon-кілті бар кез келген адам оқып, өзгерте алады. alter table public.profiles enable row level security; және өз жолдарына қол жеткізу саясаттарын қосыңыз.",
+        "en": "Without RLS anyone with the public anon key from your site can read and change the table. Add alter table public.profiles enable row level security; and policies limiting access to own rows."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "e6d78e8fbe6cd5abc224f0ab",
+      "rule": "ge.py.llm-huge-output-limit",
+      "engine": "opengrep",
+      "severity": "medium",
+      "category": "ai-cost",
+      "cwe": "CWE-770",
+      "file": "api/main.py",
+      "line": 36,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "AI output limit is very high — a single call can be expensive",
+        "kk": "ЖИ жауабының шегі тым үлкен — бір сұраныс қымбатқа түсуі мүмкін",
+        "ru": "Лимит ответа ИИ слишком большой — один запрос может стоить дорого"
+      },
+      "fix": {
+        "en": "Lower max_tokens to what the task really needs and add a per-user request limit.",
+        "kk": "max_tokens мәнін нақты қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қойыңыз.",
+        "ru": "Снизьте max_tokens до реально нужного значения и поставьте лимит запросов на пользователя."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "9fae5e0209cf19172674a85e",
+      "rule": "ge.py.debug-enabled",
+      "engine": "opengrep",
+      "severity": "medium",
+      "category": "config",
+      "cwe": "CWE-489",
+      "file": "api/main.py",
+      "line": 53,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Debug mode enabled — errors and internals are exposed",
+        "kk": "Түзету режимі қосулы — қателер мен ішкі құрылым сыртқа көрінеді",
+        "ru": "Включён режим отладки — наружу видны ошибки и внутренности"
+      },
+      "fix": {
+        "en": "Turn debug off in production and read it from an environment variable. Flask debug=True exposes a console that runs code.",
+        "kk": "Өндірісте debug өшіріп, оны орта айнымалысынан алыңыз. Flask-те debug=True код орындайтын консоль береді.",
+        "ru": "Выключите debug в продакшене и берите его из переменной окружения. В Flask debug=True даёт консоль, которая выполняет код."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "fd0bf2cf1e805a738d3846b9",
+      "rule": "ge.js.llm-no-output-limit",
+      "engine": "opengrep",
+      "severity": "medium",
+      "category": "ai-cost",
+      "cwe": "CWE-770",
+      "file": "app/api/chat/route.ts",
+      "line": 7,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Paid AI call without an output limit",
+        "kk": "Ақылы ЖИ-ге жауап ұзындығына шектеусіз сұраныс",
+        "ru": "Запрос к платному ИИ без лимита длины ответа"
+      },
+      "fix": {
+        "en": "Set max_tokens (or max_completion_tokens) to fit the task — usually 500–2000 — and cap the input length.",
+        "kk": "Тапсырмаға сай max_tokens (немесе max_completion_tokens) орнатыңыз — әдетте 500–2000 — және кіріс мәтінінің ұзындығын шектеңіз.",
+        "ru": "Задайте max_tokens (или max_completion_tokens) под задачу — обычно 500–2000 — и ограничьте длину входного текста."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "99d80861738bd4766561b697",
+      "rule": "ge.config.compose-db-port",
+      "engine": "builtin",
+      "severity": "medium",
+      "category": "config",
+      "cwe": "CWE-668",
+      "file": "docker-compose.yml",
+      "line": 7,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "ru": "docker-compose: порт базы 5432 открыт наружу",
+        "kk": "docker-compose: дерекқордың 5432 порты сыртқа ашық",
+        "en": "docker-compose: database port 5432 exposed"
+      },
+      "fix": {
+        "ru": "Уберите проброс порта или привяжите его к localhost: \"127.0.0.1:5432:5432\". Базе не нужен доступ из интернета.",
+        "kk": "Портты жіберуді алып тастаңыз немесе оны localhost-қа байлаңыз: \"127.0.0.1:5432:5432\". Дерекқорға интернеттен қол жеткізу қажет емес.",
+        "en": "Remove the port mapping or bind it to localhost: \"127.0.0.1:5432:5432\". The database does not need internet access."
+      },
+      "detail": null
+    },
+    {
+      "fingerprint": "4075d0e92f796a346c39a53a",
+      "rule": "ge.js.open-redirect",
+      "engine": "opengrep",
+      "severity": "medium",
+      "category": "injection",
+      "cwe": "CWE-601",
+      "file": "src/server/users.js",
+      "line": 44,
+      "in_history": false,
+      "commit": null,
+      "title": {
+        "en": "Open redirect — redirect target taken from the request",
+        "kk": "Ашық қайта бағыттау — өту мекенжайы сұраныстан алынады",
+        "ru": "Открытый редирект — адрес перехода берётся из запроса"
+      },
+      "fix": {
+        "en": "Redirect only to your own paths (start with '/', not '//') or allowlisted domains. Otherwise your link becomes a phishing tool.",
+        "kk": "Тек өз жолдарыңызға ('/' басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз. Әйтпесе сілтемеңіз фишингке пайдаланылады.",
+        "ru": "Редиректите только на свои пути (начинаются с '/', но не с '//') или на домены из белого списка. Иначе вашу ссылку используют для фишинга."
+      },
+      "detail": null
+    }
+  ]
+}

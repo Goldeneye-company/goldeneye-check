@@ -1,0 +1,195 @@
+# Правила GoldenEye Check для PHP (сайты на обычном хостинге, формы, Plesk/cPanel).
+
+rules:
+  - id: ge.php.sql-injection
+    languages: [php]
+    mode: taint
+    severity: ERROR
+    message: SQL-запрос собран из $_GET/$_POST
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-89
+        title:
+          ru: SQL-инъекция — данные формы попадают прямо в запрос
+          kk: SQL-инъекция — форма деректері тікелей сұранысқа түседі
+          en: SQL injection — form data goes straight into the query
+        fix:
+          ru: "Используйте подготовленные запросы: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id])."
+          kk: "Дайындалған сұраныстарды қолданыңыз: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id])."
+          en: "Use prepared statements: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id])."
+    pattern-sources: &php_sources
+      - pattern-either:
+          - pattern: $_GET
+          - pattern: $_POST
+          - pattern: $_REQUEST
+          - pattern: $_COOKIE
+          - pattern: $_SERVER['HTTP_REFERER']
+          - pattern: file_get_contents('php://input')
+    pattern-sanitizers:
+      - pattern-either:
+          - pattern: intval(...)
+          - pattern: (int) $X
+          - pattern: $DB->quote(...)
+          - pattern: mysqli_real_escape_string(...)
+      - &php_validated
+        patterns:
+          - pattern-either:
+              - pattern-inside: |
+                  if (<... $V(...) ...>) { ... }
+              - pattern-inside: |
+                  if (<... $V(...) ...>) { ... } else { ... }
+          - metavariable-regex:
+              metavariable: $V
+              regex: ^(is_numeric|is_int|ctype_digit|ctype_alnum|preg_match|filter_var|in_array)$
+          - pattern: $X
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: mysqli_query($CONN, $Q, ...)
+              - pattern: $DB->query($Q, ...)
+              - pattern: $DB->exec($Q)
+              - pattern: mysql_query($Q, ...)
+              - pattern: pg_query($CONN, $Q)
+          - focus-metavariable: $Q
+
+  - id: ge.php.xss
+    languages: [php]
+    mode: taint
+    severity: WARNING
+    message: Данные формы выводятся без экранирования
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-79
+        title:
+          ru: XSS — данные пользователя выводятся на страницу без экранирования
+          kk: XSS — пайдаланушы деректері бетке экрандаусыз шығарылады
+          en: XSS — user input printed to the page without escaping
+        fix:
+          ru: "Выводите через htmlspecialchars($value, ENT_QUOTES, 'UTF-8')."
+          kk: "htmlspecialchars($value, ENT_QUOTES, 'UTF-8') арқылы шығарыңыз."
+          en: "Print through htmlspecialchars($value, ENT_QUOTES, 'UTF-8')."
+    pattern-sources: *php_sources
+    pattern-sanitizers:
+      - pattern-either:
+          - pattern: htmlspecialchars(...)
+          - pattern: htmlentities(...)
+          - pattern: intval(...)
+          - pattern: json_encode(...)
+      - *php_validated
+    pattern-sinks:
+      - pattern-either:
+          - pattern: echo ...;
+          - pattern: print(...);
+          - pattern: printf(...);
+
+  - id: ge.php.command-injection
+    languages: [php]
+    mode: taint
+    severity: ERROR
+    message: Команда ОС из данных формы
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-78
+        title:
+          ru: Внедрение команд — данные формы попадают в команду сервера
+          kk: Командаларды енгізу — форма деректері сервер командасына түседі
+          en: Command injection — form data goes into a server command
+        fix:
+          ru: "Не передавайте ввод в shell. Если без этого нельзя — escapeshellarg() и проверка по белому списку."
+          kk: "Енгізілген деректі shell-ге бермеңіз. Онсыз болмаса — escapeshellarg() және рұқсат етілген тізім бойынша тексеру."
+          en: "Keep input out of the shell. If unavoidable, use escapeshellarg() and an allowlist."
+    pattern-sources: *php_sources
+    pattern-sanitizers:
+      - pattern: escapeshellarg(...)
+      - *php_validated
+    pattern-sinks:
+      - pattern-either:
+          - pattern: system(...)
+          - pattern: exec(...)
+          - pattern: shell_exec(...)
+          - pattern: passthru(...)
+          - pattern: popen(...)
+          - pattern: proc_open(...)
+
+  - id: ge.php.file-inclusion
+    languages: [php]
+    mode: taint
+    severity: ERROR
+    message: include/require из данных формы
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-98
+        title:
+          ru: Подключение файла по имени из запроса — можно выполнить чужой код
+          kk: Сұраныстағы атау бойынша файл қосу — бөтен кодты орындауға болады
+          en: File inclusion from request data — foreign code can run
+        fix:
+          ru: "Подключайте только файлы из заранее заданного списка: $pages = ['home' => 'home.php']; include $pages[$key] ?? 'home.php'."
+          kk: "Тек алдын ала берілген тізімдегі файлдарды қосыңыз: $pages = ['home' => 'home.php']; include $pages[$key] ?? 'home.php'."
+          en: "Include only files from a fixed list: $pages = ['home' => 'home.php']; include $pages[$key] ?? 'home.php'."
+    pattern-sources: *php_sources
+    pattern-sanitizers:
+      - *php_validated
+    pattern-sinks:
+      - pattern-either:
+          - pattern: include $X;
+          - pattern: include_once $X;
+          - pattern: require $X;
+          - pattern: require_once $X;
+
+  - id: ge.php.mail-header-injection
+    languages: [php]
+    mode: taint
+    severity: WARNING
+    message: Заголовки письма собраны из данных формы
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-93
+        title:
+          ru: Внедрение заголовков письма — форму можно использовать для рассылки спама
+          kk: Хат тақырыптарын енгізу — форманы спам таратуға пайдалануға болады
+          en: Mail header injection — the form can be abused to send spam
+        fix:
+          ru: "Не подставляйте ввод в заголовки письма. Адрес проверяйте filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк."
+          kk: "Енгізілген деректі хат тақырыптарына қоспаңыз. Мекенжайды filter_var(..., FILTER_VALIDATE_EMAIL) арқылы тексеріп, жол ауыстыруларды алып тастаңыз."
+          en: "Keep input out of mail headers. Validate addresses with filter_var(..., FILTER_VALIDATE_EMAIL) and strip line breaks."
+    pattern-sources: *php_sources
+    pattern-sanitizers:
+      - pattern: filter_var($X, FILTER_VALIDATE_EMAIL)
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: mail($TO, $SUBJ, $MSG, $H, ...)
+          - focus-metavariable: $H
+
+  - id: ge.php.unserialize
+    languages: [php]
+    mode: taint
+    severity: ERROR
+    message: unserialize от данных формы
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-502
+        title:
+          ru: Небезопасная десериализация — unserialize от данных пользователя
+          kk: Қауіпті десериализация — пайдаланушы деректерінен unserialize
+          en: Unsafe deserialization — unserialize on user input
+        fix:
+          ru: "Используйте json_decode вместо unserialize для данных извне."
+          kk: "Сырттан келген деректер үшін unserialize орнына json_decode қолданыңыз."
+          en: "Use json_decode instead of unserialize for external data."
+    pattern-sources: *php_sources
+    pattern-sinks:
+      - pattern: unserialize(...)

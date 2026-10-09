@@ -1,0 +1,4 @@
+# Одинаковые переводы строк на Windows, macOS и Linux
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.png binary

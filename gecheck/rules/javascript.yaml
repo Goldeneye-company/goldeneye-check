@@ -13,13 +13,13 @@ rules:
         category: injection
         cwe: CWE-89
         title:
-          ru: SQL-инъекция — запрос к базе собран из данных пользователя
-          kk: SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған
-          en: SQL injection — database query built from user input
+          ru: "SQL-инъекция в запросе к базе данных"
+          kk: "Дерекқорға сұраныстағы SQL-инъекция"
+          en: "SQL injection in a database query"
         fix:
-          ru: "Передавайте значения параметрами: db.query('... WHERE id = $1', [id]). Никогда не вставляйте их в строку запроса."
-          kk: "Мәндерді параметр ретінде беріңіз: db.query('... WHERE id = $1', [id]). Оларды сұраныс жолына ешқашан қоспаңыз."
-          en: "Pass values as parameters: db.query('... WHERE id = $1', [id]). Never splice them into the query string."
+          ru: "Передавайте значения как параметры запроса, например db.query('... WHERE id = $1', [id]), а не подстановкой в строку."
+          kk: "Мәндерді сұраныс параметрлері ретінде беріңіз, мысалы db.query('... WHERE id = $1', [id]), жолға қоспаңыз."
+          en: "Pass values as query parameters, for example db.query('... WHERE id = $1', [id]), instead of building the query string."
     pattern-sources: &js_sources
       - pattern-either:
           - pattern: $REQ.query
@@ -52,13 +52,13 @@ rules:
         category: injection
         cwe: CWE-78
         title:
-          ru: Внедрение команд — команда сервера собрана из данных пользователя
-          kk: Командаларды енгізу — сервер командасы пайдаланушы деректерінен құрастырылған
-          en: Command injection — server command built from user input
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
         fix:
-          ru: "Не запускайте shell с пользовательскими данными. Используйте execFile/spawn со списком аргументов и проверяйте значение по белому списку."
-          kk: "Пайдаланушы деректерімен shell іске қоспаңыз. Аргументтер тізімімен execFile/spawn қолданып, мәнді рұқсат етілген тізім бойынша тексеріңіз."
-          en: "Never run a shell with user data. Use execFile/spawn with an argument list and check the value against an allowlist."
+          ru: "Не передавайте пользовательские данные в shell. Используйте execFile или spawn со списком аргументов и проверяйте значение по списку допустимых."
+          kk: "Пайдаланушы деректерін shell-ге бермеңіз. Аргументтер тізімімен execFile немесе spawn қолданып, мәнді рұқсат етілген мәндер бойынша тексеріңіз."
+          en: "Do not pass user data to a shell. Use execFile or spawn with an argument list and check the value against an allowlist."
     pattern-sources: *js_sources
     pattern-sinks:
       - patterns:
@@ -81,13 +81,13 @@ rules:
         category: injection
         cwe: CWE-95
         title:
-          ru: Выполнение чужого кода — eval/Function от данных пользователя
-          kk: Бөтен кодты орындау — пайдаланушы деректерінен eval/Function
-          en: Code injection — eval/Function on user input
+          ru: "Выполнение кода через eval или new Function"
+          kk: "eval немесе new Function арқылы кодты орындау"
+          en: "Code execution via eval or new Function"
         fix:
-          ru: "Уберите eval и new Function. Для данных используйте JSON.parse, для логики — явный выбор из заранее известных вариантов."
-          kk: "eval және new Function алып тастаңыз. Деректер үшін JSON.parse, логика үшін алдын ала белгілі нұсқалардан нақты таңдауды қолданыңыз."
-          en: "Remove eval and new Function. Use JSON.parse for data and an explicit choice among known options for logic."
+          ru: "Уберите eval и new Function. Для разбора данных используйте JSON.parse."
+          kk: "eval және new Function алып тастаңыз. Деректерді талдау үшін JSON.parse қолданыңыз."
+          en: "Remove eval and new Function. Use JSON.parse to parse data."
     pattern-sources: *js_sources
     pattern-sinks:
       - pattern-either:
@@ -107,13 +107,13 @@ rules:
         category: injection
         cwe: CWE-79
         title:
-          ru: XSS — данные пользователя выводятся в HTML без экранирования
-          kk: XSS — пайдаланушы деректері HTML-ге экрандаусыз шығарылады
-          en: XSS — user input rendered into HTML without escaping
+          ru: "Вывод данных пользователя без экранирования (XSS)"
+          kk: "Пайдаланушы деректерін экрандаусыз шығару (XSS)"
+          en: "Unescaped user input in HTML (XSS)"
         fix:
-          ru: "Экранируйте вывод (шаблонизатор с автоэкранированием, escape-html) или отдавайте JSON. Для HTML от пользователя — DOMPurify."
-          kk: "Шығысты экрандаңыз (автоэкрандайтын шаблонизатор, escape-html) немесе JSON қайтарыңыз. Пайдаланушы HTML-і үшін — DOMPurify."
-          en: "Escape output (auto-escaping templates, escape-html) or return JSON. For user-supplied HTML use DOMPurify."
+          ru: "Экранируйте вывод (escape-html или шаблонизатор с автоэкранированием) или возвращайте JSON. HTML от пользователя очищайте через DOMPurify."
+          kk: "Шығысты экрандаңыз (escape-html немесе автоэкрандайтын шаблонизатор) немесе JSON қайтарыңыз. Пайдаланушының HTML-ін DOMPurify арқылы тазалаңыз."
+          en: "Escape the output (escape-html or an auto-escaping template engine) or return JSON. Sanitize user HTML with DOMPurify."
     pattern-sources: *js_sources
     pattern-sanitizers:
       - pattern-either:
@@ -142,13 +142,13 @@ rules:
         category: injection
         cwe: CWE-22
         title:
-          ru: Обход каталогов — путь к файлу берётся из запроса
-          kk: Каталогтарды айналып өту — файл жолы сұраныстан алынады
-          en: Path traversal — file path taken from the request
+          ru: "Путь к файлу из данных запроса (path traversal)"
+          kk: "Сұраныс деректерінен алынған файл жолы (path traversal)"
+          en: "File path from request data (path traversal)"
         fix:
-          ru: "Берите только имя файла (path.basename), проверяйте его по белому списку и убедитесь, что итоговый путь остаётся внутри нужной папки."
-          kk: "Тек файл атын алыңыз (path.basename), оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде қалатынына көз жеткізіңіз."
-          en: "Take only the file name (path.basename), check it against an allowlist and make sure the final path stays inside the intended folder."
+          ru: "Используйте только имя файла (path.basename), проверяйте его по списку допустимых и убедитесь, что итоговый путь находится внутри нужной папки."
+          kk: "Тек файл атын (path.basename) қолданыңыз, оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде екеніне көз жеткізіңіз."
+          en: "Use only the file name (path.basename), check it against an allowlist and make sure the resulting path stays inside the intended folder."
     pattern-sources: *js_sources
     pattern-sanitizers:
       - pattern: $PATH.basename(...)
@@ -176,13 +176,13 @@ rules:
         category: injection
         cwe: CWE-918
         title:
-          ru: SSRF — сервер запрашивает адрес, который прислал пользователь
-          kk: SSRF — сервер пайдаланушы жіберген мекенжайға сұраныс жасайды
-          en: SSRF — server fetches a URL supplied by the user
+          ru: "Запрос по адресу из данных пользователя (SSRF)"
+          kk: "Пайдаланушы деректеріндегі мекенжайға сұраныс (SSRF)"
+          en: "Request to a user-supplied URL (SSRF)"
         fix:
-          ru: "Разрешайте только заранее известные домены, запрещайте внутренние адреса (localhost, 10.x, 169.254.169.254) и редиректы."
-          kk: "Тек алдын ала белгілі домендерге рұқсат беріп, ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз."
-          en: "Allow only known domains and block internal addresses (localhost, 10.x, 169.254.169.254) and redirects."
+          ru: "Разрешайте запросы только к известным доменам. Запретите внутренние адреса (localhost, 10.x, 169.254.169.254) и переходы по редиректам."
+          kk: "Тек белгілі домендерге сұраныс жасауға рұқсат етіңіз. Ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз."
+          en: "Allow requests only to known domains. Block internal addresses (localhost, 10.x, 169.254.169.254) and redirects."
     pattern-sources: *js_sources
     pattern-sinks:
       - patterns:
@@ -206,13 +206,13 @@ rules:
         category: injection
         cwe: CWE-601
         title:
-          ru: Открытый редирект — адрес перехода берётся из запроса
-          kk: Ашық қайта бағыттау — өту мекенжайы сұраныстан алынады
-          en: Open redirect — redirect target taken from the request
+          ru: "Редирект на адрес из запроса"
+          kk: "Сұраныстағы мекенжайға қайта бағыттау"
+          en: "Redirect to a URL from the request"
         fix:
-          ru: "Редиректите только на свои пути (начинаются с '/', но не с '//') или на домены из белого списка. Иначе вашу ссылку используют для фишинга."
-          kk: "Тек өз жолдарыңызға ('/' басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз. Әйтпесе сілтемеңіз фишингке пайдаланылады."
-          en: "Redirect only to your own paths (start with '/', not '//') or allowlisted domains. Otherwise your link becomes a phishing tool."
+          ru: "Перенаправляйте только на свои пути (начинаются с '/', но не с '//') или на домены из списка допустимых."
+          kk: "Тек өз жолдарыңызға ('/' белгісінен басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз."
+          en: "Redirect only to your own paths (starting with '/' but not '//') or to allowlisted domains."
     pattern-sources: *js_sources
     pattern-sinks:
       - pattern: $RES.redirect(...)
@@ -227,13 +227,13 @@ rules:
         category: auth
         cwe: CWE-347
         title:
-          ru: JWT читается без проверки подписи (jwt.decode)
-          kk: JWT қолтаңбаны тексерусіз оқылады (jwt.decode)
-          en: JWT read without signature check (jwt.decode)
+          ru: "JWT без проверки подписи (jwt.decode)"
+          kk: "Қолтаңбасы тексерілмейтін JWT (jwt.decode)"
+          en: "JWT without signature verification (jwt.decode)"
         fix:
-          ru: "jwt.decode только читает токен — подделать его может любой. Для входа и прав используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
-          kk: "jwt.decode токенді тек оқиды — оны кез келген адам жасай алады. Кіру мен құқықтар үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз."
-          en: "jwt.decode only reads the token — anyone can forge it. For login and permissions use jwt.verify(token, secret, { algorithms: ['HS256'] })."
+          ru: "jwt.decode не проверяет подпись. Для аутентификации используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
+          kk: "jwt.decode қолтаңбаны тексермейді. Аутентификация үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз."
+          en: "jwt.decode does not verify the signature. For authentication use jwt.verify(token, secret, { algorithms: ['HS256'] })."
     pattern-either:
       - pattern: jwt.decode(...)
       - pattern: jsonwebtoken.decode(...)
@@ -248,13 +248,13 @@ rules:
         category: auth
         cwe: CWE-347
         title:
-          ru: JWT принимает алгоритм «none» — подпись не проверяется
-          kk: JWT «none» алгоритмін қабылдайды — қолтаңба тексерілмейді
-          en: JWT accepts the "none" algorithm — signature is not checked
+          ru: "JWT принимает алгоритм none"
+          kk: "JWT none алгоритмін қабылдайды"
+          en: "JWT accepts the none algorithm"
         fix:
-          ru: "Укажите только реальные алгоритмы: { algorithms: ['HS256'] } или ['RS256']."
-          kk: "Тек нақты алгоритмдерді көрсетіңіз: { algorithms: ['HS256'] } немесе ['RS256']."
-          en: "List only real algorithms: { algorithms: ['HS256'] } or ['RS256']."
+          ru: "Укажите только используемые алгоритмы, например { algorithms: ['HS256'] }."
+          kk: "Тек қолданылатын алгоритмдерді көрсетіңіз, мысалы { algorithms: ['HS256'] }."
+          en: "List only the algorithms you use, for example { algorithms: ['HS256'] }."
     pattern: '$JWT.verify($T, $K, {..., algorithms: [..., "none", ...], ...}, ...)'
 
   - id: ge.js.hardcoded-credential
@@ -267,13 +267,13 @@ rules:
         category: secrets
         cwe: CWE-798
         title:
-          ru: Пароль или ключ записан прямо в коде
-          kk: Құпиясөз немесе кілт тікелей кодқа жазылған
-          en: Password or key hardcoded in source
+          ru: "Пароль или ключ в исходном коде"
+          kk: "Бастапқы кодтағы құпиясөз немесе кілт"
+          en: "Password or key in source code"
         fix:
-          ru: "Перенесите значение в переменную окружения (process.env), смените пароль или ключ и не храните секреты в репозитории."
-          kk: "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз және құпияларды репозиторийде сақтамаңыз."
-          en: "Move the value to an environment variable (process.env), rotate the password or key and keep secrets out of the repository."
+          ru: "Перенесите значение в переменную окружения (process.env) и смените пароль или ключ."
+          kk: "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз."
+          en: "Move the value to an environment variable (process.env) and change the password or key."
     patterns:
       - pattern-either:
           - pattern: const $NAME = "$VALUE"
@@ -297,13 +297,13 @@ rules:
         category: config
         cwe: CWE-942
         title:
-          ru: CORS пускает любой сайт и передаёт куки
-          kk: CORS кез келген сайтқа рұқсат беріп, cookie жібереді
-          en: CORS allows any site and sends cookies
+          ru: "CORS разрешает любой источник вместе с cookie"
+          kk: "CORS кез келген көзге cookie-мен бірге рұқсат береді"
+          en: "CORS allows any origin with credentials"
         fix:
-          ru: "Укажите список своих доменов в origin. Сочетание origin: '*' или true с credentials: true позволяет чужим сайтам действовать от имени пользователя."
-          kk: "origin ішінде өз домендеріңіздің тізімін көрсетіңіз. origin: '*' немесе true мен credentials: true бірге болса, бөтен сайттар пайдаланушы атынан әрекет ете алады."
-          en: "List your own domains in origin. origin: '*' or true together with credentials: true lets other sites act on the user's behalf."
+          ru: "Укажите в origin список своих доменов. При origin: '*' или true вместе с credentials: true другие сайты могут отправлять запросы от имени пользователя."
+          kk: "origin ішінде өз домендеріңіздің тізімін көрсетіңіз. origin: '*' немесе true мен credentials: true бірге болса, басқа сайттар пайдаланушы атынан сұраныс жібере алады."
+          en: "Set origin to a list of your domains. With origin: '*' or true and credentials: true, other sites can send requests on behalf of the user."
     pattern-either:
       - pattern: 'cors({..., origin: "*", ..., credentials: true, ...})'
       - pattern: 'cors({..., origin: true, ..., credentials: true, ...})'
@@ -320,13 +320,13 @@ rules:
         category: ai-cost
         cwe: CWE-770
         title:
-          ru: Запрос к платному ИИ без лимита длины ответа
-          kk: Ақылы ЖИ-ге жауап ұзындығына шектеусіз сұраныс
-          en: Paid AI call without an output limit
+          ru: "Вызов API нейросети без max_tokens"
+          kk: "max_tokens көрсетілмеген нейрожелі API шақыруы"
+          en: "LLM API call without max_tokens"
         fix:
-          ru: "Задайте max_tokens (или max_completion_tokens) под задачу — обычно 500–2000 — и ограничьте длину входного текста."
-          kk: "Тапсырмаға сай max_tokens (немесе max_completion_tokens) орнатыңыз — әдетте 500–2000 — және кіріс мәтінінің ұзындығын шектеңіз."
-          en: "Set max_tokens (or max_completion_tokens) to fit the task — usually 500–2000 — and cap the input length."
+          ru: "Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста."
+          kk: "max_tokens (немесе max_completion_tokens) мәнін орнатып, кіріс мәтінінің ұзындығын шектеңіз."
+          en: "Set max_tokens (or max_completion_tokens) and limit the input length."
     patterns:
       - pattern-either:
           - pattern: $C.chat.completions.create({...})
@@ -345,13 +345,13 @@ rules:
         category: ai-cost
         cwe: CWE-770
         title:
-          ru: Лимит ответа ИИ слишком большой — один запрос может стоить дорого
-          kk: ЖИ жауабының шегі тым үлкен — бір сұраныс қымбатқа түсуі мүмкін
-          en: AI output limit is very high — a single call can be expensive
+          ru: "Слишком большое значение max_tokens"
+          kk: "max_tokens мәні тым үлкен"
+          en: "max_tokens is too high"
         fix:
-          ru: "Снизьте max_tokens до реально нужного значения и поставьте лимит запросов на пользователя."
-          kk: "max_tokens мәнін нақты қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қойыңыз."
-          en: "Lower max_tokens to what the task really needs and add a per-user request limit."
+          ru: "Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя."
+          kk: "max_tokens мәнін қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Reduce max_tokens to what you need and add a per-user request limit."
     patterns:
       - pattern-either:
           - pattern: "$C.$X.$Y({..., max_tokens: $N, ...})"
@@ -370,13 +370,13 @@ rules:
         category: ai-cost
         cwe: CWE-306
         title:
-          ru: Открытый ИИ-эндпоинт — платная модель доступна без входа
-          kk: Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді
-          en: Open AI endpoint — paid model reachable without login
+          ru: "Эндпоинт вызывает нейросеть без авторизации"
+          kk: "Эндпоинт нейрожеліні авторизациясыз шақырады"
+          en: "Endpoint calls an LLM without authentication"
         fix:
-          ru: "Проверяйте пользователя до вызова модели (сессия, токен, middleware) и ставьте лимит запросов на пользователя. Иначе бюджет может сжечь любой."
-          kk: "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен, middleware) және бір пайдаланушыға сұраныс шегін қойыңыз. Әйтпесе бюджетті кез келген адам жұмсап жібереді."
-          en: "Check the user before calling the model (session, token, middleware) and add a per-user rate limit. Otherwise anyone can burn your budget."
+          ru: "Проверяйте пользователя до вызова модели (сессия, токен или middleware) и добавьте лимит запросов на пользователя."
+          kk: "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен немесе middleware) және бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Check the user before calling the model (session, token or middleware) and add a per-user request limit."
     patterns:
       - pattern-either:
           - pattern: $C.messages.create(...)
@@ -425,13 +425,13 @@ rules:
         category: injection
         cwe: CWE-943
         title:
-          ru: NoSQL-инъекция — в $where подставляются значения, база выполнит их как JavaScript
-          kk: NoSQL-инъекция — $where ішіне мәндер қойылады, дерекқор оларды JavaScript ретінде орындайды
-          en: NoSQL injection — values are spliced into $where and run as JavaScript by the database
+          ru: "NoSQL-инъекция через $where"
+          kk: "$where арқылы NoSQL-инъекция"
+          en: "NoSQL injection via $where"
         fix:
-          ru: "Уберите $where и используйте обычные операторы запроса: { userId: id, stocks: { $gt: threshold } }, предварительно приведя значения к числам."
-          kk: "$where алып тастап, қарапайым сұраныс операторларын қолданыңыз: { userId: id, stocks: { $gt: threshold } }, мәндерді алдын ала санға айналдырыңыз."
-          en: "Drop $where and use regular query operators: { userId: id, stocks: { $gt: threshold } }, converting values to numbers first."
+          ru: "Не используйте $where. Пишите условия обычными операторами, например { userId: id, stocks: { $gt: threshold } }, и приводите значения к нужному типу."
+          kk: "$where қолданбаңыз. Шарттарды кәдімгі операторлармен жазыңыз, мысалы { userId: id, stocks: { $gt: threshold } }, және мәндерді қажетті түрге келтіріңіз."
+          en: "Do not use $where. Write conditions with regular operators, for example { userId: id, stocks: { $gt: threshold } }, and convert values to the expected type."
     pattern-either:
       - pattern: "{..., $where: `...${$X}...`, ...}"
       - pattern: '{..., $where: "..." + $X, ...}'
@@ -447,13 +447,13 @@ rules:
         category: injection
         cwe: CWE-79
         title:
-          ru: Выключено автоэкранирование шаблонов — любой вывод данных становится XSS
-          kk: Шаблондардың автоэкрандауы өшірулі — деректерді кез келген шығару XSS-ке айналады
-          en: Template auto-escaping is off — every data output becomes XSS
+          ru: "Отключено автоэкранирование в шаблонах"
+          kk: "Шаблондарда автоэкрандау өшірілген"
+          en: "Template auto-escaping is disabled"
         fix:
-          ru: "Верните autoescape: true. Где нужен HTML, отмечайте его явно (filter safe) и очищайте через DOMPurify."
-          kk: "autoescape: true қайтарыңыз. HTML қажет жерде оны нақты белгілеп (safe сүзгісі), DOMPurify арқылы тазалаңыз."
-          en: "Set autoescape: true again. Where HTML is needed, mark it explicitly (safe filter) and clean it with DOMPurify."
+          ru: "Включите autoescape: true. Если в каком-то месте нужен HTML, отметьте его явно (фильтр safe) и очистите через DOMPurify."
+          kk: "autoescape: true қосыңыз. Бір жерде HTML керек болса, оны анық белгілеңіз (safe сүзгісі) және DOMPurify арқылы тазалаңыз."
+          en: "Set autoescape: true. Where HTML is required, mark it explicitly (safe filter) and sanitize it with DOMPurify."
     pattern-either:
       - pattern: "{..., autoescape: false, ...}"
       - pattern: "{..., noEscape: true, ...}"

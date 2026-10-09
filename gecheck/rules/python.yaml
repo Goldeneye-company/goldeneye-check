@@ -11,13 +11,13 @@ rules:
         category: injection
         cwe: CWE-89
         title:
-          ru: SQL-инъекция — запрос собран форматированием строки
-          kk: SQL-инъекция — сұраныс жолды пішімдеу арқылы құрастырылған
-          en: SQL injection — query built with string formatting
+          ru: "SQL-запрос собирается форматированием строки"
+          kk: "SQL-сұраныс жолды пішімдеу арқылы құрастырылады"
+          en: "SQL query built with string formatting"
         fix:
-          ru: "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). f-строки, % и + в SQL недопустимы."
-          kk: "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-де f-жол, % және + қолдануға болмайды."
-          en: "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). No f-strings, % or + in SQL."
+          ru: "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). Не собирайте SQL через f-строки, % и +."
+          kk: "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-ді f-жолдар, % және + арқылы құрастырмаңыз."
+          en: "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). Do not build SQL with f-strings, % or +."
     patterns:
       - pattern-either:
           - pattern: $C.execute(f"...", ...)
@@ -48,13 +48,13 @@ rules:
         category: injection
         cwe: CWE-78
         title:
-          ru: Внедрение команд — shell-команда собирается из переменных
-          kk: Командаларды енгізу — shell-команда айнымалылардан құрастырылады
-          en: Command injection — shell command built from variables
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
         fix:
-          ru: "Используйте subprocess.run([...]) со списком аргументов и без shell=True; значения проверяйте по белому списку."
-          kk: "subprocess.run([...]) аргументтер тізімімен және shell=True-сыз қолданыңыз; мәндерді рұқсат етілген тізім бойынша тексеріңіз."
-          en: "Use subprocess.run([...]) with an argument list and no shell=True; check values against an allowlist."
+          ru: "Используйте subprocess.run([...]) со списком аргументов без shell=True и проверяйте значения по списку допустимых."
+          kk: "subprocess.run([...]) аргументтер тізімімен, shell=True-сыз қолданып, мәндерді рұқсат етілген тізім бойынша тексеріңіз."
+          en: "Use subprocess.run([...]) with an argument list and without shell=True, and check values against an allowlist."
     patterns:
       - pattern-either:
           - pattern: subprocess.$F($CMD, ..., shell=True, ...)
@@ -74,13 +74,13 @@ rules:
         category: injection
         cwe: CWE-502
         title:
-          ru: Небезопасная десериализация — pickle/yaml могут выполнить чужой код
-          kk: Қауіпті десериализация — pickle/yaml бөтен кодты орындауы мүмкін
-          en: Unsafe deserialization — pickle/yaml can execute foreign code
+          ru: "Небезопасная десериализация (pickle, yaml.load)"
+          kk: "Қауіпті десериализация (pickle, yaml.load)"
+          en: "Unsafe deserialization (pickle, yaml.load)"
         fix:
-          ru: "Для данных извне используйте JSON или yaml.safe_load. pickle — только для собственных доверенных файлов."
-          kk: "Сырттан келген деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle — тек өзіңіздің сенімді файлдарыңыз үшін."
-          en: "Use JSON or yaml.safe_load for external data. pickle only for your own trusted files."
+          ru: "Для внешних данных используйте JSON или yaml.safe_load. pickle подходит только для своих доверенных файлов."
+          kk: "Сыртқы деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle тек өзіңіздің сенімді файлдарыңызға жарайды."
+          en: "Use JSON or yaml.safe_load for external data. pickle is only suitable for your own trusted files."
     pattern-either:
       - pattern: pickle.loads(...)
       - pattern: pickle.load(...)
@@ -101,13 +101,13 @@ rules:
         category: injection
         cwe: CWE-95
         title:
-          ru: Выполнение чужого кода — eval/exec от переменных данных
-          kk: Бөтен кодты орындау — айнымалы деректерден eval/exec
-          en: Code injection — eval/exec on variable data
+          ru: "Выполнение кода через eval или exec"
+          kk: "eval немесе exec арқылы кодты орындау"
+          en: "Code execution via eval or exec"
         fix:
-          ru: "Уберите eval/exec. Для чисел и структур — json.loads или ast.literal_eval."
-          kk: "eval/exec алып тастаңыз. Сандар мен құрылымдар үшін — json.loads немесе ast.literal_eval."
-          en: "Remove eval/exec. For numbers and structures use json.loads or ast.literal_eval."
+          ru: "Уберите eval и exec. Для разбора чисел и структур используйте json.loads или ast.literal_eval."
+          kk: "eval және exec алып тастаңыз. Сандар мен құрылымдарды талдау үшін json.loads немесе ast.literal_eval қолданыңыз."
+          en: "Remove eval and exec. Use json.loads or ast.literal_eval to parse numbers and structures."
     patterns:
       - pattern-either:
           - pattern: eval($X, ...)
@@ -125,13 +125,13 @@ rules:
         category: config
         cwe: CWE-489
         title:
-          ru: Включён режим отладки — наружу видны ошибки и внутренности
-          kk: Түзету режимі қосулы — қателер мен ішкі құрылым сыртқа көрінеді
-          en: Debug mode enabled — errors and internals are exposed
+          ru: "Включён режим отладки"
+          kk: "Түзету режимі қосулы"
+          en: "Debug mode is enabled"
         fix:
-          ru: "Выключите debug в продакшене и берите его из переменной окружения. В Flask debug=True даёт консоль, которая выполняет код."
-          kk: "Өндірісте debug өшіріп, оны орта айнымалысынан алыңыз. Flask-те debug=True код орындайтын консоль береді."
-          en: "Turn debug off in production and read it from an environment variable. Flask debug=True exposes a console that runs code."
+          ru: "Отключите debug на рабочем сервере и задавайте его через переменную окружения. В Flask режим debug=True открывает консоль, которая выполняет код."
+          kk: "Жұмыс серверінде debug өшіріп, оны орта айнымалысы арқылы орнатыңыз. Flask-те debug=True код орындайтын консольді ашады."
+          en: "Disable debug on the production server and set it through an environment variable. In Flask, debug=True exposes a console that executes code."
     pattern-either:
       - pattern: $APP.run(..., debug=True, ...)
       - patterns:
@@ -150,13 +150,13 @@ rules:
         category: secrets
         cwe: CWE-798
         title:
-          ru: Пароль или ключ записан прямо в коде
-          kk: Құпиясөз немесе кілт тікелей кодқа жазылған
-          en: Password or key hardcoded in source
+          ru: "Пароль или ключ в исходном коде"
+          kk: "Бастапқы кодтағы құпиясөз немесе кілт"
+          en: "Password or key in source code"
         fix:
-          ru: "Читайте значение из переменной окружения (os.environ), смените пароль или ключ и не храните секреты в репозитории."
-          kk: "Мәнді орта айнымалысынан (os.environ) оқып, құпиясөзді немесе кілтті ауыстырыңыз және құпияларды репозиторийде сақтамаңыз."
-          en: "Read the value from an environment variable (os.environ), rotate the password or key and keep secrets out of the repository."
+          ru: "Читайте значение из переменной окружения (os.environ) и смените пароль или ключ."
+          kk: "Мәнді орта айнымалысынан (os.environ) оқып, құпиясөзді немесе кілтті ауыстырыңыз."
+          en: "Read the value from an environment variable (os.environ) and change the password or key."
     patterns:
       - pattern: $NAME = "$VALUE"
       - metavariable-regex:
@@ -176,13 +176,13 @@ rules:
         category: auth
         cwe: CWE-347
         title:
-          ru: JWT читается без проверки подписи
-          kk: JWT қолтаңбаны тексерусіз оқылады
-          en: JWT decoded without signature check
+          ru: "JWT без проверки подписи"
+          kk: "Қолтаңбасы тексерілмейтін JWT"
+          en: "JWT without signature verification"
         fix:
           ru: "Проверяйте подпись: jwt.decode(token, key, algorithms=['HS256']). Не отключайте verify_signature и не разрешайте алгоритм none."
           kk: "Қолтаңбаны тексеріңіз: jwt.decode(token, key, algorithms=['HS256']). verify_signature өшірмеңіз және none алгоритміне рұқсат бермеңіз."
-          en: "Verify the signature: jwt.decode(token, key, algorithms=['HS256']). Never disable verify_signature or allow the none algorithm."
+          en: "Verify the signature: jwt.decode(token, key, algorithms=['HS256']). Do not disable verify_signature or allow the none algorithm."
     pattern-either:
       - pattern: 'jwt.decode(..., options={..., "verify_signature": False, ...}, ...)'
       - pattern: 'jwt.decode(..., algorithms=[..., "none", ...], ...)'
@@ -198,13 +198,13 @@ rules:
         category: ai-cost
         cwe: CWE-770
         title:
-          ru: Запрос к платному ИИ без лимита длины ответа
-          kk: Ақылы ЖИ-ге жауап ұзындығына шектеусіз сұраныс
-          en: Paid AI call without an output limit
+          ru: "Вызов API нейросети без max_tokens"
+          kk: "max_tokens көрсетілмеген нейрожелі API шақыруы"
+          en: "LLM API call without max_tokens"
         fix:
-          ru: "Задайте max_tokens (или max_completion_tokens) под задачу — обычно 500–2000 — и ограничьте длину входного текста."
-          kk: "Тапсырмаға сай max_tokens (немесе max_completion_tokens) орнатыңыз — әдетте 500–2000 — және кіріс мәтінінің ұзындығын шектеңіз."
-          en: "Set max_tokens (or max_completion_tokens) to fit the task — usually 500–2000 — and cap the input length."
+          ru: "Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста."
+          kk: "max_tokens (немесе max_completion_tokens) мәнін орнатып, кіріс мәтінінің ұзындығын шектеңіз."
+          en: "Set max_tokens (or max_completion_tokens) and limit the input length."
     patterns:
       - pattern-either:
           - pattern: $C.chat.completions.create(...)
@@ -223,13 +223,13 @@ rules:
         category: ai-cost
         cwe: CWE-770
         title:
-          ru: Лимит ответа ИИ слишком большой — один запрос может стоить дорого
-          kk: ЖИ жауабының шегі тым үлкен — бір сұраныс қымбатқа түсуі мүмкін
-          en: AI output limit is very high — a single call can be expensive
+          ru: "Слишком большое значение max_tokens"
+          kk: "max_tokens мәні тым үлкен"
+          en: "max_tokens is too high"
         fix:
-          ru: "Снизьте max_tokens до реально нужного значения и поставьте лимит запросов на пользователя."
-          kk: "max_tokens мәнін нақты қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қойыңыз."
-          en: "Lower max_tokens to what the task really needs and add a per-user request limit."
+          ru: "Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя."
+          kk: "max_tokens мәнін қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Reduce max_tokens to what you need and add a per-user request limit."
     patterns:
       - pattern-either:
           - pattern: $C.$X.$Y(..., max_tokens=$N, ...)
@@ -248,13 +248,13 @@ rules:
         category: ai-cost
         cwe: CWE-306
         title:
-          ru: Открытый ИИ-эндпоинт — платная модель доступна без входа
-          kk: Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді
-          en: Open AI endpoint — paid model reachable without login
+          ru: "Эндпоинт вызывает нейросеть без авторизации"
+          kk: "Эндпоинт нейрожеліні авторизациясыз шақырады"
+          en: "Endpoint calls an LLM without authentication"
         fix:
-          ru: "Добавьте проверку пользователя (Depends(get_current_user), @login_required) и лимит запросов на пользователя."
-          kk: "Пайдаланушыны тексеруді (Depends(get_current_user), @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз."
-          en: "Add a user check (Depends(get_current_user), @login_required) and a per-user rate limit."
+          ru: "Добавьте проверку пользователя (Depends(get_current_user) или @login_required) и лимит запросов на пользователя."
+          kk: "Пайдаланушыны тексеруді (Depends(get_current_user) немесе @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Add a user check (Depends(get_current_user) or @login_required) and a per-user request limit."
     patterns:
       - pattern-either:
           - pattern: $C.messages.create(...)

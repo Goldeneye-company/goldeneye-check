@@ -69,14 +69,14 @@ def to_markdown(result, lang="ru") -> str:
     c = result.counts
     sev = {s: t(SEVERITY, s, lang) for s in SEVERITIES}
     lines = [
-        f"# GoldenEye Check — {t(UI, 'report_title_site' if result.kind == 'site' else 'report_title', lang).lower()}", "",
+        f"# GoldenEye Check: {t(UI, 'report_title_site' if result.kind == 'site' else 'report_title', lang).lower()}", "",
         f"**{t(UI, _subject(result), lang)}:** {result.root.name}  ",
         f"**{t(UI, 'date', lang)}:** {result.started_at[:10]}"
         + (f"  \n**{t(UI, 'commit', lang)}:** {result.git['commit']}" if result.git.get("commit") else ""),
         "",
-        f"**{t(UI, 'score', lang)}: {result.score}/100 · {t(UI, 'grade', lang)} {result.grade}**  ",
-        f"{t(UI, 'total', lang)}: {len(result.findings)} — "
-        + ", ".join(f"{sev[s].lower()}: {c[s]}" for s in SEVERITIES),
+        f"{t(UI, 'score', lang)}: {result.score}/100, {t(UI, 'grade', lang).lower()} {result.grade}  ",
+        f"{t(UI, 'total', lang)}: {len(result.findings)} ("
+        + ", ".join(f"{sev[s].lower()}: {c[s]}" for s in SEVERITIES) + ")",
         "",
     ]
     if result.notice:
@@ -155,7 +155,7 @@ def to_html(result, lang="ru") -> str:
     c = result.counts
     parts = [f"""<!doctype html><html lang="{lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>GoldenEye Check — {e(result.root.name)}</title><style>{CSS}</style></head><body><main class="wrap">
+<title>GoldenEye Check: {e(result.root.name)}</title><style>{CSS}</style></head><body><main class="wrap">
 <div class="brand"><i></i>GOLDENEYE CHECK</div>
 <h1>{e(t(UI, 'report_title_site' if result.kind == 'site' else 'report_title', lang))}</h1>
 <div class="meta"><span>{e(t(UI, _subject(result), lang))}: <b>{e(result.root.name)}</b></span>
@@ -165,7 +165,7 @@ def to_html(result, lang="ru") -> str:
     parts.append("</div>")
 
     top = [f for f in result.findings if f.severity in ("critical", "high")][:3]
-    top_html = "".join(f"<li>{e(f.text('title', lang))} — <span class='loc'>{e(_where(f, lang))}</span></li>" for f in top)
+    top_html = "".join(f"<li>{e(f.text('title', lang))} <span class='loc'>({e(_where(f, lang))})</span></li>" for f in top)
     counts_html = "".join(
         f"<div class='count c-{s}'><b>{c[s]}</b><small>{e(t(SEVERITY, s, lang))}</small></div>" for s in SEVERITIES)
     parts.append(f"""<section class="summary">

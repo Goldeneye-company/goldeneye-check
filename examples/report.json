@@ -28,14 +28,15 @@
     }
   },
   "scan": {
-    "started_at": "2026-10-04T08:22:56+00:00",
-    "duration_s": 4.0,
+    "started_at": "2026-10-09T17:33:36+00:00",
+    "duration_s": 7.0,
+    "kind": "code",
     "project": {
-      "id": "f16d05ec6b29248d",
-      "name": "fixture"
+      "id": "8d9001d32c6a703d",
+      "name": "shop"
     },
     "git": {
-      "commit": "f9071f7",
+      "commit": "02588f1",
       "branch": "master"
     },
     "options": {
@@ -57,6 +58,7 @@
     }
   },
   "warnings": [],
+  "notice": null,
   "findings": [
     {
       "fingerprint": "00f9255d1633831167d8b471",
@@ -70,23 +72,23 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "ru": "Файл .env с секретами хранится в git",
-        "kk": "Құпиялары бар .env файлы git-те сақталады",
-        "en": ".env with secrets is committed to git"
+        "ru": "Файл .env хранится в git",
+        "kk": ".env файлы git-те сақталады",
+        "en": ".env is committed to git"
       },
       "fix": {
-        "ru": "Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите все ключи из файла — они уже в истории.",
-        "kk": "git rm --cached .env орындап, .env* жолын .gitignore-ға қосыңыз және файлдағы барлық кілттерді қайта шығарыңыз — олар тарихта қалды.",
-        "en": "Run git rm --cached .env, add .env* to .gitignore and rotate every key in the file — they are already in history."
+        "ru": "Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите ключи из этого файла, так как они остаются в истории.",
+        "kk": "git rm --cached .env орындап, .gitignore-ға .env* қосыңыз және осы файлдағы кілттерді қайта шығарыңыз, себебі олар тарихта қалады.",
+        "en": "Run git rm --cached .env, add .env* to .gitignore and rotate the keys from this file, since they remain in the history."
       },
       "detail": {
         "ru": "в файле есть значения, похожие на настоящие пароли и ключи",
         "kk": "файлда нақты құпиясөздер мен кілттерге ұқсас мәндер бар",
-        "en": "the file holds values that look like real passwords and keys"
+        "en": "the file contains values that look like real passwords and keys"
       }
     },
     {
-      "fingerprint": "139b40c522f2e34a3e441a69",
+      "fingerprint": "8da880cfe33bcd314142649c",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -102,14 +104,14 @@
         "en": "Secret in code: Stripe secret key"
       },
       "fix": {
-        "ru": "Сразу перевыпустите ключ в консоли сервиса — считайте его украденным. Затем уберите из кода в переменную окружения или менеджер секретов.",
-        "kk": "Кілтті сервис консолінде дереу қайта шығарыңыз — оны ұрланған деп санаңыз. Содан кейін кодтан орта айнымалысына немесе құпиялар менеджеріне көшіріңіз.",
-        "en": "Rotate the key in the service console right away — treat it as stolen. Then move it out of the code into an environment variable or a secrets manager."
+        "ru": "Перевыпустите ключ в консоли сервиса, старый считайте скомпрометированным. Затем перенесите значение в переменную окружения или хранилище секретов.",
+        "kk": "Кілтті сервис консолінде қайта шығарыңыз, ескісін жария болған деп санаңыз. Содан кейін мәнді орта айнымалысына немесе құпиялар қоймасына көшіріңіз.",
+        "en": "Rotate the key in the service console and treat the old one as compromised. Then move the value to an environment variable or a secrets store."
       },
       "detail": {
-        "ru": "значение sk_liv…Wc",
-        "kk": "мәні sk_liv…Wc",
-        "en": "value sk_liv…Wc"
+        "ru": "значение sk_liv…P2",
+        "kk": "мәні sk_liv…P2",
+        "en": "value sk_liv…P2"
       }
     },
     {
@@ -125,13 +127,13 @@
       "commit": null,
       "title": {
         "ru": "Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY",
-        "kk": "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жалпыға ашық айнымалысындағы құпия",
+        "kk": "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жария айнымалысындағы құпия",
         "en": "Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY"
       },
       "fix": {
-        "ru": "Префиксы NEXT_PUBLIC_, VITE_, REACT_APP_, EXPO_PUBLIC_ кладут значение в код, который скачивает каждый посетитель. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.",
-        "kk": "NEXT_PUBLIC_, VITE_, REACT_APP_, EXPO_PUBLIC_ префикстері мәнді әр келуші жүктейтін кодқа салады. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.",
-        "en": "NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ put the value into code every visitor downloads. Drop the prefix, use the value only on the server and rotate the key."
+        "ru": "Переменные с префиксами NEXT_PUBLIC_, VITE_, REACT_APP_ и EXPO_PUBLIC_ попадают в код, который загружает браузер. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.",
+        "kk": "NEXT_PUBLIC_, VITE_, REACT_APP_ және EXPO_PUBLIC_ префикстері бар айнымалылар браузер жүктейтін кодқа түседі. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.",
+        "en": "Variables prefixed with NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ end up in code loaded by the browser. Remove the prefix, use the value only on the server and rotate the key."
       },
       "detail": null
     },
@@ -147,14 +149,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "SQL injection — query built with string formatting",
-        "kk": "SQL-инъекция — сұраныс жолды пішімдеу арқылы құрастырылған",
-        "ru": "SQL-инъекция — запрос собран форматированием строки"
+        "en": "SQL query built with string formatting",
+        "kk": "SQL-сұраныс жолды пішімдеу арқылы құрастырылады",
+        "ru": "SQL-запрос собирается форматированием строки"
       },
       "fix": {
-        "en": "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). No f-strings, % or + in SQL.",
-        "kk": "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-де f-жол, % және + қолдануға болмайды.",
-        "ru": "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). f-строки, % и + в SQL недопустимы."
+        "en": "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). Do not build SQL with f-strings, % or +.",
+        "kk": "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-ді f-жолдар, % және + арқылы құрастырмаңыз.",
+        "ru": "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). Не собирайте SQL через f-строки, % и +."
       },
       "detail": null
     },
@@ -170,14 +172,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Unsafe deserialization — pickle/yaml can execute foreign code",
-        "kk": "Қауіпті десериализация — pickle/yaml бөтен кодты орындауы мүмкін",
-        "ru": "Небезопасная десериализация — pickle/yaml могут выполнить чужой код"
+        "en": "Unsafe deserialization (pickle, yaml.load)",
+        "kk": "Қауіпті десериализация (pickle, yaml.load)",
+        "ru": "Небезопасная десериализация (pickle, yaml.load)"
       },
       "fix": {
-        "en": "Use JSON or yaml.safe_load for external data. pickle only for your own trusted files.",
-        "kk": "Сырттан келген деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle — тек өзіңіздің сенімді файлдарыңыз үшін.",
-        "ru": "Для данных извне используйте JSON или yaml.safe_load. pickle — только для собственных доверенных файлов."
+        "en": "Use JSON or yaml.safe_load for external data. pickle is only suitable for your own trusted files.",
+        "kk": "Сыртқы деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle тек өзіңіздің сенімді файлдарыңызға жарайды.",
+        "ru": "Для внешних данных используйте JSON или yaml.safe_load. pickle подходит только для своих доверенных файлов."
       },
       "detail": null
     },
@@ -193,14 +195,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Open AI endpoint — paid model reachable without login",
-        "kk": "Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді",
-        "ru": "Открытый ИИ-эндпоинт — платная модель доступна без входа"
+        "en": "Endpoint calls an LLM without authentication",
+        "kk": "Эндпоинт нейрожеліні авторизациясыз шақырады",
+        "ru": "Эндпоинт вызывает нейросеть без авторизации"
       },
       "fix": {
-        "en": "Add a user check (Depends(get_current_user), @login_required) and a per-user rate limit.",
-        "kk": "Пайдаланушыны тексеруді (Depends(get_current_user), @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз.",
-        "ru": "Добавьте проверку пользователя (Depends(get_current_user), @login_required) и лимит запросов на пользователя."
+        "en": "Add a user check (Depends(get_current_user) or @login_required) and a per-user request limit.",
+        "kk": "Пайдаланушыны тексеруді (Depends(get_current_user) немесе @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз.",
+        "ru": "Добавьте проверку пользователя (Depends(get_current_user) или @login_required) и лимит запросов на пользователя."
       },
       "detail": null
     },
@@ -216,14 +218,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Command injection — shell command built from variables",
-        "kk": "Командаларды енгізу — shell-команда айнымалылардан құрастырылады",
-        "ru": "Внедрение команд — shell-команда собирается из переменных"
+        "en": "OS command injection",
+        "kk": "Операциялық жүйе командаларын енгізу",
+        "ru": "Внедрение команд ОС"
       },
       "fix": {
-        "en": "Use subprocess.run([...]) with an argument list and no shell=True; check values against an allowlist.",
-        "kk": "subprocess.run([...]) аргументтер тізімімен және shell=True-сыз қолданыңыз; мәндерді рұқсат етілген тізім бойынша тексеріңіз.",
-        "ru": "Используйте subprocess.run([...]) со списком аргументов и без shell=True; значения проверяйте по белому списку."
+        "en": "Use subprocess.run([...]) with an argument list and without shell=True, and check values against an allowlist.",
+        "kk": "subprocess.run([...]) аргументтер тізімімен, shell=True-сыз қолданып, мәндерді рұқсат етілген тізім бойынша тексеріңіз.",
+        "ru": "Используйте subprocess.run([...]) со списком аргументов без shell=True и проверяйте значения по списку допустимых."
       },
       "detail": null
     },
@@ -239,14 +241,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Open AI endpoint — paid model reachable without login",
-        "kk": "Ашық ЖИ-эндпоинт — ақылы модель кірусіз қолжетімді",
-        "ru": "Открытый ИИ-эндпоинт — платная модель доступна без входа"
+        "en": "Endpoint calls an LLM without authentication",
+        "kk": "Эндпоинт нейрожеліні авторизациясыз шақырады",
+        "ru": "Эндпоинт вызывает нейросеть без авторизации"
       },
       "fix": {
-        "en": "Check the user before calling the model (session, token, middleware) and add a per-user rate limit. Otherwise anyone can burn your budget.",
-        "kk": "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен, middleware) және бір пайдаланушыға сұраныс шегін қойыңыз. Әйтпесе бюджетті кез келген адам жұмсап жібереді.",
-        "ru": "Проверяйте пользователя до вызова модели (сессия, токен, middleware) и ставьте лимит запросов на пользователя. Иначе бюджет может сжечь любой."
+        "en": "Check the user before calling the model (session, token or middleware) and add a per-user request limit.",
+        "kk": "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен немесе middleware) және бір пайдаланушыға сұраныс шегін қосыңыз.",
+        "ru": "Проверяйте пользователя до вызова модели (сессия, токен или middleware) и добавьте лимит запросов на пользователя."
       },
       "detail": null
     },
@@ -262,14 +264,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "ru": "Firebase: правила firestore.rules открывают данные всем",
-        "kk": "Firebase: firestore.rules ережелері деректерді барлығына ашады",
-        "en": "Firebase: firestore.rules rules open data to everyone"
+        "ru": "Firebase: правила в firestore.rules разрешают доступ всем",
+        "kk": "Firebase: firestore.rules ережелері барлығына рұқсат береді",
+        "en": "Firebase: rules in firestore.rules allow access to everyone"
       },
       "fix": {
-        "ru": "Разрешайте доступ только вошедшим и только к своим данным: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
-        "kk": "Тек кірген пайдаланушыларға және тек өз деректеріне рұқсат беріңіз: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
-        "en": "Allow access only to signed-in users and only to their own data: allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;"
+        "ru": "Разрешите доступ только авторизованным пользователям и только к их данным, например allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
+        "kk": "Тек авторизацияланған пайдаланушыларға және тек өз деректеріне рұқсат беріңіз, мысалы allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
+        "en": "Allow access only to authenticated users and only to their own data, for example allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;"
       },
       "detail": null
     },
@@ -285,9 +287,9 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "SQL injection — form data goes straight into the query",
-        "kk": "SQL-инъекция — форма деректері тікелей сұранысқа түседі",
-        "ru": "SQL-инъекция — данные формы попадают прямо в запрос"
+        "en": "SQL injection in a database query",
+        "kk": "Дерекқорға сұраныстағы SQL-инъекция",
+        "ru": "SQL-инъекция в запросе к базе данных"
       },
       "fix": {
         "en": "Use prepared statements: $stmt = $pdo->prepare('... WHERE id = ?'); $stmt->execute([$id]).",
@@ -297,7 +299,7 @@
       "detail": null
     },
     {
-      "fingerprint": "11a40eeae2f9c0d0ac98dd1e",
+      "fingerprint": "6e47cb854521cac3420b86a5",
       "rule": "gitleaks.openai-api-key",
       "engine": "gitleaks",
       "severity": "critical",
@@ -306,25 +308,25 @@
       "file": "src/config.js",
       "line": null,
       "in_history": true,
-      "commit": "700e32a2",
+      "commit": "2b74b4d6",
       "title": {
         "ru": "Секрет в истории git: OpenAI API key",
         "kk": "git тарихындағы құпия: OpenAI API key",
         "en": "Secret in git history: OpenAI API key"
       },
       "fix": {
-        "ru": "Файл уже удалён, но ключ остался в истории — его достанет любой, у кого есть копия репозитория. Перевыпустите ключ; историю можно почистить git filter-repo, но это не заменяет перевыпуск.",
-        "kk": "Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.",
-        "en": "The file is gone but the key stays in history — anyone with a copy of the repo can get it. Rotate the key; you can scrub history with git filter-repo, but that does not replace rotation."
+        "ru": "Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.",
+        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.",
+        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated."
       },
       "detail": {
-        "ru": "коммит 700e32a2, значение sk-pro…lq",
-        "kk": "коммит 700e32a2, мәні sk-pro…lq",
-        "en": "commit 700e32a2, value sk-pro…lq"
+        "ru": "коммит 2b74b4d6, значение sk-pro…OJ",
+        "kk": "коммит 2b74b4d6, мәні sk-pro…OJ",
+        "en": "commit 2b74b4d6, value sk-pro…OJ"
       }
     },
     {
-      "fingerprint": "d1cdcb78495569c0d2df9973",
+      "fingerprint": "9ff49f286b2b120fad3acbeb",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -333,21 +335,21 @@
       "file": "src/payments.js",
       "line": null,
       "in_history": true,
-      "commit": "700e32a2",
+      "commit": "2b74b4d6",
       "title": {
         "ru": "Секрет в истории git: Stripe secret key",
         "kk": "git тарихындағы құпия: Stripe secret key",
         "en": "Secret in git history: Stripe secret key"
       },
       "fix": {
-        "ru": "Файл уже удалён, но ключ остался в истории — его достанет любой, у кого есть копия репозитория. Перевыпустите ключ; историю можно почистить git filter-repo, но это не заменяет перевыпуск.",
-        "kk": "Файл жойылған, бірақ кілт тарихта қалды — оны репозиторий көшірмесі бар кез келген адам ала алады. Кілтті қайта шығарыңыз; тарихты git filter-repo арқылы тазалауға болады, бірақ бұл қайта шығаруды алмастырмайды.",
-        "en": "The file is gone but the key stays in history — anyone with a copy of the repo can get it. Rotate the key; you can scrub history with git filter-repo, but that does not replace rotation."
+        "ru": "Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.",
+        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.",
+        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated."
       },
       "detail": {
-        "ru": "коммит 700e32a2, значение sk_liv…az",
-        "kk": "коммит 700e32a2, мәні sk_liv…az",
-        "en": "commit 700e32a2, value sk_liv…az"
+        "ru": "коммит 2b74b4d6, значение sk_liv…pV",
+        "kk": "коммит 2b74b4d6, мәні sk_liv…pV",
+        "en": "commit 2b74b4d6, value sk_liv…pV"
       }
     },
     {
@@ -362,14 +364,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "SQL injection — database query built from user input",
-        "kk": "SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған",
-        "ru": "SQL-инъекция — запрос к базе собран из данных пользователя"
+        "en": "SQL injection in a database query",
+        "kk": "Дерекқорға сұраныстағы SQL-инъекция",
+        "ru": "SQL-инъекция в запросе к базе данных"
       },
       "fix": {
-        "en": "Pass values as parameters: db.query('... WHERE id = $1', [id]). Never splice them into the query string.",
-        "kk": "Мәндерді параметр ретінде беріңіз: db.query('... WHERE id = $1', [id]). Оларды сұраныс жолына ешқашан қоспаңыз.",
-        "ru": "Передавайте значения параметрами: db.query('... WHERE id = $1', [id]). Никогда не вставляйте их в строку запроса."
+        "en": "Pass values as query parameters, for example db.query('... WHERE id = $1', [id]), instead of building the query string.",
+        "kk": "Мәндерді сұраныс параметрлері ретінде беріңіз, мысалы db.query('... WHERE id = $1', [id]), жолға қоспаңыз.",
+        "ru": "Передавайте значения как параметры запроса, например db.query('... WHERE id = $1', [id]), а не подстановкой в строку."
       },
       "detail": null
     },
@@ -385,14 +387,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "SQL injection — database query built from user input",
-        "kk": "SQL-инъекция — дерекқорға сұраныс пайдаланушы деректерінен құрастырылған",
-        "ru": "SQL-инъекция — запрос к базе собран из данных пользователя"
+        "en": "SQL injection in a database query",
+        "kk": "Дерекқорға сұраныстағы SQL-инъекция",
+        "ru": "SQL-инъекция в запросе к базе данных"
       },
       "fix": {
-        "en": "Pass values as parameters: db.query('... WHERE id = $1', [id]). Never splice them into the query string.",
-        "kk": "Мәндерді параметр ретінде беріңіз: db.query('... WHERE id = $1', [id]). Оларды сұраныс жолына ешқашан қоспаңыз.",
-        "ru": "Передавайте значения параметрами: db.query('... WHERE id = $1', [id]). Никогда не вставляйте их в строку запроса."
+        "en": "Pass values as query parameters, for example db.query('... WHERE id = $1', [id]), instead of building the query string.",
+        "kk": "Мәндерді сұраныс параметрлері ретінде беріңіз, мысалы db.query('... WHERE id = $1', [id]), жолға қоспаңыз.",
+        "ru": "Передавайте значения как параметры запроса, например db.query('... WHERE id = $1', [id]), а не подстановкой в строку."
       },
       "detail": null
     },
@@ -408,14 +410,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Command injection — server command built from user input",
-        "kk": "Командаларды енгізу — сервер командасы пайдаланушы деректерінен құрастырылған",
-        "ru": "Внедрение команд — команда сервера собрана из данных пользователя"
+        "en": "OS command injection",
+        "kk": "Операциялық жүйе командаларын енгізу",
+        "ru": "Внедрение команд ОС"
       },
       "fix": {
-        "en": "Never run a shell with user data. Use execFile/spawn with an argument list and check the value against an allowlist.",
-        "kk": "Пайдаланушы деректерімен shell іске қоспаңыз. Аргументтер тізімімен execFile/spawn қолданып, мәнді рұқсат етілген тізім бойынша тексеріңіз.",
-        "ru": "Не запускайте shell с пользовательскими данными. Используйте execFile/spawn со списком аргументов и проверяйте значение по белому списку."
+        "en": "Do not pass user data to a shell. Use execFile or spawn with an argument list and check the value against an allowlist.",
+        "kk": "Пайдаланушы деректерін shell-ге бермеңіз. Аргументтер тізімімен execFile немесе spawn қолданып, мәнді рұқсат етілген мәндер бойынша тексеріңіз.",
+        "ru": "Не передавайте пользовательские данные в shell. Используйте execFile или spawn со списком аргументов и проверяйте значение по списку допустимых."
       },
       "detail": null
     },
@@ -431,14 +433,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Code injection — eval/Function on user input",
-        "kk": "Бөтен кодты орындау — пайдаланушы деректерінен eval/Function",
-        "ru": "Выполнение чужого кода — eval/Function от данных пользователя"
+        "en": "Code execution via eval or new Function",
+        "kk": "eval немесе new Function арқылы кодты орындау",
+        "ru": "Выполнение кода через eval или new Function"
       },
       "fix": {
-        "en": "Remove eval and new Function. Use JSON.parse for data and an explicit choice among known options for logic.",
-        "kk": "eval және new Function алып тастаңыз. Деректер үшін JSON.parse, логика үшін алдын ала белгілі нұсқалардан нақты таңдауды қолданыңыз.",
-        "ru": "Уберите eval и new Function. Для данных используйте JSON.parse, для логики — явный выбор из заранее известных вариантов."
+        "en": "Remove eval and new Function. Use JSON.parse to parse data.",
+        "kk": "eval және new Function алып тастаңыз. Деректерді талдау үшін JSON.parse қолданыңыз.",
+        "ru": "Уберите eval и new Function. Для разбора данных используйте JSON.parse."
       },
       "detail": null
     },
@@ -454,14 +456,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "ru": "docker-compose: пароль базы по умолчанию (POSTGRES_PASSWORD)",
-        "kk": "docker-compose: дерекқордың әдепкі құпиясөзі (POSTGRES_PASSWORD)",
+        "ru": "docker-compose: стандартный пароль базы данных (POSTGRES_PASSWORD)",
+        "kk": "docker-compose: дерекқордың стандартты құпиясөзі (POSTGRES_PASSWORD)",
         "en": "docker-compose: default database password (POSTGRES_PASSWORD)"
       },
       "fix": {
-        "ru": "Сгенерируйте длинный пароль, передавайте его через .env (не коммитя) и смените на всех серверах, где этот файл уже запускался.",
-        "kk": "Ұзын құпиясөз жасап, оны .env арқылы беріңіз (коммиттемей) және бұл файл іске қосылған барлық серверлерде ауыстырыңыз.",
-        "en": "Generate a long password, pass it through .env (not committed) and change it on every server where this file already ran."
+        "ru": "Задайте длинный случайный пароль через .env, который не хранится в git, и смените пароль на серверах, где этот файл уже использовался.",
+        "kk": "git-те сақталмайтын .env арқылы ұзын кездейсоқ құпиясөз орнатыңыз және бұл файл қолданылған серверлерде құпиясөзді ауыстырыңыз.",
+        "en": "Set a long random password through a .env file that is not stored in git, and change the password on servers where this file was already used."
       },
       "detail": null
     },
@@ -483,7 +485,7 @@
       },
       "fix": {
         "ru": "Обновите lodash до версии 4.18.0 или новее и пересоберите lock-файл.",
-        "kk": "lodash пакетін 4.18.0 нұсқасына немесе жаңарағына дейін жаңартып, lock-файлды қайта жинаңыз.",
+        "kk": "lodash пакетін 4.18.0 немесе одан жаңа нұсқаға жаңартып, lock-файлды қайта жинаңыз.",
         "en": "Upgrade lodash to 4.18.0 or later and regenerate the lock file."
       },
       "detail": {
@@ -504,14 +506,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "XSS — user input printed to the page without escaping",
-        "kk": "XSS — пайдаланушы деректері бетке экрандаусыз шығарылады",
-        "ru": "XSS — данные пользователя выводятся на страницу без экранирования"
+        "en": "Unescaped user input in HTML (XSS)",
+        "kk": "Пайдаланушы деректерін экрандаусыз шығару (XSS)",
+        "ru": "Вывод данных пользователя без экранирования (XSS)"
       },
       "fix": {
-        "en": "Print through htmlspecialchars($value, ENT_QUOTES, 'UTF-8').",
-        "kk": "htmlspecialchars($value, ENT_QUOTES, 'UTF-8') арқылы шығарыңыз.",
-        "ru": "Выводите через htmlspecialchars($value, ENT_QUOTES, 'UTF-8')."
+        "en": "Output data through htmlspecialchars($value, ENT_QUOTES, 'UTF-8').",
+        "kk": "Деректерді htmlspecialchars($value, ENT_QUOTES, 'UTF-8') арқылы шығарыңыз.",
+        "ru": "Выводите данные через htmlspecialchars($value, ENT_QUOTES, 'UTF-8')."
       },
       "detail": null
     },
@@ -527,14 +529,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Mail header injection — the form can be abused to send spam",
-        "kk": "Хат тақырыптарын енгізу — форманы спам таратуға пайдалануға болады",
-        "ru": "Внедрение заголовков письма — форму можно использовать для рассылки спама"
+        "en": "Mail header injection",
+        "kk": "Хат тақырыптарын енгізу",
+        "ru": "Внедрение заголовков письма"
       },
       "fix": {
-        "en": "Keep input out of mail headers. Validate addresses with filter_var(..., FILTER_VALIDATE_EMAIL) and strip line breaks.",
-        "kk": "Енгізілген деректі хат тақырыптарына қоспаңыз. Мекенжайды filter_var(..., FILTER_VALIDATE_EMAIL) арқылы тексеріп, жол ауыстыруларды алып тастаңыз.",
-        "ru": "Не подставляйте ввод в заголовки письма. Адрес проверяйте filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк."
+        "en": "Do not put user data into mail headers. Validate addresses with filter_var(..., FILTER_VALIDATE_EMAIL) and strip line breaks.",
+        "kk": "Пайдаланушы деректерін хат тақырыптарына қоймаңыз. Мекенжайды filter_var(..., FILTER_VALIDATE_EMAIL) арқылы тексеріп, жол ауыстыру таңбаларын алып тастаңыз.",
+        "ru": "Не подставляйте пользовательские данные в заголовки письма. Проверяйте адрес через filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк."
       },
       "detail": null
     },
@@ -550,14 +552,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "XSS — user input rendered into HTML without escaping",
-        "kk": "XSS — пайдаланушы деректері HTML-ге экрандаусыз шығарылады",
-        "ru": "XSS — данные пользователя выводятся в HTML без экранирования"
+        "en": "Unescaped user input in HTML (XSS)",
+        "kk": "Пайдаланушы деректерін экрандаусыз шығару (XSS)",
+        "ru": "Вывод данных пользователя без экранирования (XSS)"
       },
       "fix": {
-        "en": "Escape output (auto-escaping templates, escape-html) or return JSON. For user-supplied HTML use DOMPurify.",
-        "kk": "Шығысты экрандаңыз (автоэкрандайтын шаблонизатор, escape-html) немесе JSON қайтарыңыз. Пайдаланушы HTML-і үшін — DOMPurify.",
-        "ru": "Экранируйте вывод (шаблонизатор с автоэкранированием, escape-html) или отдавайте JSON. Для HTML от пользователя — DOMPurify."
+        "en": "Escape the output (escape-html or an auto-escaping template engine) or return JSON. Sanitize user HTML with DOMPurify.",
+        "kk": "Шығысты экрандаңыз (escape-html немесе автоэкрандайтын шаблонизатор) немесе JSON қайтарыңыз. Пайдаланушының HTML-ін DOMPurify арқылы тазалаңыз.",
+        "ru": "Экранируйте вывод (escape-html или шаблонизатор с автоэкранированием) или возвращайте JSON. HTML от пользователя очищайте через DOMPurify."
       },
       "detail": null
     },
@@ -573,14 +575,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "JWT read without signature check (jwt.decode)",
-        "kk": "JWT қолтаңбаны тексерусіз оқылады (jwt.decode)",
-        "ru": "JWT читается без проверки подписи (jwt.decode)"
+        "en": "JWT without signature verification (jwt.decode)",
+        "kk": "Қолтаңбасы тексерілмейтін JWT (jwt.decode)",
+        "ru": "JWT без проверки подписи (jwt.decode)"
       },
       "fix": {
-        "en": "jwt.decode only reads the token — anyone can forge it. For login and permissions use jwt.verify(token, secret, { algorithms: ['HS256'] }).",
-        "kk": "jwt.decode токенді тек оқиды — оны кез келген адам жасай алады. Кіру мен құқықтар үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз.",
-        "ru": "jwt.decode только читает токен — подделать его может любой. Для входа и прав используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
+        "en": "jwt.decode does not verify the signature. For authentication use jwt.verify(token, secret, { algorithms: ['HS256'] }).",
+        "kk": "jwt.decode қолтаңбаны тексермейді. Аутентификация үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз.",
+        "ru": "jwt.decode не проверяет подпись. Для аутентификации используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
       },
       "detail": null
     },
@@ -596,14 +598,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Path traversal — file path taken from the request",
-        "kk": "Каталогтарды айналып өту — файл жолы сұраныстан алынады",
-        "ru": "Обход каталогов — путь к файлу берётся из запроса"
+        "en": "File path from request data (path traversal)",
+        "kk": "Сұраныс деректерінен алынған файл жолы (path traversal)",
+        "ru": "Путь к файлу из данных запроса (path traversal)"
       },
       "fix": {
-        "en": "Take only the file name (path.basename), check it against an allowlist and make sure the final path stays inside the intended folder.",
-        "kk": "Тек файл атын алыңыз (path.basename), оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде қалатынына көз жеткізіңіз.",
-        "ru": "Берите только имя файла (path.basename), проверяйте его по белому списку и убедитесь, что итоговый путь остаётся внутри нужной папки."
+        "en": "Use only the file name (path.basename), check it against an allowlist and make sure the resulting path stays inside the intended folder.",
+        "kk": "Тек файл атын (path.basename) қолданыңыз, оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде екеніне көз жеткізіңіз.",
+        "ru": "Используйте только имя файла (path.basename), проверяйте его по списку допустимых и убедитесь, что итоговый путь находится внутри нужной папки."
       },
       "detail": null
     },
@@ -619,14 +621,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Password or key hardcoded in source",
-        "kk": "Құпиясөз немесе кілт тікелей кодқа жазылған",
-        "ru": "Пароль или ключ записан прямо в коде"
+        "en": "Password or key in source code",
+        "kk": "Бастапқы кодтағы құпиясөз немесе кілт",
+        "ru": "Пароль или ключ в исходном коде"
       },
       "fix": {
-        "en": "Move the value to an environment variable (process.env), rotate the password or key and keep secrets out of the repository.",
-        "kk": "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз және құпияларды репозиторийде сақтамаңыз.",
-        "ru": "Перенесите значение в переменную окружения (process.env), смените пароль или ключ и не храните секреты в репозитории."
+        "en": "Move the value to an environment variable (process.env) and change the password or key.",
+        "kk": "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз.",
+        "ru": "Перенесите значение в переменную окружения (process.env) и смените пароль или ключ."
       },
       "detail": null
     },
@@ -642,14 +644,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "SSRF — server fetches a URL supplied by the user",
-        "kk": "SSRF — сервер пайдаланушы жіберген мекенжайға сұраныс жасайды",
-        "ru": "SSRF — сервер запрашивает адрес, который прислал пользователь"
+        "en": "Request to a user-supplied URL (SSRF)",
+        "kk": "Пайдаланушы деректеріндегі мекенжайға сұраныс (SSRF)",
+        "ru": "Запрос по адресу из данных пользователя (SSRF)"
       },
       "fix": {
-        "en": "Allow only known domains and block internal addresses (localhost, 10.x, 169.254.169.254) and redirects.",
-        "kk": "Тек алдын ала белгілі домендерге рұқсат беріп, ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз.",
-        "ru": "Разрешайте только заранее известные домены, запрещайте внутренние адреса (localhost, 10.x, 169.254.169.254) и редиректы."
+        "en": "Allow requests only to known domains. Block internal addresses (localhost, 10.x, 169.254.169.254) and redirects.",
+        "kk": "Тек белгілі домендерге сұраныс жасауға рұқсат етіңіз. Ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз.",
+        "ru": "Разрешайте запросы только к известным доменам. Запретите внутренние адреса (localhost, 10.x, 169.254.169.254) и переходы по редиректам."
       },
       "detail": null
     },
@@ -665,14 +667,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "NoSQL injection — values are spliced into $where and run as JavaScript by the database",
-        "kk": "NoSQL-инъекция — $where ішіне мәндер қойылады, дерекқор оларды JavaScript ретінде орындайды",
-        "ru": "NoSQL-инъекция — в $where подставляются значения, база выполнит их как JavaScript"
+        "en": "NoSQL injection via $where",
+        "kk": "$where арқылы NoSQL-инъекция",
+        "ru": "NoSQL-инъекция через $where"
       },
       "fix": {
-        "en": "Drop $where and use regular query operators: { userId: id, stocks: { $gt: threshold } }, converting values to numbers first.",
-        "kk": "$where алып тастап, қарапайым сұраныс операторларын қолданыңыз: { userId: id, stocks: { $gt: threshold } }, мәндерді алдын ала санға айналдырыңыз.",
-        "ru": "Уберите $where и используйте обычные операторы запроса: { userId: id, stocks: { $gt: threshold } }, предварительно приведя значения к числам."
+        "en": "Do not use $where. Write conditions with regular operators, for example { userId: id, stocks: { $gt: threshold } }, and convert values to the expected type.",
+        "kk": "$where қолданбаңыз. Шарттарды кәдімгі операторлармен жазыңыз, мысалы { userId: id, stocks: { $gt: threshold } }, және мәндерді қажетті түрге келтіріңіз.",
+        "ru": "Не используйте $where. Пишите условия обычными операторами, например { userId: id, stocks: { $gt: threshold } }, и приводите значения к нужному типу."
       },
       "detail": null
     },
@@ -688,14 +690,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Template auto-escaping is off — every data output becomes XSS",
-        "kk": "Шаблондардың автоэкрандауы өшірулі — деректерді кез келген шығару XSS-ке айналады",
-        "ru": "Выключено автоэкранирование шаблонов — любой вывод данных становится XSS"
+        "en": "Template auto-escaping is disabled",
+        "kk": "Шаблондарда автоэкрандау өшірілген",
+        "ru": "Отключено автоэкранирование в шаблонах"
       },
       "fix": {
-        "en": "Set autoescape: true again. Where HTML is needed, mark it explicitly (safe filter) and clean it with DOMPurify.",
-        "kk": "autoescape: true қайтарыңыз. HTML қажет жерде оны нақты белгілеп (safe сүзгісі), DOMPurify арқылы тазалаңыз.",
-        "ru": "Верните autoescape: true. Где нужен HTML, отмечайте его явно (filter safe) и очищайте через DOMPurify."
+        "en": "Set autoescape: true. Where HTML is required, mark it explicitly (safe filter) and sanitize it with DOMPurify.",
+        "kk": "autoescape: true қосыңыз. Бір жерде HTML керек болса, оны анық белгілеңіз (safe сүзгісі) және DOMPurify арқылы тазалаңыз.",
+        "ru": "Включите autoescape: true. Если в каком-то месте нужен HTML, отметьте его явно (фильтр safe) и очистите через DOMPurify."
       },
       "detail": null
     },
@@ -711,14 +713,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "ru": "Supabase: у таблицы public.profiles не включён RLS",
-        "kk": "Supabase: public.profiles кестесінде RLS қосылмаған",
-        "en": "Supabase: table public.profiles has no RLS"
+        "ru": "Supabase: для таблицы public.profiles не включён RLS",
+        "kk": "Supabase: public.profiles кестесі үшін RLS қосылмаған",
+        "en": "Supabase: RLS is not enabled for table public.profiles"
       },
       "fix": {
-        "ru": "Без RLS таблицу читает и меняет любой, у кого есть публичный anon-ключ из вашего сайта. Добавьте alter table public.profiles enable row level security; и политики доступа к своим строкам.",
-        "kk": "RLS болмаса, кестені сайтыңыздағы жалпыға ашық anon-кілті бар кез келген адам оқып, өзгерте алады. alter table public.profiles enable row level security; және өз жолдарына қол жеткізу саясаттарын қосыңыз.",
-        "en": "Without RLS anyone with the public anon key from your site can read and change the table. Add alter table public.profiles enable row level security; and policies limiting access to own rows."
+        "ru": "Без RLS таблицу может читать и изменять любой, у кого есть публичный anon-ключ. Выполните alter table public.profiles enable row level security; и добавьте политики доступа.",
+        "kk": "RLS болмаса, жария anon-кілті бар кез келген адам кестені оқи және өзгерте алады. alter table public.profiles enable row level security; орындап, қол жеткізу саясаттарын қосыңыз.",
+        "en": "Without RLS anyone with the public anon key can read and modify the table. Run alter table public.profiles enable row level security; and add access policies."
       },
       "detail": null
     },
@@ -734,14 +736,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "AI output limit is very high — a single call can be expensive",
-        "kk": "ЖИ жауабының шегі тым үлкен — бір сұраныс қымбатқа түсуі мүмкін",
-        "ru": "Лимит ответа ИИ слишком большой — один запрос может стоить дорого"
+        "en": "max_tokens is too high",
+        "kk": "max_tokens мәні тым үлкен",
+        "ru": "Слишком большое значение max_tokens"
       },
       "fix": {
-        "en": "Lower max_tokens to what the task really needs and add a per-user request limit.",
-        "kk": "max_tokens мәнін нақты қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қойыңыз.",
-        "ru": "Снизьте max_tokens до реально нужного значения и поставьте лимит запросов на пользователя."
+        "en": "Reduce max_tokens to what you need and add a per-user request limit.",
+        "kk": "max_tokens мәнін қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қосыңыз.",
+        "ru": "Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя."
       },
       "detail": null
     },
@@ -757,14 +759,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Debug mode enabled — errors and internals are exposed",
-        "kk": "Түзету режимі қосулы — қателер мен ішкі құрылым сыртқа көрінеді",
-        "ru": "Включён режим отладки — наружу видны ошибки и внутренности"
+        "en": "Debug mode is enabled",
+        "kk": "Түзету режимі қосулы",
+        "ru": "Включён режим отладки"
       },
       "fix": {
-        "en": "Turn debug off in production and read it from an environment variable. Flask debug=True exposes a console that runs code.",
-        "kk": "Өндірісте debug өшіріп, оны орта айнымалысынан алыңыз. Flask-те debug=True код орындайтын консоль береді.",
-        "ru": "Выключите debug в продакшене и берите его из переменной окружения. В Flask debug=True даёт консоль, которая выполняет код."
+        "en": "Disable debug on the production server and set it through an environment variable. In Flask, debug=True exposes a console that executes code.",
+        "kk": "Жұмыс серверінде debug өшіріп, оны орта айнымалысы арқылы орнатыңыз. Flask-те debug=True код орындайтын консольді ашады.",
+        "ru": "Отключите debug на рабочем сервере и задавайте его через переменную окружения. В Flask режим debug=True открывает консоль, которая выполняет код."
       },
       "detail": null
     },
@@ -780,14 +782,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Paid AI call without an output limit",
-        "kk": "Ақылы ЖИ-ге жауап ұзындығына шектеусіз сұраныс",
-        "ru": "Запрос к платному ИИ без лимита длины ответа"
+        "en": "LLM API call without max_tokens",
+        "kk": "max_tokens көрсетілмеген нейрожелі API шақыруы",
+        "ru": "Вызов API нейросети без max_tokens"
       },
       "fix": {
-        "en": "Set max_tokens (or max_completion_tokens) to fit the task — usually 500–2000 — and cap the input length.",
-        "kk": "Тапсырмаға сай max_tokens (немесе max_completion_tokens) орнатыңыз — әдетте 500–2000 — және кіріс мәтінінің ұзындығын шектеңіз.",
-        "ru": "Задайте max_tokens (или max_completion_tokens) под задачу — обычно 500–2000 — и ограничьте длину входного текста."
+        "en": "Set max_tokens (or max_completion_tokens) and limit the input length.",
+        "kk": "max_tokens (немесе max_completion_tokens) мәнін орнатып, кіріс мәтінінің ұзындығын шектеңіз.",
+        "ru": "Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста."
       },
       "detail": null
     },
@@ -803,14 +805,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "ru": "docker-compose: порт базы 5432 открыт наружу",
-        "kk": "docker-compose: дерекқордың 5432 порты сыртқа ашық",
-        "en": "docker-compose: database port 5432 exposed"
+        "ru": "docker-compose: порт базы данных 5432 открыт",
+        "kk": "docker-compose: дерекқордың 5432 порты ашық",
+        "en": "docker-compose: database port 5432 is exposed"
       },
       "fix": {
-        "ru": "Уберите проброс порта или привяжите его к localhost: \"127.0.0.1:5432:5432\". Базе не нужен доступ из интернета.",
-        "kk": "Портты жіберуді алып тастаңыз немесе оны localhost-қа байлаңыз: \"127.0.0.1:5432:5432\". Дерекқорға интернеттен қол жеткізу қажет емес.",
-        "en": "Remove the port mapping or bind it to localhost: \"127.0.0.1:5432:5432\". The database does not need internet access."
+        "ru": "Уберите публикацию порта или привяжите его к localhost: \"127.0.0.1:5432:5432\".",
+        "kk": "Портты жариялауды алып тастаңыз немесе оны localhost-қа байлаңыз: \"127.0.0.1:5432:5432\".",
+        "en": "Remove the port mapping or bind it to localhost: \"127.0.0.1:5432:5432\"."
       },
       "detail": null
     },
@@ -826,14 +828,14 @@
       "in_history": false,
       "commit": null,
       "title": {
-        "en": "Open redirect — redirect target taken from the request",
-        "kk": "Ашық қайта бағыттау — өту мекенжайы сұраныстан алынады",
-        "ru": "Открытый редирект — адрес перехода берётся из запроса"
+        "en": "Redirect to a URL from the request",
+        "kk": "Сұраныстағы мекенжайға қайта бағыттау",
+        "ru": "Редирект на адрес из запроса"
       },
       "fix": {
-        "en": "Redirect only to your own paths (start with '/', not '//') or allowlisted domains. Otherwise your link becomes a phishing tool.",
-        "kk": "Тек өз жолдарыңызға ('/' басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз. Әйтпесе сілтемеңіз фишингке пайдаланылады.",
-        "ru": "Редиректите только на свои пути (начинаются с '/', но не с '//') или на домены из белого списка. Иначе вашу ссылку используют для фишинга."
+        "en": "Redirect only to your own paths (starting with '/' but not '//') or to allowlisted domains.",
+        "kk": "Тек өз жолдарыңызға ('/' белгісінен басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз.",
+        "ru": "Перенаправляйте только на свои пути (начинаются с '/', но не с '//') или на домены из списка допустимых."
       },
       "detail": null
     }

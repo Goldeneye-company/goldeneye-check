@@ -83,7 +83,7 @@ def main():
         for n in names:
             hit = tools[n][cid]
             if cid.startswith("V"):
-                marks.append("нашёл" if hit else "—")
+                marks.append("нашёл" if hit else "пропуск")
             else:
                 marks.append("ЛОЖНОЕ" if hit else "ok")
         print(f"{cid:6} {desc[:52]:52} " + " ".join(f"{m:>16}" for m in marks))

@@ -132,10 +132,10 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
             engines[name] = {"version": ver, "status": "ok", "findings": len(found)}
         except EngineMissing:
             engines[name] = {"version": ver, "status": "missing", "findings": 0}
-            warnings.append(f"{name}: движок не установлен — выполните «gecheck install»")
+            warnings.append(f"{name}: движок не установлен, выполните gecheck install")
         except Exception as exc:  # ошибка одного движка не прерывает проверку
             engines[name] = {"version": ver, "status": "error", "findings": 0}
-            warnings.append(f"{name}: ошибка — {str(exc)[:200]}")
+            warnings.append(f"{name} завершился с ошибкой: {str(exc)[:200]}")
 
     findings = _dedupe(findings)
     findings.sort(key=lambda f: (SEV_RANK.get(f.severity, 9), f.file, f.line or 0))

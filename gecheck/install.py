@@ -90,7 +90,7 @@ def _download(url: str, log=print) -> bytes:
             reason = str(getattr(e, "reason", e))
         if attempt == RETRIES:
             raise SystemExit(f"Не удалось скачать {url.rsplit('/', 1)[1]} после {RETRIES} попыток ({reason}). "
-                             "Проверьте интернет и запустите «gecheck install» ещё раз.")
+                             "Проверьте подключение к интернету и запустите gecheck install ещё раз.")
         log(f"    сбой загрузки ({reason}), повтор через {RETRY_PAUSE * attempt} с…")
         time.sleep(RETRY_PAUSE * attempt)
 

@@ -238,7 +238,7 @@ def run_site(url: str, log=print) -> ScanResult:
         if urlsplit(base).port is None:
             findings += check_redirect(host)
     else:
-        warnings.append("Проверка запущена по http:// — HTTPS и сертификат не проверялись")
+        warnings.append("Проверка запущена по http://, поэтому HTTPS и сертификат не проверялись")
 
     log("  заголовки и cookie…")
     main = fetch(base + "/")

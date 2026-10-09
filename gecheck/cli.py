@@ -41,9 +41,9 @@ YES = {"да", "д", "yes", "y", "иә", "иа", "и"}
 def _summary(result, written, lang, fail_on):
     c = result.counts
     print()
-    print(f"{t(UI, 'score', lang)}: {result.score}/100 · {t(UI, 'grade', lang)} {result.grade}")
-    print(f"{t(UI, 'total', lang)}: {len(result.findings)} — "
-          + ", ".join(f"{t(SEVERITY, s, lang).lower()} {c[s]}" for s in SEVERITIES))
+    print(f"{t(UI, 'score', lang)}: {result.score}/100, {t(UI, 'grade', lang).lower()} {result.grade}")
+    print(f"{t(UI, 'total', lang)}: {len(result.findings)} ("
+          + ", ".join(f"{t(SEVERITY, s, lang).lower()}: {c[s]}" for s in SEVERITIES) + ")")
     for w in result.warnings:
         print(f"! {w}")
     for p in written:
@@ -97,7 +97,7 @@ def main(argv=None):
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
-    ap = argparse.ArgumentParser(prog="gecheck", description="GoldenEye Check — проверка кода на уязвимости")
+    ap = argparse.ArgumentParser(prog="gecheck", description="GoldenEye Check: проверка кода и сайтов на уязвимости")
     ap.add_argument("--version", action="version", version=f"GoldenEye Check {__version__} (rules {RULES_VERSION})")
     sub = ap.add_subparsers(dest="cmd", required=True)
 

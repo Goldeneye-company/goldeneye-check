@@ -78,7 +78,7 @@ The score starts at 100. Each critical finding subtracts 25, high 10, medium 4, 
 
 ## Accuracy
 
-`bench/` contains a generator for a test project with 29 vulnerabilities and 9 safe code samples. The current version finds all 29 with no false positives. For comparison, vibe-audit finds 4. Run it with `python bench/benchmark.py`.
+`bench/` contains a generator for a test project with 29 vulnerabilities and 9 safe code samples. The current version finds all 29 with no false positives. Run it with `python bench/benchmark.py`.
 
 Results on open projects (OWASP NodeGoat, DVWA, PyGoat, nextjs/saas-starter, fastapi/full-stack-fastapi-template) are in [bench/REALRUN.md](bench/REALRUN.md): 67 of 72 findings were correct.
 

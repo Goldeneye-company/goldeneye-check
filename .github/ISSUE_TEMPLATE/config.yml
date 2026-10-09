@@ -2,4 +2,4 @@ blank_issues_enabled: false
 contact_links:
   - name: Ручной аудит безопасности
     url: https://goldeneye.kz/ru/audit/
-    about: Глубокая проверка логики доступа, сервера и облака — специалистами GoldenEye
+    about: Проверка логики доступа, серверов и облачной инфраструктуры специалистами GoldenEye

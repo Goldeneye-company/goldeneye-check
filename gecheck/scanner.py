@@ -1,4 +1,4 @@
-"""Оркестратор: запускает движки, сводит находки, считает индекс."""
+"""Запуск движков, объединение находок и расчёт индекса."""
 
 import hashlib
 import time
@@ -30,8 +30,8 @@ class ScanResult:
     duration: float
     git: dict = field(default_factory=dict)
     options: Options = field(default_factory=Options)
-    kind: str = "code"
-    notice: Optional[dict] = None  # текст плашки над находками на трёх языках  # code — проверка кода, site — проверка опубликованного сайта
+    kind: str = "code"  # "code" или "site"
+    notice: Optional[dict] = None  # сообщение над списком находок, по языкам
 
     @property
     def counts(self):
@@ -43,11 +43,9 @@ class ScanResult:
 
     @property
     def score(self) -> int:
-        """100 минус штрафы.
+        """100 минус штраф: 25/10/4/1 за critical/high/medium/low.
 
-        Код, секреты, конфигурации: критичная −25, высокая −10, средняя −4, низкая −1.
-        Зависимости: −10 / −4 / −1, но в сумме не больше −30 — устаревшие пакеты не должны
-        обнулять оценку проекта, в коде которого ошибок нет.
+        Для зависимостей 10/4/1, но в сумме не больше 30.
         """
         c, d = self._counts(False), self._counts(True)
         code = 25 * c["critical"] + 10 * c["high"] + 4 * c["medium"] + c["low"]
@@ -69,12 +67,12 @@ class ScanResult:
 
     @property
     def project_id(self) -> str:
-        """Обезличенный идентификатор проекта для портала: из адреса репозитория или имени папки."""
+        """Первые 16 символов sha256 от адреса origin или имени папки."""
         base = self.git.get("remote") or self.root.name
         return hashlib.sha256(base.encode("utf-8")).hexdigest()[:16]
 
 
-# Если одну строку с секретом нашли несколько движков, оставляем самый точный текст
+# Какую находку оставить, если одну строку с секретом нашли несколько движков
 SECRET_PRIORITY = {"builtin": 0, "gitleaks": 1, "opengrep": 2}
 
 
@@ -135,7 +133,7 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
         except EngineMissing:
             engines[name] = {"version": ver, "status": "missing", "findings": 0}
             warnings.append(f"{name}: движок не установлен — выполните «gecheck install»")
-        except Exception as exc:  # один упавший движок не должен ронять всю проверку
+        except Exception as exc:  # ошибка одного движка не прерывает проверку
             engines[name] = {"version": ver, "status": "error", "findings": 0}
             warnings.append(f"{name}: ошибка — {str(exc)[:200]}")
 

@@ -1,15 +1,10 @@
-"""Сравнение: GoldenEye Check против другого сканера на учебном проекте.
+"""Сравнение GoldenEye Check с другим сканером на учебном проекте.
 
-Собирает свежий учебный проект (make_fixture.py), прогоняет GoldenEye Check и, если указан,
-vibe-audit, и считает по маркерам GE:Vnn / GE:Snn:
-  нашёл       — есть находка ровно в этой строке (для файловых случаев — в том же файле);
-  пропустил   — находки нет;
-  ложное      — находка на безопасном фрагменте GE:Snn.
-Для vibe-audit засчитываем любую находку в нужной строке, даже с неверным названием —
-это в его пользу.
+Строки с маркером GE:Vnn содержат уязвимость, GE:Snn безопасный код. Находка засчитывается,
+если указывает на ту же строку (для файловых случаев на тот же файл). Для vibe-audit
+засчитывается любая его находка в этой строке.
 
-Запуск:
-  python bench/benchmark.py [--vibe-audit путь/к/audit.py] [--keep]
+    python bench/benchmark.py [--vibe-audit путь/к/audit.py] [--keep]
 """
 
 import argparse
@@ -69,7 +64,7 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
-    # Вне репозитория: osv-scanner учитывает .gitignore родительских папок, а bench/fixture там игнорируется
+    # во временной папке: osv-scanner учитывает .gitignore родительских каталогов
     root = Path(tempfile.mkdtemp(prefix="gecheck-bench-")) / "fixture"
     build(root)
     markers = marker_lines(root)

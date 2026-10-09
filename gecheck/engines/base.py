@@ -17,7 +17,7 @@ def run_engine(name: str, args, cwd=None, timeout=900) -> subprocess.CompletedPr
 
 
 def rel_path(root: Path, path: str) -> str:
-    """Путь относительно корня проекта, всегда через «/»: так отчёт одинаков на Windows и Linux."""
+    """Путь относительно корня проекта с разделителем /."""
     p = Path(path)
     if p.is_absolute():
         for candidate, base in ((p, root), (p.resolve(), root.resolve())):

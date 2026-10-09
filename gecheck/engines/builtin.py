@@ -1,4 +1,4 @@
-"""Встроенные проверки конфигураций — то, что не видят gitleaks, osv-scanner и opengrep."""
+"""Проверки конфигурационных файлов, которые не покрывают внешние движки."""
 
 import base64
 import json
@@ -50,7 +50,7 @@ ENV_LINE = re.compile(r"^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$")
 
 
 def env_secret_level(text: str) -> str:
-    """real — есть похожие на настоящие секреты; placeholder — только заглушки; none — секретов нет."""
+    """Возвращает real, placeholder или none."""
     real = placeholder = 0
     for line in text.splitlines():
         m = ENV_LINE.match(line)
@@ -141,7 +141,7 @@ def _table_name(raw: str) -> str:
 
 
 def uses_supabase(root: Path) -> bool:
-    """RLS важен только там, где таблицы открыты наружу через Supabase (PostgREST)."""
+    """RLS проверяем только в проектах на Supabase."""
     if (root / "supabase").is_dir():
         return True
     manifests = ["package.json", "requirements.txt", "pyproject.toml"]
@@ -201,7 +201,7 @@ def check_compose(root: Path):
     for pattern in ("docker-compose*.yml", "docker-compose*.yaml", "compose*.yml", "compose*.yaml"):
         for p, rel in _walk(root, pattern):
             text = _read(p)
-            # override-файлы — для локальной разработки, их риск ниже
+            # override-файлы обычно используются только локально
             dev = "override" in p.name.lower()
             for m in DB_PASS.finditer(text):
                 out.append(_finding("compose_default_password", "low" if dev else "high", "config", rel,

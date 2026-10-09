@@ -1,6 +1,6 @@
-"""Секреты: gitleaks по рабочей папке и по всей истории git.
+"""Поиск секретов через gitleaks в рабочей папке и истории git.
 
-Значение секрета живёт только в памяти: в отчёт попадает маска, в отпечаток — хэш.
+В отчёт попадает только маска значения, в отпечаток находки только его хэш.
 """
 
 import hashlib
@@ -13,7 +13,7 @@ from ..i18n import TEXTS, tri
 from ..model import SKIP_DIRS, Finding, mask_secret
 from .base import rel_path, run_engine
 
-# Понятные названия для частых правил gitleaks; остальные показываем по RuleID
+# Названия для отчёта; для остальных правил выводится RuleID
 KINDS = {
     "openai-api-key": "OpenAI API key",
     "anthropic-api-key": "Anthropic API key",
@@ -30,7 +30,7 @@ KINDS = {
     "generic-api-key": "API key / password",
 }
 
-# Ключ в документации, тестах или тестовый ключ платёжки — проблема, но не пожар
+# Ключи в документации и тестах, а также тестовые ключи Stripe получают уровень medium
 DOC_OR_TEST_PATH = re.compile(r"(^|/)(docs?|examples?|samples?|tests?|__tests__|spec|fixtures?|mocks?)(/|$)"
                               r"|\.(md|mdx|rst|txt|adoc)$|[._](test|spec)\.", re.I)
 TEST_KEY = re.compile(r"^(sk|rk|pk)_test_", re.I)
@@ -39,7 +39,7 @@ TEST_KEY = re.compile(r"^(sk|rk|pk)_test_", re.I)
 def severity_for(file: str, secret: str, rule_id: str) -> str:
     if TEST_KEY.match(secret) or DOC_OR_TEST_PATH.search(file):
         return "medium"
-    # generic-api-key — эвристика «похоже на ключ», а не опознанный ключ конкретного сервиса
+    # generic-api-key срабатывает по эвристике, поэтому high, а не critical
     return "high" if rule_id == "generic-api-key" else "critical"
 
 
@@ -83,7 +83,7 @@ def scan(root: Path, warnings: list, history: bool = True):
             current_digests.add(digest)
         elif digest in current_digests or any(
                 f.file == file and f.rule == f"gitleaks.{leak.get('RuleID')}" and not f.in_history for f in findings):
-            # секрет и так виден в текущих файлах (возможно, файл переехал или ключ записан иначе) — не дублируем
+            # уже найден в текущих файлах
             continue
         in_history = from_history
         kind = KINDS.get(leak.get("RuleID", ""), leak.get("RuleID", "secret"))

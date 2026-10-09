@@ -69,7 +69,7 @@ def cmd_site(args):
             return EXIT_ERROR
         try:
             answer = input(t(UI, "confirm_owner", args.lang, host=host)).strip().lower()
-        except EOFError:  # ввода нет — подтверждения нет
+        except EOFError:  # нет stdin, считаем отказом
             answer = ""
         if answer not in YES:
             print("Отменено.")

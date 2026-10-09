@@ -1,10 +1,4 @@
-"""Тесты GoldenEye Check.
-
-Встроенные проверки и отчёты тестируются без движков. Полный прогон по учебному проекту
-запускается, только если движки установлены (gecheck install), иначе пропускается.
-
-Запуск: python -m unittest discover -s tests
-"""
+"""Тесты. FixtureTest пропускается, если движки не установлены (gecheck install)."""
 
 import json
 import shutil
@@ -38,7 +32,7 @@ class TempProject(unittest.TestCase):
 
 
 class DownloadRetryTest(unittest.TestCase):
-    """Временный сбой GitHub при скачивании движков не должен ронять установку."""
+    """Повтор загрузки при ошибках сервера."""
 
     def setUp(self):
         from gecheck import install
@@ -126,7 +120,7 @@ class BuiltinTest(TempProject):
         self.assertEqual(builtin.check_compose(self.dir), [])
 
     def test_public_env_secret(self):
-        # значения нарочно ненастоящие: правило срабатывает по имени переменной, а не по виду ключа
+        # правило срабатывает по имени переменной, значение не важно
         self.write(".env.local", "NEXT_PUBLIC_STRIPE_SECRET_KEY=fake-value-for-tests-only\n"
                                  "NEXT_PUBLIC_SUPABASE_URL=https://demo.supabase.co\n")
         found = builtin.check_public_env(self.dir)
@@ -192,7 +186,7 @@ class ReportTest(unittest.TestCase):
 
 @unittest.skipUnless(all(engine_path(n).exists() for n in NAMES), "движки не установлены: gecheck install")
 class FixtureTest(unittest.TestCase):
-    """Полный прогон: каждая заложенная дыра найдена, безопасные фрагменты чистые."""
+    """Полный прогон по учебному проекту."""
 
     @classmethod
     def setUpClass(cls):

@@ -6,7 +6,7 @@ from typing import Optional
 SEVERITIES = ("critical", "high", "medium", "low")
 SEV_RANK = {s: i for i, s in enumerate(SEVERITIES)}
 
-# Папки, которые не проверяем ни одним движком: зависимости, сборки, кэш и наши же отчёты
+# Каталоги, которые не сканируются
 SKIP_DIRS = ("node_modules", ".git", ".next", ".nuxt", ".svelte-kit", "dist", "build", "out",
              "vendor", ".venv", "venv", "__pycache__", ".cache", "coverage", ".turbo",
              ".vercel", ".goldeneye-check")
@@ -27,9 +27,9 @@ class Finding:
     snippet: Optional[str] = None
     in_history: bool = False
     commit: Optional[str] = None
-    # стабильная часть отпечатка: не зависит от номера строки, чтобы сдвиг кода не плодил «новые» находки
+    # часть отпечатка, не зависящая от номера строки
     anchor: Optional[str] = None
-    # закрытая находка: в отчёте видны только уровень и тип, место и исправление скрыты
+    # в отчёте показываются только уровень и категория
     locked: bool = False
 
     def fingerprint(self) -> str:
@@ -43,7 +43,7 @@ class Finding:
 
 
 def mask_secret(value: str) -> str:
-    """Секрет никогда не попадает в отчёт целиком: остаются 6 первых и 2 последних символа."""
+    """Оставляет первые 6 и последние 2 символа."""
     value = value.strip().strip("\"'")
     if len(value) <= 10:
         return "•" * 6

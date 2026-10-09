@@ -1,7 +1,5 @@
-# Правила GoldenEye Check для JavaScript / TypeScript (Express, Next.js, Node).
-# Тексты для отчёта лежат в metadata.ge: severity, category, cwe, title/fix на ru/kk/en.
-# Источники пользовательского ввода повторяются в каждом taint-правиле намеренно:
-# правило должно читаться само по себе.
+# Правила для JavaScript и TypeScript (Express, Next.js).
+# Тексты для отчёта: metadata.ge (severity, category, cwe, title и fix на ru/kk/en).
 
 rules:
   - id: ge.js.sql-injection

@@ -1,4 +1,4 @@
-"""Отчёты: HTML для человека, Markdown для репозитория, JSON для портала и CI."""
+"""Отчёты в HTML, Markdown и JSON."""
 
 import html
 import json
@@ -12,7 +12,7 @@ SCHEMA = "goldeneye-check/report@1"
 
 
 def to_json(result, include_snippets=False) -> dict:
-    """Формат для портала: без кода и без секретов, только где, что и как чинить."""
+    """JSON без фрагментов кода, если не задан include_snippets."""
     findings = []
     for f in result.findings:
         if f.locked:

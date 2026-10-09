@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "goldeneye-check"
 version = "0.1.0"
-description = "Проверка кода на типовые уязвимости: секреты, инъекции, открытые ИИ-эндпоинты, конфигурации. Код не покидает компьютер."
+description = "Проверка кода и сайтов на типовые уязвимости"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "Apache-2.0" }

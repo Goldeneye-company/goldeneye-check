@@ -1,10 +1,8 @@
-"""Собирает учебный «навайбкоженный» проект с заранее известными дырами.
+"""Генератор учебного проекта с известными уязвимостями.
 
-Каждая дыра помечена маркером GE:Vnn в той же строке, каждый безопасный фрагмент — GE:Snn.
-По маркерам benchmark.py считает, что инструмент нашёл, что пропустил и где ошибся.
-Ключи генерируются случайно в реальном формате: это не настоящие секреты.
+Уязвимые строки помечены GE:Vnn, безопасные GE:Snn. Ключи генерируются случайно.
 
-Запуск: python bench/make_fixture.py <папка>
+    python bench/make_fixture.py <папка>
 """
 
 import json
@@ -290,13 +288,13 @@ def git(root, *args):
 def write(root, rel, text):
     p = root / rel
     p.parent.mkdir(parents=True, exist_ok=True)
-    # open(), а не write_text(newline=...): параметр newline у write_text есть только с Python 3.10
+    # write_text(newline=...) есть только с Python 3.10
     with open(p, "w", encoding="utf-8", newline="\n") as f:
         f.write(text)
 
 
 def remove_tree(root: Path):
-    """git делает свои объекты read-only — на Windows их надо разблокировать перед удалением."""
+    """Удаляет каталог, снимая read-only с объектов git (нужно на Windows)."""
     def unlock(func, path, _exc):
         os.chmod(path, stat.S_IWRITE)
         func(path)
@@ -312,8 +310,7 @@ def build(root: Path):
                      ("core.autocrlf", "false"), ("core.longpaths", "true")):
         git(root, "config", key, val)
 
-    # коммит 1: ключи в config.js и payments.js; коммит 2: config.js удалён, из payments.js убрана
-    # только строка с ключом — в обоих случаях ключ остался в истории
+    # ключи остаются только в истории: config.js удаляется, из payments.js убирается строка с ключом
     write(root, "src/config.js", f'export const OPENAI_API_KEY = "{openai_key()}";\n')
     write(root, "src/payments.js", f'const stripe = require("stripe")("{stripe_key()}");\n')
     write(root, ".gitignore", "node_modules\n.env.local\n")
@@ -338,7 +335,7 @@ def build(root: Path):
     write(root, ".env.example", "OPENAI_API_KEY=your-key-here  # GE:S08\n")
     git(root, "add", "-A")
     git(root, "commit", "-qm", "app")
-    # .env.local не коммитится (он в .gitignore), но лежит в папке, как у любого разработчика
+    # .env.local есть на диске, но не в git
     write(root, ".env.local", f"NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY={service_role_jwt()}  # GE:V22\n")
 
 

@@ -1,4 +1,4 @@
-"""Анализ кода: opengrep с правилами GoldenEye (gecheck/rules)."""
+"""Анализ кода через opengrep с правилами из gecheck/rules."""
 
 import json
 import re
@@ -9,13 +9,13 @@ from ..paths import RULES_DIR
 from .base import rel_path, run_engine
 
 
-# Пароль в seed-скрипте или тесте — плохая привычка, но не дыра в продакшене
+# Пароли в seed-скриптах и тестах понижаются до low
 SEED_OR_TEST = re.compile(r"(^|/)(tests?|__tests__|spec|fixtures?|mocks?|seeds?|examples?)(/|$)"
                           r"|(^|/)seed[^/]*$|[._](test|spec)\.", re.I)
 
 
 def _mask_snippet(snippet: str, metavars: dict) -> str:
-    """Маскируем только найденное значение секрета; если движок его не отдал — все строки в кавычках."""
+    """Маскирует значение $VALUE, а если его нет, все строки в кавычках."""
     value = ((metavars or {}).get("$VALUE") or {}).get("abstract_content")
     if value and len(value) >= 3:
         return snippet.replace(value, mask_secret(value))

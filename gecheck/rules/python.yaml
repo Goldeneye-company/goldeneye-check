@@ -1,4 +1,4 @@
-# Правила GoldenEye Check для Python (FastAPI, Flask, Django, скрипты).
+# Правила для Python (FastAPI, Flask, Django).
 
 rules:
   - id: ge.py.sql-injection

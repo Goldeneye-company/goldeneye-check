@@ -1,4 +1,4 @@
-"""Тесты проверки сайта на локальном сервере: сеть наружу не нужна."""
+"""Тесты gecheck site на локальном HTTP-сервере."""
 
 import http.server
 import shutil
@@ -33,7 +33,7 @@ class _Quiet(http.server.SimpleHTTPRequestHandler):
 
 
 class _Spa(_Quiet):
-    """Как одностраничное приложение: на любой адрес отдаёт index.html с кодом 200."""
+    """Отдаёт index.html на любой путь, как SPA."""
 
     def send_head(self):
         self.path = "/index.html"
@@ -107,7 +107,7 @@ class SiteTest(unittest.TestCase):
             "Referrer-Policy": "strict-origin-when-cross-origin",
         }, cookie="sessionid=abc; Path=/; Secure; HttpOnly; SameSite=Lax")
         found = self.rules(site.check_headers(site.fetch(base + "/")))
-        # по http:// HSTS не проверяется, сервер разработки сообщает версию Python — это одна низкая находка
+        # по http HSTS не проверяется; http.server отдаёт версию Python в заголовке Server
         self.assertEqual(found, ["ge.site.server-version:server"])
 
     def test_normalize(self):

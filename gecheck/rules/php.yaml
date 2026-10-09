@@ -1,4 +1,4 @@
-# Правила GoldenEye Check для PHP (сайты на обычном хостинге, формы, Plesk/cPanel).
+# Правила для PHP.
 
 rules:
   - id: ge.php.sql-injection

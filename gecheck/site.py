@@ -1,7 +1,6 @@
-"""Проверка опубликованного сайта: только обычные GET-запросы, как у браузера.
+"""gecheck site: проверка опубликованного сайта.
 
-Ничего не подбирает, не атакует и не перегружает: около 30 запросов с паузой между ними.
-Запускать только против своего сайта — команда спрашивает подтверждение.
+Только GET-запросы, около 30 штук с паузой между ними.
 """
 
 import hashlib
@@ -76,7 +75,7 @@ def _f(key, severity, category, where, anchor=None, detail=None, **kw):
                    detail=tri(t["detail"], **kw) if detail and "detail" in t else {})
 
 
-# ---------- HTTPS и сертификат ----------
+# HTTPS и сертификат
 
 def check_tls(host, port=443):
     out = []
@@ -104,14 +103,14 @@ def check_tls(host, port=443):
 def check_redirect(host):
     r = fetch(f"http://{host}/", follow=False)
     if r.status == 0:
-        return []  # порт 80 закрыт — тоже нормально
+        return []  # порт 80 закрыт
     location = r.header("Location") or ""
     if r.status in (301, 302, 307, 308) and location.lower().startswith("https://"):
         return []
     return [_f("no_redirect", "medium", "config", f"http://{host}/")]
 
 
-# ---------- заголовки и cookie ----------
+# Заголовки и cookie
 
 SESSION_COOKIE = re.compile(r"(sess|sid|auth|token|login|jwt|remember)", re.I)
 VERSION_RE = re.compile(r"\d+\.\d+")
@@ -154,14 +153,14 @@ def check_headers(r: Response):
     return out
 
 
-# ---------- файлы, которых не должно быть снаружи ----------
+# Открытые служебные файлы
 
 def _env(b):
     return bool(re.search(rb"(?m)^[A-Z][A-Z0-9_]{2,}=\S", b))
 
 
 EXPOSED = [
-    # путь, уровень, проверка содержимого (чтобы не путать с «мягкой» 404 и SPA)
+    # путь, уровень, проверка содержимого (отсекает soft 404 и SPA)
     (".env", "critical", _env),
     (".env.local", "critical", _env),
     (".env.production", "critical", _env),
@@ -194,7 +193,7 @@ def _fingerprint(body: bytes) -> str:
 
 def check_exposed(base: str):
     out = []
-    # «мягкая 404»: многие сайты на любой путь отдают 200 и главную — сравниваем с заведомо несуществующим
+    # soft 404: некоторые сайты отвечают 200 на любой путь, сравниваем с ответом на несуществующий файл
     probe = fetch(f"{base}/gecheck-{int(time.time())}-does-not-exist.txt")
     soft404 = _fingerprint(probe.body) if probe.status == 200 else None
     for path, sev, looks_real in EXPOSED:
@@ -209,13 +208,13 @@ def check_exposed(base: str):
                       anchor=path, path=path))
     for d in LISTING_DIRS:
         r = fetch(f"{base}/{d}")
-        # Apache и nginx: «Index of /…», Python и некоторые панели: «Directory listing for /…»
+        # Apache/nginx: "Index of /", http.server и некоторые панели: "Directory listing for /"
         if r.status == 200 and re.search(rb"<title>\s*(Index of|Directory listing for) /", r.body, re.I):
             out.append(_f("dir_listing", "medium", "config", f"{base}/{d}", anchor=d, path=d))
     return out
 
 
-# ---------- оркестратор ----------
+# Запуск
 
 def normalize(url: str):
     if "://" not in url:

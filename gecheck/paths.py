@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 def home() -> Path:
-    """Папка GoldenEye Check: движки и кэш. Переопределяется переменной GECHECK_HOME."""
+    """Рабочая папка с движками; можно задать через GECHECK_HOME."""
     custom = os.environ.get("GECHECK_HOME")
     return Path(custom) if custom else Path.home() / ".goldeneye-check"
 

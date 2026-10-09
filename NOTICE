@@ -1,0 +1,13 @@
+GoldenEye Check
+Copyright 2026 GOLDENEYE LLP, Astana, Kazakhstan
+
+GoldenEye Check runs third-party programs as separate processes. They are not part
+of GoldenEye Check, are not modified, and are downloaded by "gecheck install" from
+their official releases with SHA-256 verification:
+
+- gitleaks, https://github.com/gitleaks/gitleaks, MIT License
+- osv-scanner, https://github.com/google/osv-scanner, Apache License 2.0
+- opengrep, https://github.com/opengrep/opengrep, GNU LGPL 2.1
+
+The rules in gecheck/rules are written by GoldenEye and distributed under the license
+of this repository. Rules from the Semgrep registry are not used.

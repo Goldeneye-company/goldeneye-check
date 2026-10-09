@@ -1,0 +1,194 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>GoldenEye Check: shop</title><style>
+:root{--bg:#F4F3EF;--card:#FFFFFF;--ink:#15191C;--muted:#5B625E;--rule:#DDDAD2;--green:#24584A;--gold:#B8913F;
+--crit:#A3302A;--high:#B8641E;--med:#8A7A1F;--low:#4F6B78;--code:#F1EFE9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121619;--card:#1A1F23;--ink:#E9E7E1;--muted:#A3AAA6;--rule:#2C3338;
+--green:#6FAE95;--gold:#D4AC57;--crit:#E0726B;--high:#E39A5B;--med:#CDBB5A;--low:#8FB0BF;--code:#22282D;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 56px;overflow-wrap:anywhere}
+.summary>*,.f{min-width:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.2em;font-size:13px}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block}
+h1{font-size:clamp(24px,3.2vw,34px);font-weight:500;margin:18px 0 4px;line-height:1.15}
+.meta{color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.summary{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:16px;margin:28px 0}
+@media (max-width:720px){.summary{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--rule);padding:20px 22px}
+.score{display:flex;align-items:baseline;gap:12px}.score b{font-size:56px;font-weight:500;line-height:1}
+.score span{color:var(--muted)}.grade{display:inline-grid;place-items:center;width:44px;height:44px;border:2px solid var(--ink);
+font-size:22px;font-weight:600;margin-left:auto}
+.label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media (max-width:520px){.counts{grid-template-columns:repeat(2,1fr)}}
+.count{border-top:3px solid;padding-top:8px}.count b{font-size:28px;font-weight:500;display:block}.count small{color:var(--muted)}
+.c-critical{border-color:var(--crit)}.c-high{border-color:var(--high)}.c-medium{border-color:var(--med)}.c-low{border-color:var(--low)}
+ol.top{margin:6px 0 0;padding-left:20px}ol.top li{margin:4px 0}
+h2{font-size:20px;font-weight:500;margin:36px 0 12px;display:flex;align-items:center;gap:10px}
+h2 .dot{width:12px;height:12px;border-radius:50%}
+.f{background:var(--card);border:1px solid var(--rule);border-left:4px solid;padding:16px 20px;margin:0 0 10px}
+.f h3{margin:0 0 6px;font-size:16px;font-weight:600;line-height:1.35}
+.f .loc{font:13px/1.4 ui-monospace,Consolas,monospace;color:var(--muted);word-break:break-all}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{font-size:12px;border:1px solid var(--rule);padding:1px 8px;color:var(--muted)}
+.tag.hist{border-color:var(--gold);color:var(--gold)}
+pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.fix{margin:8px 0 0}.fix b{color:var(--green)}
+.note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
+.notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
+.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
+.cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
+.cta a{color:var(--gold);font-weight:600}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+@media print{body{background:#fff}.f,.card{break-inside:avoid}}
+</style></head><body><main class="wrap">
+<div class="brand"><i></i>GOLDENEYE CHECK</div>
+<h1>Отчёт о проверке кода</h1>
+<div class="meta"><span>Проект: <b>shop</b></span>
+<span>Дата: 2026-10-09</span>
+<span>Коммит: 02588f1</span>
+</div>
+<section class="summary">
+<div class="card"><p class="label">Индекс защищённости</p>
+<div class="score"><b>0</b><span>/ 100</span><span class="grade" title="Оценка">F</span></div></div>
+<div class="card"><p class="label">Всего находок: 33</p><div class="counts"><div class='count c-critical'><b>16</b><small>Критический</small></div><div class='count c-high'><b>12</b><small>Высокий</small></div><div class='count c-medium'><b>5</b><small>Средний</small></div><div class='count c-low'><b>0</b><small>Низкий</small></div></div>
+<p class='label' style='margin-top:18px'>Исправить в первую очередь</p><ol class='top'><li>Файл .env хранится в git <span class='loc'>(.env)</span></li><li>Секрет в коде: Stripe secret key <span class='loc'>(.env:1)</span></li><li>Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY <span class='loc'>(.env.local:1)</span></li></ol>
+</div></section>
+<h2><span class='dot' style='background:var(--crit)'></span>Критический · 16</h2>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Файл .env хранится в git</h3><div class="loc">.env</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/538.html' rel='noopener'>CWE-538</a><span class='tag'>builtin</span></div><p class='note'>в файле есть значения, похожие на настоящие пароли и ключи</p>
+<p class="fix"><b>Как исправить:</b> Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите ключи из этого файла, так как они остаются в истории.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Секрет в коде: Stripe secret key</h3><div class="loc">.env:1</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>значение sk_liv…P2</p>
+<p class="fix"><b>Как исправить:</b> Перевыпустите ключ в консоли сервиса, старый считайте скомпрометированным. Затем перенесите значение в переменную окружения или хранилище секретов.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</h3><div class="loc">.env.local:1</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…BQ</pre>
+<p class="fix"><b>Как исправить:</b> Переменные с префиксами NEXT_PUBLIC_, VITE_, REACT_APP_ и EXPO_PUBLIC_ попадают в код, который загружает браузер. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-запрос собирается форматированием строки</h3><div class="loc">api/main.py:19</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>return sqlite3.connect(&quot;db&quot;).execute(&quot;SELECT * FROM orders WHERE id=%s&quot; % oid).fetchall()  # GE:V12</pre>
+<p class="fix"><b>Как исправить:</b> Передавайте значения вторым аргументом: cursor.execute(&#x27;... WHERE id = %s&#x27;, (oid,)). Не собирайте SQL через f-строки, % и +.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Небезопасная десериализация (pickle, yaml.load)</h3><div class="loc">api/main.py:29</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/502.html' rel='noopener'>CWE-502</a><span class='tag'>opengrep</span></div><pre>return pickle.loads(await req.body())  # GE:V13</pre>
+<p class="fix"><b>Как исправить:</b> Для внешних данных используйте JSON или yaml.safe_load. pickle подходит только для своих доверенных файлов.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Эндпоинт вызывает нейросеть без авторизации</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>Нейросети</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>Как исправить:</b> Добавьте проверку пользователя (Depends(get_current_user) или @login_required) и лимит запросов на пользователя.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Внедрение команд ОС</h3><div class="loc">api/main.py:47</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>return subprocess.run(&quot;nslookup &quot; + host, shell=True, capture_output=True).stdout  # GE:V15</pre>
+<p class="fix"><b>Как исправить:</b> Используйте subprocess.run([...]) со списком аргументов без shell=True и проверяйте значения по списку допустимых.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Эндпоинт вызывает нейросеть без авторизации</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>Нейросети</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>Как исправить:</b> Проверяйте пользователя до вызова модели (сессия, токен или middleware) и добавьте лимит запросов на пользователя.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Firebase: правила в firestore.rules разрешают доступ всем</h3><div class="loc">firestore.rules:5</div>
+<div class="tags"><span class='tag'>Доступ к данным</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Как исправить:</b> Разрешите доступ только авторизованным пользователям и только к их данным, например allow read, write: if request.auth != null &amp;&amp; request.auth.uid == resource.data.owner;</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция в запросе к базе данных</h3><div class="loc">public/contact.php:3</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
+<p class="fix"><b>Как исправить:</b> Используйте подготовленные запросы: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Секрет в истории git: OpenAI API key</h3><div class="loc">src/config.js (в истории git, 2b74b4d6)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит 2b74b4d6, значение sk-pro…OJ</p>
+<p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Секрет в истории git: Stripe secret key</h3><div class="loc">src/payments.js (в истории git, 2b74b4d6)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит 2b74b4d6, значение sk_liv…pV</p>
+<p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция в запросе к базе данных</h3><div class="loc">src/server/users.js:9</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const rows = await db.query(`SELECT * FROM users WHERE id = ${req.params.id}`); // GE:V01</pre>
+<p class="fix"><b>Как исправить:</b> Передавайте значения как параметры запроса, например db.query(&#x27;... WHERE id = $1&#x27;, [id]), а не подстановкой в строку.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL-инъекция в запросе к базе данных</h3><div class="loc">src/server/users.js:19</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const r = await db.query(&quot;SELECT * FROM items WHERE name = &#x27;&quot; + req.query.name + &quot;&#x27;&quot;); // GE:V02</pre>
+<p class="fix"><b>Как исправить:</b> Передавайте значения как параметры запроса, например db.query(&#x27;... WHERE id = $1&#x27;, [id]), а не подстановкой в строку.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Внедрение команд ОС</h3><div class="loc">src/server/users.js:26</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/ping&quot;, (req, res) =&gt; exec(&quot;ping -c 1 &quot; + req.query.host, (e, out) =&gt; res.json({ out }))); // GE:V04</pre>
+<p class="fix"><b>Как исправить:</b> Не передавайте пользовательские данные в shell. Используйте execFile или spawn со списком аргументов и проверяйте значение по списку допустимых.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Выполнение кода через eval или new Function</h3><div class="loc">src/server/users.js:46</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/95.html' rel='noopener'>CWE-95</a><span class='tag'>opengrep</span></div><pre>app.post(&quot;/calc&quot;, (req, res) =&gt; res.json({ result: eval(req.body.expr) })); // GE:V10</pre>
+<p class="fix"><b>Как исправить:</b> Уберите eval и new Function. Для разбора данных используйте JSON.parse.</p></article>
+<h2><span class='dot' style='background:var(--high)'></span>Высокий · 12</h2>
+<article class="f" style="border-left-color:var(--high)">
+<h3>docker-compose: стандартный пароль базы данных (POSTGRES_PASSWORD)</h3><div class="loc">docker-compose.yml:5</div>
+<div class="tags"><span class='tag'>Настройки</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1393.html' rel='noopener'>CWE-1393</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Как исправить:</b> Задайте длинный случайный пароль через .env, который не хранится в git, и смените пароль на серверах, где этот файл уже использовался.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Уязвимая зависимость: lodash 4.17.15</h3><div class="loc">package-lock.json</div>
+<div class="tags"><span class='tag'>Зависимости</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1395.html' rel='noopener'>CWE-1395</a><span class='tag'>osv-scanner</span></div><p class='note'>уязвимости: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465</p>
+<p class="fix"><b>Как исправить:</b> Обновите lodash до версии 4.18.0 или новее и пересоберите lock-файл.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Вывод данных пользователя без экранирования (XSS)</h3><div class="loc">public/contact.php:4</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>echo &quot;&lt;p&gt;Результаты для &quot; . $_GET[&#x27;email&#x27;] . &quot;&lt;/p&gt;&quot;; // GE:V18</pre>
+<p class="fix"><b>Как исправить:</b> Выводите данные через htmlspecialchars($value, ENT_QUOTES, &#x27;UTF-8&#x27;).</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Внедрение заголовков письма</h3><div class="loc">public/contact.php:7</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/93.html' rel='noopener'>CWE-93</a><span class='tag'>opengrep</span></div><pre>mail(&quot;info@example.kz&quot;, &quot;Заявка с сайта&quot;, $_POST[&#x27;message&#x27;], $headers); // GE:V19</pre>
+<p class="fix"><b>Как исправить:</b> Не подставляйте пользовательские данные в заголовки письма. Проверяйте адрес через filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Вывод данных пользователя без экранирования (XSS)</h3><div class="loc">src/server/users.js:23</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/hello&quot;, (req, res) =&gt; res.send(&quot;&lt;h1&gt;Hi &quot; + req.query.name + &quot;&lt;/h1&gt;&quot;)); // GE:V03</pre>
+<p class="fix"><b>Как исправить:</b> Экранируйте вывод (escape-html или шаблонизатор с автоэкранированием) или возвращайте JSON. HTML от пользователя очищайте через DOMPurify.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>JWT без проверки подписи (jwt.decode)</h3><div class="loc">src/server/users.js:29</div>
+<div class="tags"><span class='tag'>Аутентификация</span><a class='tag' href='https://cwe.mitre.org/data/definitions/347.html' rel='noopener'>CWE-347</a><span class='tag'>opengrep</span></div><pre>const user = jwt.decode(req.headers.authorization); // GE:V05</pre>
+<p class="fix"><b>Как исправить:</b> jwt.decode не проверяет подпись. Для аутентификации используйте jwt.verify(token, secret, { algorithms: [&#x27;HS256&#x27;] }).</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Путь к файлу из данных запроса (path traversal)</h3><div class="loc">src/server/users.js:33</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/22.html' rel='noopener'>CWE-22</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/file&quot;, (req, res) =&gt; res.sendFile(&quot;/srv/files/&quot; + req.query.name)); // GE:V06</pre>
+<p class="fix"><b>Как исправить:</b> Используйте только имя файла (path.basename), проверяйте его по списку допустимых и убедитесь, что итоговый путь находится внутри нужной папки.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Пароль или ключ в исходном коде</h3><div class="loc">src/server/users.js:35</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>opengrep</span></div><pre>const ADMIN_PASSWORD = &quot;Qwerty…6!&quot;; // GE:V07</pre>
+<p class="fix"><b>Как исправить:</b> Перенесите значение в переменную окружения (process.env) и смените пароль или ключ.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Запрос по адресу из данных пользователя (SSRF)</h3><div class="loc">src/server/users.js:40</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/918.html' rel='noopener'>CWE-918</a><span class='tag'>opengrep</span></div><pre>const page = await fetch(req.query.url); // GE:V08</pre>
+<p class="fix"><b>Как исправить:</b> Разрешайте запросы только к известным доменам. Запретите внутренние адреса (localhost, 10.x, 169.254.169.254) и переходы по редиректам.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>NoSQL-инъекция через $where</h3><div class="loc">src/server/users.js:49</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/943.html' rel='noopener'>CWE-943</a><span class='tag'>opengrep</span></div><pre>const docs = await stocks.find({ $where: `this.price &gt; ${req.query.min}` }).toArray(); // GE:V27</pre>
+<p class="fix"><b>Как исправить:</b> Не используйте $where. Пишите условия обычными операторами, например { userId: id, stocks: { $gt: threshold } }, и приводите значения к нужному типу.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Отключено автоэкранирование в шаблонах</h3><div class="loc">src/server/users.js:53</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>swig.setDefaults({ autoescape: false }); // GE:V28</pre>
+<p class="fix"><b>Как исправить:</b> Включите autoescape: true. Если в каком-то месте нужен HTML, отметьте его явно (фильтр safe) и очистите через DOMPurify.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Supabase: для таблицы public.profiles не включён RLS</h3><div class="loc">supabase/migrations/001_init.sql:1</div>
+<div class="tags"><span class='tag'>Доступ к данным</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Как исправить:</b> Без RLS таблицу может читать и изменять любой, у кого есть публичный anon-ключ. Выполните alter table public.profiles enable row level security; и добавьте политики доступа.</p></article>
+<h2><span class='dot' style='background:var(--med)'></span>Средний · 5</h2>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Слишком большое значение max_tokens</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>Нейросети</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>Как исправить:</b> Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Включён режим отладки</h3><div class="loc">api/main.py:53</div>
+<div class="tags"><span class='tag'>Настройки</span><a class='tag' href='https://cwe.mitre.org/data/definitions/489.html' rel='noopener'>CWE-489</a><span class='tag'>opengrep</span></div><pre>flask_app.run(host=&quot;0.0.0.0&quot;, debug=True)  # GE:V16</pre>
+<p class="fix"><b>Как исправить:</b> Отключите debug на рабочем сервере и задавайте его через переменную окружения. В Flask режим debug=True открывает консоль, которая выполняет код.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Вызов API нейросети без max_tokens</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>Нейросети</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>Как исправить:</b> Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>docker-compose: порт базы данных 5432 открыт</h3><div class="loc">docker-compose.yml:7</div>
+<div class="tags"><span class='tag'>Настройки</span><a class='tag' href='https://cwe.mitre.org/data/definitions/668.html' rel='noopener'>CWE-668</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>Как исправить:</b> Уберите публикацию порта или привяжите его к localhost: &quot;127.0.0.1:5432:5432&quot;.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Редирект на адрес из запроса</h3><div class="loc">src/server/users.js:44</div>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/601.html' rel='noopener'>CWE-601</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/go&quot;, (req, res) =&gt; res.redirect(req.query.next)); // GE:V09</pre>
+<p class="fix"><b>Как исправить:</b> Перенаправляйте только на свои пути (начинаются с &#x27;/&#x27;, но не с &#x27;//&#x27;) или на домены из списка допустимых.</p></article>
+<h2>Что не проверялось</h2><p class="note">Логика прав доступа (например, может ли один пользователь открыть данные другого), настройки облачных сервисов и платёжных систем, работа под нагрузкой. Исходный код никуда не отправлялся. Для проверки зависимостей в базу OSV были отправлены названия и версии пакетов.</p>
+<section class="cta"><h2>Ручная проверка</h2><p>Специалисты GoldenEye могут проверить логику доступа, настройки серверов и облака и помочь с исправлением найденных проблем.</p>
+<p><a href="https://goldeneye.kz/ru/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>
+<footer>Сформировано GoldenEye Check 0.1.0 · rules 2026.10.0 · Движки: gitleaks 8.30.1, osv-scanner 2.6.0, opengrep 1.30.0, builtin 0.1.0 · 7.0 s</footer>
+</main></body></html>

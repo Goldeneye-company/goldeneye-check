@@ -1,0 +1,10 @@
+.home/
+.goldeneye-check/
+bench/fixture/
+bench/out/
+bench/site-out/
+bench/.og.*
+__pycache__/
+*.egg-info/
+build/
+dist/

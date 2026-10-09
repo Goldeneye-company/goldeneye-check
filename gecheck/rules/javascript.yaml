@@ -1,0 +1,459 @@
+# Rules for JavaScript and TypeScript (Express, Next.js).
+# Report texts: metadata.ge (severity, category, cwe, title and fix in ru/kk/en).
+
+rules:
+  - id: ge.js.sql-injection
+    languages: [javascript, typescript]
+    mode: taint
+    severity: ERROR
+    message: SQL-запрос собран из данных запроса
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-89
+        title:
+          ru: "SQL-инъекция в запросе к базе данных"
+          kk: "Дерекқорға сұраныстағы SQL-инъекция"
+          en: "SQL injection in a database query"
+        fix:
+          ru: "Передавайте значения как параметры запроса, например db.query('... WHERE id = $1', [id]), а не подстановкой в строку."
+          kk: "Мәндерді сұраныс параметрлері ретінде беріңіз, мысалы db.query('... WHERE id = $1', [id]), жолға қоспаңыз."
+          en: "Pass values as query parameters, for example db.query('... WHERE id = $1', [id]), instead of building the query string."
+    pattern-sources: &js_sources
+      - pattern-either:
+          - pattern: $REQ.query
+          - pattern: $REQ.params
+          - pattern: $REQ.body
+          - pattern: $REQ.headers
+          - pattern: $REQ.cookies
+          - pattern: $URL.searchParams.get(...)
+          - pattern: await $REQ.json()
+          - pattern: await $REQ.formData()
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: $DB.query($Q, ...)
+              - pattern: $DB.execute($Q, ...)
+              - pattern: $DB.raw($Q, ...)
+              - pattern: $DB.unsafe($Q, ...)
+              - pattern: $DB.$queryRawUnsafe($Q, ...)
+              - pattern: $DB.$executeRawUnsafe($Q, ...)
+          - focus-metavariable: $Q
+
+  - id: ge.js.command-injection
+    languages: [javascript, typescript]
+    mode: taint
+    severity: ERROR
+    message: Команда ОС собрана из данных запроса
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-78
+        title:
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
+        fix:
+          ru: "Не передавайте пользовательские данные в shell. Используйте execFile или spawn со списком аргументов и проверяйте значение по списку допустимых."
+          kk: "Пайдаланушы деректерін shell-ге бермеңіз. Аргументтер тізімімен execFile немесе spawn қолданып, мәнді рұқсат етілген мәндер бойынша тексеріңіз."
+          en: "Do not pass user data to a shell. Use execFile or spawn with an argument list and check the value against an allowlist."
+    pattern-sources: *js_sources
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: $CP.exec($CMD, ...)
+              - pattern: $CP.execSync($CMD, ...)
+              - pattern: exec($CMD, ...)
+              - pattern: execSync($CMD, ...)
+              - pattern: "$CP.spawn($CMD, ..., {..., shell: true, ...})"
+          - focus-metavariable: $CMD
+
+  - id: ge.js.code-injection
+    languages: [javascript, typescript]
+    mode: taint
+    severity: ERROR
+    message: Код выполняется из данных запроса
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-95
+        title:
+          ru: "Выполнение кода через eval или new Function"
+          kk: "eval немесе new Function арқылы кодты орындау"
+          en: "Code execution via eval or new Function"
+        fix:
+          ru: "Уберите eval и new Function. Для разбора данных используйте JSON.parse."
+          kk: "eval және new Function алып тастаңыз. Деректерді талдау үшін JSON.parse қолданыңыз."
+          en: "Remove eval and new Function. Use JSON.parse to parse data."
+    pattern-sources: *js_sources
+    pattern-sinks:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)
+          - pattern: $VM.runInNewContext(...)
+          - pattern: $VM.runInThisContext(...)
+
+  - id: ge.js.xss
+    languages: [javascript, typescript]
+    mode: taint
+    severity: WARNING
+    message: Данные запроса попадают в HTML без экранирования
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-79
+        title:
+          ru: "Вывод данных пользователя без экранирования (XSS)"
+          kk: "Пайдаланушы деректерін экрандаусыз шығару (XSS)"
+          en: "Unescaped user input in HTML (XSS)"
+        fix:
+          ru: "Экранируйте вывод (escape-html или шаблонизатор с автоэкранированием) или возвращайте JSON. HTML от пользователя очищайте через DOMPurify."
+          kk: "Шығысты экрандаңыз (escape-html немесе автоэкрандайтын шаблонизатор) немесе JSON қайтарыңыз. Пайдаланушының HTML-ін DOMPurify арқылы тазалаңыз."
+          en: "Escape the output (escape-html or an auto-escaping template engine) or return JSON. Sanitize user HTML with DOMPurify."
+    pattern-sources: *js_sources
+    pattern-sanitizers:
+      - pattern-either:
+          - pattern: escapeHtml(...)
+          - pattern: escape(...)
+          - pattern: $V.escape(...)
+          - pattern: $P.sanitize(...)
+          - pattern: encodeURIComponent(...)
+    pattern-sinks:
+      - pattern-either:
+          - pattern: $RES.send(...)
+          - pattern: $RES.write(...)
+          - pattern: $EL.innerHTML = ...
+          - pattern: $EL.outerHTML = ...
+          - pattern: document.write(...)
+          - pattern: "<$TAG dangerouslySetInnerHTML={{__html: $X}} />"
+
+  - id: ge.js.path-traversal
+    languages: [javascript, typescript]
+    mode: taint
+    severity: WARNING
+    message: Путь к файлу собран из данных запроса
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-22
+        title:
+          ru: "Путь к файлу из данных запроса (path traversal)"
+          kk: "Сұраныс деректерінен алынған файл жолы (path traversal)"
+          en: "File path from request data (path traversal)"
+        fix:
+          ru: "Используйте только имя файла (path.basename), проверяйте его по списку допустимых и убедитесь, что итоговый путь находится внутри нужной папки."
+          kk: "Тек файл атын (path.basename) қолданыңыз, оны рұқсат етілген тізім бойынша тексеріп, соңғы жол қажетті қалтаның ішінде екеніне көз жеткізіңіз."
+          en: "Use only the file name (path.basename), check it against an allowlist and make sure the resulting path stays inside the intended folder."
+    pattern-sources: *js_sources
+    pattern-sanitizers:
+      - pattern: $PATH.basename(...)
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: $RES.sendFile($P, ...)
+              - pattern: $RES.download($P, ...)
+              - pattern: $FS.readFile($P, ...)
+              - pattern: $FS.readFileSync($P, ...)
+              - pattern: $FS.createReadStream($P, ...)
+              - pattern: $FS.writeFile($P, ...)
+              - pattern: $FS.writeFileSync($P, ...)
+              - pattern: $FS.unlink($P, ...)
+          - focus-metavariable: $P
+
+  - id: ge.js.ssrf
+    languages: [javascript, typescript]
+    mode: taint
+    severity: WARNING
+    message: Сервер ходит по адресу из запроса
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-918
+        title:
+          ru: "Запрос по адресу из данных пользователя (SSRF)"
+          kk: "Пайдаланушы деректеріндегі мекенжайға сұраныс (SSRF)"
+          en: "Request to a user-supplied URL (SSRF)"
+        fix:
+          ru: "Разрешайте запросы только к известным доменам. Запретите внутренние адреса (localhost, 10.x, 169.254.169.254) и переходы по редиректам."
+          kk: "Тек белгілі домендерге сұраныс жасауға рұқсат етіңіз. Ішкі мекенжайларға (localhost, 10.x, 169.254.169.254) және қайта бағыттауларға тыйым салыңыз."
+          en: "Allow requests only to known domains. Block internal addresses (localhost, 10.x, 169.254.169.254) and redirects."
+    pattern-sources: *js_sources
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: fetch($U, ...)
+              - pattern: axios($U, ...)
+              - pattern: axios.$M($U, ...)
+              - pattern: got($U, ...)
+              - pattern: $HTTP.get($U, ...)
+              - pattern: $HTTP.request($U, ...)
+          - focus-metavariable: $U
+
+  - id: ge.js.open-redirect
+    languages: [javascript, typescript]
+    mode: taint
+    severity: INFO
+    message: Редирект на адрес из запроса
+    metadata:
+      ge:
+        severity: medium
+        category: injection
+        cwe: CWE-601
+        title:
+          ru: "Редирект на адрес из запроса"
+          kk: "Сұраныстағы мекенжайға қайта бағыттау"
+          en: "Redirect to a URL from the request"
+        fix:
+          ru: "Перенаправляйте только на свои пути (начинаются с '/', но не с '//') или на домены из списка допустимых."
+          kk: "Тек өз жолдарыңызға ('/' белгісінен басталатын, бірақ '//' емес) немесе рұқсат етілген домендерге бағыттаңыз."
+          en: "Redirect only to your own paths (starting with '/' but not '//') or to allowlisted domains."
+    pattern-sources: *js_sources
+    pattern-sinks:
+      - pattern: $RES.redirect(...)
+
+  - id: ge.js.jwt-decode-without-verify
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: jwt.decode не проверяет подпись
+    metadata:
+      ge:
+        severity: high
+        category: auth
+        cwe: CWE-347
+        title:
+          ru: "JWT без проверки подписи (jwt.decode)"
+          kk: "Қолтаңбасы тексерілмейтін JWT (jwt.decode)"
+          en: "JWT without signature verification (jwt.decode)"
+        fix:
+          ru: "jwt.decode не проверяет подпись. Для аутентификации используйте jwt.verify(token, secret, { algorithms: ['HS256'] })."
+          kk: "jwt.decode қолтаңбаны тексермейді. Аутентификация үшін jwt.verify(token, secret, { algorithms: ['HS256'] }) қолданыңыз."
+          en: "jwt.decode does not verify the signature. For authentication use jwt.verify(token, secret, { algorithms: ['HS256'] })."
+    pattern-either:
+      - pattern: jwt.decode(...)
+      - pattern: jsonwebtoken.decode(...)
+
+  - id: ge.js.jwt-none-algorithm
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: JWT принимает алгоритм none
+    metadata:
+      ge:
+        severity: critical
+        category: auth
+        cwe: CWE-347
+        title:
+          ru: "JWT принимает алгоритм none"
+          kk: "JWT none алгоритмін қабылдайды"
+          en: "JWT accepts the none algorithm"
+        fix:
+          ru: "Укажите только используемые алгоритмы, например { algorithms: ['HS256'] }."
+          kk: "Тек қолданылатын алгоритмдерді көрсетіңіз, мысалы { algorithms: ['HS256'] }."
+          en: "List only the algorithms you use, for example { algorithms: ['HS256'] }."
+    pattern: '$JWT.verify($T, $K, {..., algorithms: [..., "none", ...], ...}, ...)'
+
+  - id: ge.js.hardcoded-credential
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Пароль или ключ записан прямо в коде
+    metadata:
+      ge:
+        severity: high
+        category: secrets
+        cwe: CWE-798
+        title:
+          ru: "Пароль или ключ в исходном коде"
+          kk: "Бастапқы кодтағы құпиясөз немесе кілт"
+          en: "Password or key in source code"
+        fix:
+          ru: "Перенесите значение в переменную окружения (process.env) и смените пароль или ключ."
+          kk: "Мәнді орта айнымалысына (process.env) көшіріп, құпиясөзді немесе кілтті ауыстырыңыз."
+          en: "Move the value to an environment variable (process.env) and change the password or key."
+    patterns:
+      - pattern-either:
+          - pattern: const $NAME = "$VALUE"
+          - pattern: let $NAME = "$VALUE"
+          - pattern: var $NAME = "$VALUE"
+          - pattern: "{..., $NAME: \"$VALUE\", ...}"
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: (?i)^(admin_?)?(pass(word)?|passwd|pwd|secret|client_?secret|api_?key|secret_?key|private_?key|access_?token|auth_?token|jwt_?secret)$
+      - metavariable-regex:
+          metavariable: $VALUE
+          regex: ^(?!(changeme|change-me|your[-_].*|xxx+|\*+|example.*|<.*>)$).{6,}$
+
+  - id: ge.js.cors-credentials-any-origin
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: CORS открыт для любого сайта вместе с куками
+    metadata:
+      ge:
+        severity: medium
+        category: config
+        cwe: CWE-942
+        title:
+          ru: "CORS разрешает любой источник вместе с cookie"
+          kk: "CORS кез келген көзге cookie-мен бірге рұқсат береді"
+          en: "CORS allows any origin with credentials"
+        fix:
+          ru: "Укажите в origin список своих доменов. При origin: '*' или true вместе с credentials: true другие сайты могут отправлять запросы от имени пользователя."
+          kk: "origin ішінде өз домендеріңіздің тізімін көрсетіңіз. origin: '*' немесе true мен credentials: true бірге болса, басқа сайттар пайдаланушы атынан сұраныс жібере алады."
+          en: "Set origin to a list of your domains. With origin: '*' or true and credentials: true, other sites can send requests on behalf of the user."
+    pattern-either:
+      - pattern: 'cors({..., origin: "*", ..., credentials: true, ...})'
+      - pattern: 'cors({..., origin: true, ..., credentials: true, ...})'
+      - pattern: 'cors({..., credentials: true, ..., origin: "*", ...})'
+      - pattern: 'cors({..., credentials: true, ..., origin: true, ...})'
+
+  - id: ge.js.llm-no-output-limit
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Вызов LLM без лимита ответа
+    metadata:
+      ge:
+        severity: medium
+        category: ai-cost
+        cwe: CWE-770
+        title:
+          ru: "Вызов API нейросети без max_tokens"
+          kk: "max_tokens көрсетілмеген нейрожелі API шақыруы"
+          en: "LLM API call without max_tokens"
+        fix:
+          ru: "Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста."
+          kk: "max_tokens (немесе max_completion_tokens) мәнін орнатып, кіріс мәтінінің ұзындығын шектеңіз."
+          en: "Set max_tokens (or max_completion_tokens) and limit the input length."
+    patterns:
+      - pattern-either:
+          - pattern: $C.chat.completions.create({...})
+          - pattern: $C.responses.create({...})
+      - pattern-not: "$C.$X.$Y({..., max_tokens: $N, ...})"
+      - pattern-not: "$C.$X.$Y({..., max_completion_tokens: $N, ...})"
+      - pattern-not: "$C.$X({..., max_output_tokens: $N, ...})"
+
+  - id: ge.js.llm-huge-output-limit
+    languages: [javascript, typescript]
+    severity: INFO
+    message: Слишком большой лимит ответа LLM
+    metadata:
+      ge:
+        severity: medium
+        category: ai-cost
+        cwe: CWE-770
+        title:
+          ru: "Слишком большое значение max_tokens"
+          kk: "max_tokens мәні тым үлкен"
+          en: "max_tokens is too high"
+        fix:
+          ru: "Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя."
+          kk: "max_tokens мәнін қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Reduce max_tokens to what you need and add a per-user request limit."
+    patterns:
+      - pattern-either:
+          - pattern: "$C.$X.$Y({..., max_tokens: $N, ...})"
+          - pattern: "$C.$X.$Y({..., max_completion_tokens: $N, ...})"
+      - metavariable-comparison:
+          metavariable: $N
+          comparison: $N > 8192
+
+  - id: ge.js.llm-endpoint-without-auth
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Эндпоинт вызывает LLM без проверки пользователя
+    metadata:
+      ge:
+        severity: critical
+        category: ai-cost
+        cwe: CWE-306
+        title:
+          ru: "Эндпоинт вызывает нейросеть без авторизации"
+          kk: "Эндпоинт нейрожеліні авторизациясыз шақырады"
+          en: "Endpoint calls an LLM without authentication"
+        fix:
+          ru: "Проверяйте пользователя до вызова модели (сессия, токен или middleware) и добавьте лимит запросов на пользователя."
+          kk: "Модельді шақырмас бұрын пайдаланушыны тексеріңіз (сессия, токен немесе middleware) және бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Check the user before calling the model (session, token or middleware) and add a per-user request limit."
+    patterns:
+      - pattern-either:
+          - pattern: $C.messages.create(...)
+          - pattern: $C.chat.completions.create(...)
+          - pattern: $C.responses.create(...)
+          - pattern: generateText(...)
+          - pattern: streamText(...)
+      - pattern-either:
+          - pattern-inside: $APP.$M($PATH, ($REQ, $RES) => { ... })
+          - pattern-inside: $APP.$M($PATH, async ($REQ, $RES) => { ... })
+          - pattern-inside: $APP.$M($PATH, function ($REQ, $RES) { ... })
+          - pattern-inside: $APP.$M($PATH, async function ($REQ, $RES) { ... })
+          - pattern-inside: |
+              export async function $F(...) { ... }
+          - pattern-inside: |
+              export default async function $F(...) { ... }
+      - pattern-not-inside: |
+          $S = await auth(...);
+          ...
+      - pattern-not-inside: |
+          $S = await getServerSession(...);
+          ...
+      - pattern-not-inside: |
+          $S = await currentUser(...);
+          ...
+      - pattern-not-inside: |
+          $S = await $SB.auth.getUser(...);
+          ...
+      - pattern-not-inside: |
+          $S = await verifyToken(...);
+          ...
+      - pattern-not-inside: |
+          $S = $JWT.verify(...);
+          ...
+      - pattern-not-inside: |
+          if (<... $REQ.user ...>) { ... }
+          ...
+
+  - id: ge.js.nosql-where
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: MongoDB $where с подстановкой значений
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-943
+        title:
+          ru: "NoSQL-инъекция через $where"
+          kk: "$where арқылы NoSQL-инъекция"
+          en: "NoSQL injection via $where"
+        fix:
+          ru: "Не используйте $where. Пишите условия обычными операторами, например { userId: id, stocks: { $gt: threshold } }, и приводите значения к нужному типу."
+          kk: "$where қолданбаңыз. Шарттарды кәдімгі операторлармен жазыңыз, мысалы { userId: id, stocks: { $gt: threshold } }, және мәндерді қажетті түрге келтіріңіз."
+          en: "Do not use $where. Write conditions with regular operators, for example { userId: id, stocks: { $gt: threshold } }, and convert values to the expected type."
+    pattern-either:
+      - pattern: "{..., $where: `...${$X}...`, ...}"
+      - pattern: '{..., $where: "..." + $X, ...}'
+      - pattern: '{..., $where: $X + "...", ...}'
+
+  - id: ge.js.template-autoescape-off
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Автоэкранирование шаблонов выключено
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-79
+        title:
+          ru: "Отключено автоэкранирование в шаблонах"
+          kk: "Шаблондарда автоэкрандау өшірілген"
+          en: "Template auto-escaping is disabled"
+        fix:
+          ru: "Включите autoescape: true. Если в каком-то месте нужен HTML, отметьте его явно (фильтр safe) и очистите через DOMPurify."
+          kk: "autoescape: true қосыңыз. Бір жерде HTML керек болса, оны анық белгілеңіз (safe сүзгісі) және DOMPurify арқылы тазалаңыз."
+          en: "Set autoescape: true. Where HTML is required, mark it explicitly (safe filter) and sanitize it with DOMPurify."
+    pattern-either:
+      - pattern: "{..., autoescape: false, ...}"
+      - pattern: "{..., noEscape: true, ...}"

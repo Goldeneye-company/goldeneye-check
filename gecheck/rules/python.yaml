@@ -1,0 +1,300 @@
+# Rules for Python (FastAPI, Flask, Django).
+
+rules:
+  - id: ge.py.sql-injection
+    languages: [python]
+    severity: ERROR
+    message: SQL-запрос собран форматированием строки
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-89
+        title:
+          ru: "SQL-запрос собирается форматированием строки"
+          kk: "SQL-сұраныс жолды пішімдеу арқылы құрастырылады"
+          en: "SQL query built with string formatting"
+        fix:
+          ru: "Передавайте значения вторым аргументом: cursor.execute('... WHERE id = %s', (oid,)). Не собирайте SQL через f-строки, % и +."
+          kk: "Мәндерді екінші аргумент ретінде беріңіз: cursor.execute('... WHERE id = %s', (oid,)). SQL-ді f-жолдар, % және + арқылы құрастырмаңыз."
+          en: "Pass values as the second argument: cursor.execute('... WHERE id = %s', (oid,)). Do not build SQL with f-strings, % or +."
+    patterns:
+      - pattern-either:
+          - pattern: $C.execute(f"...", ...)
+          - pattern: $C.execute("..." % $X, ...)
+          - pattern: $C.execute("..." + $X, ...)
+          - pattern: $C.execute("...".format(...), ...)
+          - pattern: $C.executemany(f"...", ...)
+          - pattern: $C.raw(f"...", ...)
+          - pattern: $C.raw("..." % $X, ...)
+          - pattern: text(f"...")
+          - pattern: text("..." % $X)
+          - pattern: |
+              $Q = f"..."
+              ...
+              $C.execute($Q, ...)
+          - pattern: |
+              $Q = "..." % $X
+              ...
+              $C.execute($Q, ...)
+
+  - id: ge.py.command-injection
+    languages: [python]
+    severity: ERROR
+    message: Команда ОС с непостоянной строкой через shell
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-78
+        title:
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
+        fix:
+          ru: "Используйте subprocess.run([...]) со списком аргументов без shell=True и проверяйте значения по списку допустимых."
+          kk: "subprocess.run([...]) аргументтер тізімімен, shell=True-сыз қолданып, мәндерді рұқсат етілген тізім бойынша тексеріңіз."
+          en: "Use subprocess.run([...]) with an argument list and without shell=True, and check values against an allowlist."
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.$F($CMD, ..., shell=True, ...)
+          - pattern: os.system($CMD)
+          - pattern: os.popen($CMD, ...)
+      - pattern-not: subprocess.$F("...", ...)
+      - pattern-not: os.system("...")
+      - pattern-not: os.popen("...", ...)
+
+  - id: ge.py.unsafe-deserialization
+    languages: [python]
+    severity: ERROR
+    message: Небезопасная десериализация
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-502
+        title:
+          ru: "Небезопасная десериализация (pickle, yaml.load)"
+          kk: "Қауіпті десериализация (pickle, yaml.load)"
+          en: "Unsafe deserialization (pickle, yaml.load)"
+        fix:
+          ru: "Для внешних данных используйте JSON или yaml.safe_load. pickle подходит только для своих доверенных файлов."
+          kk: "Сыртқы деректер үшін JSON немесе yaml.safe_load қолданыңыз. pickle тек өзіңіздің сенімді файлдарыңызға жарайды."
+          en: "Use JSON or yaml.safe_load for external data. pickle is only suitable for your own trusted files."
+    pattern-either:
+      - pattern: pickle.loads(...)
+      - pattern: pickle.load(...)
+      - pattern: cPickle.loads(...)
+      - pattern: marshal.loads(...)
+      - patterns:
+          - pattern: yaml.load(...)
+          - pattern-not: yaml.load(..., Loader=yaml.SafeLoader, ...)
+          - pattern-not: yaml.load(..., Loader=SafeLoader, ...)
+
+  - id: ge.py.code-injection
+    languages: [python]
+    severity: ERROR
+    message: eval/exec от непостоянных данных
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-95
+        title:
+          ru: "Выполнение кода через eval или exec"
+          kk: "eval немесе exec арқылы кодты орындау"
+          en: "Code execution via eval or exec"
+        fix:
+          ru: "Уберите eval и exec. Для разбора чисел и структур используйте json.loads или ast.literal_eval."
+          kk: "eval және exec алып тастаңыз. Сандар мен құрылымдарды талдау үшін json.loads немесе ast.literal_eval қолданыңыз."
+          en: "Remove eval and exec. Use json.loads or ast.literal_eval to parse numbers and structures."
+    patterns:
+      - pattern-either:
+          - pattern: eval($X, ...)
+          - pattern: exec($X, ...)
+      - pattern-not: eval("...", ...)
+      - pattern-not: exec("...", ...)
+
+  - id: ge.py.debug-enabled
+    languages: [python]
+    severity: WARNING
+    message: Режим отладки включён
+    metadata:
+      ge:
+        severity: medium
+        category: config
+        cwe: CWE-489
+        title:
+          ru: "Включён режим отладки"
+          kk: "Түзету режимі қосулы"
+          en: "Debug mode is enabled"
+        fix:
+          ru: "Отключите debug на рабочем сервере и задавайте его через переменную окружения. В Flask режим debug=True открывает консоль, которая выполняет код."
+          kk: "Жұмыс серверінде debug өшіріп, оны орта айнымалысы арқылы орнатыңыз. Flask-те debug=True код орындайтын консольді ашады."
+          en: "Disable debug on the production server and set it through an environment variable. In Flask, debug=True exposes a console that executes code."
+    pattern-either:
+      - pattern: $APP.run(..., debug=True, ...)
+      - patterns:
+          - pattern: DEBUG = True
+          - pattern-inside: |
+              SECRET_KEY = ...
+              ...
+
+  - id: ge.py.hardcoded-credential
+    languages: [python]
+    severity: WARNING
+    message: Пароль или ключ записан прямо в коде
+    metadata:
+      ge:
+        severity: high
+        category: secrets
+        cwe: CWE-798
+        title:
+          ru: "Пароль или ключ в исходном коде"
+          kk: "Бастапқы кодтағы құпиясөз немесе кілт"
+          en: "Password or key in source code"
+        fix:
+          ru: "Читайте значение из переменной окружения (os.environ) и смените пароль или ключ."
+          kk: "Мәнді орта айнымалысынан (os.environ) оқып, құпиясөзді немесе кілтті ауыстырыңыз."
+          en: "Read the value from an environment variable (os.environ) and change the password or key."
+    patterns:
+      - pattern: $NAME = "$VALUE"
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: (?i)^(admin_?)?(pass(word)?|passwd|pwd|secret|client_?secret|api_?key|secret_?key|private_?key|access_?token|auth_?token|jwt_?secret)$
+      - metavariable-regex:
+          metavariable: $VALUE
+          regex: ^(?!(changeme|change-me|your[-_].*|xxx+|\*+|example.*|<.*>)$).{6,}$
+
+  - id: ge.py.jwt-without-verify
+    languages: [python]
+    severity: ERROR
+    message: JWT без проверки подписи
+    metadata:
+      ge:
+        severity: critical
+        category: auth
+        cwe: CWE-347
+        title:
+          ru: "JWT без проверки подписи"
+          kk: "Қолтаңбасы тексерілмейтін JWT"
+          en: "JWT without signature verification"
+        fix:
+          ru: "Проверяйте подпись: jwt.decode(token, key, algorithms=['HS256']). Не отключайте verify_signature и не разрешайте алгоритм none."
+          kk: "Қолтаңбаны тексеріңіз: jwt.decode(token, key, algorithms=['HS256']). verify_signature өшірмеңіз және none алгоритміне рұқсат бермеңіз."
+          en: "Verify the signature: jwt.decode(token, key, algorithms=['HS256']). Do not disable verify_signature or allow the none algorithm."
+    pattern-either:
+      - pattern: 'jwt.decode(..., options={..., "verify_signature": False, ...}, ...)'
+      - pattern: 'jwt.decode(..., algorithms=[..., "none", ...], ...)'
+      - pattern: jwt.decode(..., verify=False, ...)
+
+  - id: ge.py.llm-no-output-limit
+    languages: [python]
+    severity: WARNING
+    message: Вызов LLM без лимита ответа
+    metadata:
+      ge:
+        severity: medium
+        category: ai-cost
+        cwe: CWE-770
+        title:
+          ru: "Вызов API нейросети без max_tokens"
+          kk: "max_tokens көрсетілмеген нейрожелі API шақыруы"
+          en: "LLM API call without max_tokens"
+        fix:
+          ru: "Задайте max_tokens (или max_completion_tokens) и ограничьте длину входного текста."
+          kk: "max_tokens (немесе max_completion_tokens) мәнін орнатып, кіріс мәтінінің ұзындығын шектеңіз."
+          en: "Set max_tokens (or max_completion_tokens) and limit the input length."
+    patterns:
+      - pattern-either:
+          - pattern: $C.chat.completions.create(...)
+          - pattern: $C.responses.create(...)
+      - pattern-not: $C.$X.$Y(..., max_tokens=$N, ...)
+      - pattern-not: $C.$X.$Y(..., max_completion_tokens=$N, ...)
+      - pattern-not: $C.$X(..., max_output_tokens=$N, ...)
+
+  - id: ge.py.llm-huge-output-limit
+    languages: [python]
+    severity: INFO
+    message: Слишком большой лимит ответа LLM
+    metadata:
+      ge:
+        severity: medium
+        category: ai-cost
+        cwe: CWE-770
+        title:
+          ru: "Слишком большое значение max_tokens"
+          kk: "max_tokens мәні тым үлкен"
+          en: "max_tokens is too high"
+        fix:
+          ru: "Уменьшите max_tokens до нужного значения и добавьте лимит запросов на пользователя."
+          kk: "max_tokens мәнін қажетті деңгейге дейін азайтып, бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Reduce max_tokens to what you need and add a per-user request limit."
+    patterns:
+      - pattern-either:
+          - pattern: $C.$X.$Y(..., max_tokens=$N, ...)
+          - pattern: $C.$X.$Y(..., max_completion_tokens=$N, ...)
+      - metavariable-comparison:
+          metavariable: $N
+          comparison: $N > 8192
+
+  - id: ge.py.llm-endpoint-without-auth
+    languages: [python]
+    severity: ERROR
+    message: Эндпоинт вызывает LLM без проверки пользователя
+    metadata:
+      ge:
+        severity: critical
+        category: ai-cost
+        cwe: CWE-306
+        title:
+          ru: "Эндпоинт вызывает нейросеть без авторизации"
+          kk: "Эндпоинт нейрожеліні авторизациясыз шақырады"
+          en: "Endpoint calls an LLM without authentication"
+        fix:
+          ru: "Добавьте проверку пользователя (Depends(get_current_user) или @login_required) и лимит запросов на пользователя."
+          kk: "Пайдаланушыны тексеруді (Depends(get_current_user) немесе @login_required) және бір пайдаланушыға сұраныс шегін қосыңыз."
+          en: "Add a user check (Depends(get_current_user) or @login_required) and a per-user request limit."
+    patterns:
+      - pattern-either:
+          - pattern: $C.messages.create(...)
+          - pattern: $C.chat.completions.create(...)
+          - pattern: $C.responses.create(...)
+          - pattern: $C.generate_content(...)
+      - pattern-either:
+          - pattern-inside: |
+              @$APP.$M(...)
+              def $F(...):
+                ...
+          - pattern-inside: |
+              @$APP.$M(...)
+              async def $F(...):
+                ...
+      - metavariable-regex:
+          metavariable: $M
+          regex: ^(get|post|put|patch|delete|route|api_route|websocket)$
+      - pattern-not-inside: |
+          @$APP.$M(...)
+          def $F(..., $U = Depends(...), ...):
+            ...
+      - pattern-not-inside: |
+          @$APP.$M(...)
+          async def $F(..., $U = Depends(...), ...):
+            ...
+      - pattern-not-inside: |
+          @$APP.$M(..., dependencies=[...], ...)
+          def $F(...):
+            ...
+      - pattern-not-inside: |
+          @$APP.$M(..., dependencies=[...], ...)
+          async def $F(...):
+            ...
+      - pattern-not-inside: |
+          @login_required
+          def $F(...):
+            ...
+      - pattern-not-inside: |
+          @$APP.$M(...)
+          @login_required
+          def $F(...):
+            ...

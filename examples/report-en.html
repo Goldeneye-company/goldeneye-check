@@ -1,0 +1,194 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>GoldenEye Check: shop</title><style>
+:root{--bg:#F4F3EF;--card:#FFFFFF;--ink:#15191C;--muted:#5B625E;--rule:#DDDAD2;--green:#24584A;--gold:#B8913F;
+--crit:#A3302A;--high:#B8641E;--med:#8A7A1F;--low:#4F6B78;--code:#F1EFE9;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#121619;--card:#1A1F23;--ink:#E9E7E1;--muted:#A3AAA6;--rule:#2C3338;
+--green:#6FAE95;--gold:#D4AC57;--crit:#E0726B;--high:#E39A5B;--med:#CDBB5A;--low:#8FB0BF;--code:#22282D;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 56px;overflow-wrap:anywhere}
+.summary>*,.f{min-width:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:.2em;font-size:13px}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block}
+h1{font-size:clamp(24px,3.2vw,34px);font-weight:500;margin:18px 0 4px;line-height:1.15}
+.meta{color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.summary{display:grid;grid-template-columns:minmax(200px,260px) 1fr;gap:16px;margin:28px 0}
+@media (max-width:720px){.summary{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--rule);padding:20px 22px}
+.score{display:flex;align-items:baseline;gap:12px}.score b{font-size:56px;font-weight:500;line-height:1}
+.score span{color:var(--muted)}.grade{display:inline-grid;place-items:center;width:44px;height:44px;border:2px solid var(--ink);
+font-size:22px;font-weight:600;margin-left:auto}
+.label{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}@media (max-width:520px){.counts{grid-template-columns:repeat(2,1fr)}}
+.count{border-top:3px solid;padding-top:8px}.count b{font-size:28px;font-weight:500;display:block}.count small{color:var(--muted)}
+.c-critical{border-color:var(--crit)}.c-high{border-color:var(--high)}.c-medium{border-color:var(--med)}.c-low{border-color:var(--low)}
+ol.top{margin:6px 0 0;padding-left:20px}ol.top li{margin:4px 0}
+h2{font-size:20px;font-weight:500;margin:36px 0 12px;display:flex;align-items:center;gap:10px}
+h2 .dot{width:12px;height:12px;border-radius:50%}
+.f{background:var(--card);border:1px solid var(--rule);border-left:4px solid;padding:16px 20px;margin:0 0 10px}
+.f h3{margin:0 0 6px;font-size:16px;font-weight:600;line-height:1.35}
+.f .loc{font:13px/1.4 ui-monospace,Consolas,monospace;color:var(--muted);word-break:break-all}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.tag{font-size:12px;border:1px solid var(--rule);padding:1px 8px;color:var(--muted)}
+.tag.hist{border-color:var(--gold);color:var(--gold)}
+pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-monospace,Consolas,monospace;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.fix{margin:8px 0 0}.fix b{color:var(--green)}
+.note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
+.notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
+.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
+.cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
+.cta a{color:var(--gold);font-weight:600}
+footer{margin-top:28px;color:var(--muted);font-size:13px}
+@media print{body{background:#fff}.f,.card{break-inside:avoid}}
+</style></head><body><main class="wrap">
+<div class="brand"><i></i>GOLDENEYE CHECK</div>
+<h1>Code check report</h1>
+<div class="meta"><span>Project: <b>shop</b></span>
+<span>Date: 2026-10-09</span>
+<span>Commit: 02588f1</span>
+</div>
+<section class="summary">
+<div class="card"><p class="label">Security score</p>
+<div class="score"><b>0</b><span>/ 100</span><span class="grade" title="Grade">F</span></div></div>
+<div class="card"><p class="label">Total findings: 33</p><div class="counts"><div class='count c-critical'><b>16</b><small>Critical</small></div><div class='count c-high'><b>12</b><small>High</small></div><div class='count c-medium'><b>5</b><small>Medium</small></div><div class='count c-low'><b>0</b><small>Low</small></div></div>
+<p class='label' style='margin-top:18px'>Fix first</p><ol class='top'><li>.env is committed to git <span class='loc'>(.env)</span></li><li>Secret in code: Stripe secret key <span class='loc'>(.env:1)</span></li><li>Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY <span class='loc'>(.env.local:1)</span></li></ol>
+</div></section>
+<h2><span class='dot' style='background:var(--crit)'></span>Critical · 16</h2>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>.env is committed to git</h3><div class="loc">.env</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/538.html' rel='noopener'>CWE-538</a><span class='tag'>builtin</span></div><p class='note'>the file contains values that look like real passwords and keys</p>
+<p class="fix"><b>How to fix:</b> Run git rm --cached .env, add .env* to .gitignore and rotate the keys from this file, since they remain in the history.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Secret in code: Stripe secret key</h3><div class="loc">.env:1</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>value sk_liv…P2</p>
+<p class="fix"><b>How to fix:</b> Rotate the key in the service console and treat the old one as compromised. Then move the value to an environment variable or a secrets store.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</h3><div class="loc">.env.local:1</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…BQ</pre>
+<p class="fix"><b>How to fix:</b> Variables prefixed with NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ end up in code loaded by the browser. Remove the prefix, use the value only on the server and rotate the key.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL query built with string formatting</h3><div class="loc">api/main.py:19</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>return sqlite3.connect(&quot;db&quot;).execute(&quot;SELECT * FROM orders WHERE id=%s&quot; % oid).fetchall()  # GE:V12</pre>
+<p class="fix"><b>How to fix:</b> Pass values as the second argument: cursor.execute(&#x27;... WHERE id = %s&#x27;, (oid,)). Do not build SQL with f-strings, % or +.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Unsafe deserialization (pickle, yaml.load)</h3><div class="loc">api/main.py:29</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/502.html' rel='noopener'>CWE-502</a><span class='tag'>opengrep</span></div><pre>return pickle.loads(await req.body())  # GE:V13</pre>
+<p class="fix"><b>How to fix:</b> Use JSON or yaml.safe_load for external data. pickle is only suitable for your own trusted files.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Endpoint calls an LLM without authentication</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>LLM usage</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>How to fix:</b> Add a user check (Depends(get_current_user) or @login_required) and a per-user request limit.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>OS command injection</h3><div class="loc">api/main.py:47</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>return subprocess.run(&quot;nslookup &quot; + host, shell=True, capture_output=True).stdout  # GE:V15</pre>
+<p class="fix"><b>How to fix:</b> Use subprocess.run([...]) with an argument list and without shell=True, and check values against an allowlist.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Endpoint calls an LLM without authentication</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>LLM usage</span><a class='tag' href='https://cwe.mitre.org/data/definitions/306.html' rel='noopener'>CWE-306</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>How to fix:</b> Check the user before calling the model (session, token or middleware) and add a per-user request limit.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Firebase: rules in firestore.rules allow access to everyone</h3><div class="loc">firestore.rules:5</div>
+<div class="tags"><span class='tag'>Data access</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>How to fix:</b> Allow access only to authenticated users and only to their own data, for example allow read, write: if request.auth != null &amp;&amp; request.auth.uid == resource.data.owner;</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL injection in a database query</h3><div class="loc">public/contact.php:3</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
+<p class="fix"><b>How to fix:</b> Use prepared statements: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Secret in git history: OpenAI API key</h3><div class="loc">src/config.js (in git history, 2b74b4d6)</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit 2b74b4d6, value sk-pro…OJ</p>
+<p class="fix"><b>How to fix:</b> The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Secret in git history: Stripe secret key</h3><div class="loc">src/payments.js (in git history, 2b74b4d6)</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit 2b74b4d6, value sk_liv…pV</p>
+<p class="fix"><b>How to fix:</b> The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL injection in a database query</h3><div class="loc">src/server/users.js:9</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const rows = await db.query(`SELECT * FROM users WHERE id = ${req.params.id}`); // GE:V01</pre>
+<p class="fix"><b>How to fix:</b> Pass values as query parameters, for example db.query(&#x27;... WHERE id = $1&#x27;, [id]), instead of building the query string.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>SQL injection in a database query</h3><div class="loc">src/server/users.js:19</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>const r = await db.query(&quot;SELECT * FROM items WHERE name = &#x27;&quot; + req.query.name + &quot;&#x27;&quot;); // GE:V02</pre>
+<p class="fix"><b>How to fix:</b> Pass values as query parameters, for example db.query(&#x27;... WHERE id = $1&#x27;, [id]), instead of building the query string.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>OS command injection</h3><div class="loc">src/server/users.js:26</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/78.html' rel='noopener'>CWE-78</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/ping&quot;, (req, res) =&gt; exec(&quot;ping -c 1 &quot; + req.query.host, (e, out) =&gt; res.json({ out }))); // GE:V04</pre>
+<p class="fix"><b>How to fix:</b> Do not pass user data to a shell. Use execFile or spawn with an argument list and check the value against an allowlist.</p></article>
+<article class="f" style="border-left-color:var(--crit)">
+<h3>Code execution via eval or new Function</h3><div class="loc">src/server/users.js:46</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/95.html' rel='noopener'>CWE-95</a><span class='tag'>opengrep</span></div><pre>app.post(&quot;/calc&quot;, (req, res) =&gt; res.json({ result: eval(req.body.expr) })); // GE:V10</pre>
+<p class="fix"><b>How to fix:</b> Remove eval and new Function. Use JSON.parse to parse data.</p></article>
+<h2><span class='dot' style='background:var(--high)'></span>High · 12</h2>
+<article class="f" style="border-left-color:var(--high)">
+<h3>docker-compose: default database password (POSTGRES_PASSWORD)</h3><div class="loc">docker-compose.yml:5</div>
+<div class="tags"><span class='tag'>Configuration</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1393.html' rel='noopener'>CWE-1393</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>How to fix:</b> Set a long random password through a .env file that is not stored in git, and change the password on servers where this file was already used.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Vulnerable dependency: lodash 4.17.15</h3><div class="loc">package-lock.json</div>
+<div class="tags"><span class='tag'>Dependencies</span><a class='tag' href='https://cwe.mitre.org/data/definitions/1395.html' rel='noopener'>CWE-1395</a><span class='tag'>osv-scanner</span></div><p class='note'>vulnerabilities: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465</p>
+<p class="fix"><b>How to fix:</b> Upgrade lodash to 4.18.0 or later and regenerate the lock file.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Unescaped user input in HTML (XSS)</h3><div class="loc">public/contact.php:4</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>echo &quot;&lt;p&gt;Результаты для &quot; . $_GET[&#x27;email&#x27;] . &quot;&lt;/p&gt;&quot;; // GE:V18</pre>
+<p class="fix"><b>How to fix:</b> Output data through htmlspecialchars($value, ENT_QUOTES, &#x27;UTF-8&#x27;).</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Mail header injection</h3><div class="loc">public/contact.php:7</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/93.html' rel='noopener'>CWE-93</a><span class='tag'>opengrep</span></div><pre>mail(&quot;info@example.kz&quot;, &quot;Заявка с сайта&quot;, $_POST[&#x27;message&#x27;], $headers); // GE:V19</pre>
+<p class="fix"><b>How to fix:</b> Do not put user data into mail headers. Validate addresses with filter_var(..., FILTER_VALIDATE_EMAIL) and strip line breaks.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Unescaped user input in HTML (XSS)</h3><div class="loc">src/server/users.js:23</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/hello&quot;, (req, res) =&gt; res.send(&quot;&lt;h1&gt;Hi &quot; + req.query.name + &quot;&lt;/h1&gt;&quot;)); // GE:V03</pre>
+<p class="fix"><b>How to fix:</b> Escape the output (escape-html or an auto-escaping template engine) or return JSON. Sanitize user HTML with DOMPurify.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>JWT without signature verification (jwt.decode)</h3><div class="loc">src/server/users.js:29</div>
+<div class="tags"><span class='tag'>Authentication</span><a class='tag' href='https://cwe.mitre.org/data/definitions/347.html' rel='noopener'>CWE-347</a><span class='tag'>opengrep</span></div><pre>const user = jwt.decode(req.headers.authorization); // GE:V05</pre>
+<p class="fix"><b>How to fix:</b> jwt.decode does not verify the signature. For authentication use jwt.verify(token, secret, { algorithms: [&#x27;HS256&#x27;] }).</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>File path from request data (path traversal)</h3><div class="loc">src/server/users.js:33</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/22.html' rel='noopener'>CWE-22</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/file&quot;, (req, res) =&gt; res.sendFile(&quot;/srv/files/&quot; + req.query.name)); // GE:V06</pre>
+<p class="fix"><b>How to fix:</b> Use only the file name (path.basename), check it against an allowlist and make sure the resulting path stays inside the intended folder.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Password or key in source code</h3><div class="loc">src/server/users.js:35</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>opengrep</span></div><pre>const ADMIN_PASSWORD = &quot;Qwerty…6!&quot;; // GE:V07</pre>
+<p class="fix"><b>How to fix:</b> Move the value to an environment variable (process.env) and change the password or key.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Request to a user-supplied URL (SSRF)</h3><div class="loc">src/server/users.js:40</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/918.html' rel='noopener'>CWE-918</a><span class='tag'>opengrep</span></div><pre>const page = await fetch(req.query.url); // GE:V08</pre>
+<p class="fix"><b>How to fix:</b> Allow requests only to known domains. Block internal addresses (localhost, 10.x, 169.254.169.254) and redirects.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>NoSQL injection via $where</h3><div class="loc">src/server/users.js:49</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/943.html' rel='noopener'>CWE-943</a><span class='tag'>opengrep</span></div><pre>const docs = await stocks.find({ $where: `this.price &gt; ${req.query.min}` }).toArray(); // GE:V27</pre>
+<p class="fix"><b>How to fix:</b> Do not use $where. Write conditions with regular operators, for example { userId: id, stocks: { $gt: threshold } }, and convert values to the expected type.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Template auto-escaping is disabled</h3><div class="loc">src/server/users.js:53</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>swig.setDefaults({ autoescape: false }); // GE:V28</pre>
+<p class="fix"><b>How to fix:</b> Set autoescape: true. Where HTML is required, mark it explicitly (safe filter) and sanitize it with DOMPurify.</p></article>
+<article class="f" style="border-left-color:var(--high)">
+<h3>Supabase: RLS is not enabled for table public.profiles</h3><div class="loc">supabase/migrations/001_init.sql:1</div>
+<div class="tags"><span class='tag'>Data access</span><a class='tag' href='https://cwe.mitre.org/data/definitions/284.html' rel='noopener'>CWE-284</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>How to fix:</b> Without RLS anyone with the public anon key can read and modify the table. Run alter table public.profiles enable row level security; and add access policies.</p></article>
+<h2><span class='dot' style='background:var(--med)'></span>Medium · 5</h2>
+<article class="f" style="border-left-color:var(--med)">
+<h3>max_tokens is too high</h3><div class="loc">api/main.py:36</div>
+<div class="tags"><span class='tag'>LLM usage</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>return client.messages.create(model=&quot;claude-sonnet-5-5&quot;, max_tokens=100000, messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: data[&quot;q&quot;]}])  # GE:V14</pre>
+<p class="fix"><b>How to fix:</b> Reduce max_tokens to what you need and add a per-user request limit.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Debug mode is enabled</h3><div class="loc">api/main.py:53</div>
+<div class="tags"><span class='tag'>Configuration</span><a class='tag' href='https://cwe.mitre.org/data/definitions/489.html' rel='noopener'>CWE-489</a><span class='tag'>opengrep</span></div><pre>flask_app.run(host=&quot;0.0.0.0&quot;, debug=True)  # GE:V16</pre>
+<p class="fix"><b>How to fix:</b> Disable debug on the production server and set it through an environment variable. In Flask, debug=True exposes a console that executes code.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>LLM API call without max_tokens</h3><div class="loc">app/api/chat/route.ts:7</div>
+<div class="tags"><span class='tag'>LLM usage</span><a class='tag' href='https://cwe.mitre.org/data/definitions/770.html' rel='noopener'>CWE-770</a><span class='tag'>opengrep</span></div><pre>const completion = await openai.chat.completions.create({ model: &quot;gpt-5&quot;, messages: [{ role: &quot;user&quot;, content: prompt }] }); // GE:V11</pre>
+<p class="fix"><b>How to fix:</b> Set max_tokens (or max_completion_tokens) and limit the input length.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>docker-compose: database port 5432 is exposed</h3><div class="loc">docker-compose.yml:7</div>
+<div class="tags"><span class='tag'>Configuration</span><a class='tag' href='https://cwe.mitre.org/data/definitions/668.html' rel='noopener'>CWE-668</a><span class='tag'>builtin</span></div>
+<p class="fix"><b>How to fix:</b> Remove the port mapping or bind it to localhost: &quot;127.0.0.1:5432:5432&quot;.</p></article>
+<article class="f" style="border-left-color:var(--med)">
+<h3>Redirect to a URL from the request</h3><div class="loc">src/server/users.js:44</div>
+<div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/601.html' rel='noopener'>CWE-601</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/go&quot;, (req, res) =&gt; res.redirect(req.query.next)); // GE:V09</pre>
+<p class="fix"><b>How to fix:</b> Redirect only to your own paths (starting with &#x27;/&#x27; but not &#x27;//&#x27;) or to allowlisted domains.</p></article>
+<h2>Not checked</h2><p class="note">Access-control logic (for example, whether one user can open another user&#x27;s data), cloud and payment settings, behaviour under load. Source code was not sent anywhere. Package names and versions were sent to the OSV database for the dependency check.</p>
+<section class="cta"><h2>Manual review</h2><p>GoldenEye specialists can review access logic, server and cloud settings and help fix the issues found.</p>
+<p><a href="https://goldeneye.kz/en/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>
+<footer>Generated by GoldenEye Check 0.1.0 · rules 2026.10.0 · Engines: gitleaks 8.30.1, osv-scanner 2.6.0, opengrep 1.30.0, builtin 0.1.0 · 11.0 s</footer>
+</main></body></html>

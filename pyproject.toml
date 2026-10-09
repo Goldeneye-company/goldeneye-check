@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "goldeneye-check"
+version = "0.1.0"
+description = "Checks code and websites for common vulnerabilities"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Goldeneye LLP", email = "info@goldeneye.kz" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://goldeneye.kz/en/check/"
+Repository = "https://github.com/Goldeneye-company/goldeneye-check"
+Issues = "https://github.com/Goldeneye-company/goldeneye-check/issues"
+
+[project.scripts]
+gecheck = "gecheck.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["gecheck*"]
+
+[tool.setuptools.package-data]
+gecheck = ["rules/*.yaml"]

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Manual security audit
+    url: https://goldeneye.kz/en/audit/
+    about: Review of access control, servers and cloud infrastructure by GoldenEye specialists

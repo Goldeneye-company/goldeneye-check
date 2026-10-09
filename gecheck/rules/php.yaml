@@ -5,7 +5,7 @@ rules:
     languages: [php]
     mode: taint
     severity: ERROR
-    message: SQL-запрос собран из $_GET/$_POST
+    message: SQL query built from $_GET/$_POST
     metadata:
       ge:
         severity: critical
@@ -58,7 +58,7 @@ rules:
     languages: [php]
     mode: taint
     severity: WARNING
-    message: Данные формы выводятся без экранирования
+    message: Form data printed without escaping
     metadata:
       ge:
         severity: high
@@ -90,7 +90,7 @@ rules:
     languages: [php]
     mode: taint
     severity: ERROR
-    message: Команда ОС из данных формы
+    message: OS command from form data
     metadata:
       ge:
         severity: critical
@@ -121,7 +121,7 @@ rules:
     languages: [php]
     mode: taint
     severity: ERROR
-    message: include/require из данных формы
+    message: include/require from form data
     metadata:
       ge:
         severity: critical
@@ -149,7 +149,7 @@ rules:
     languages: [php]
     mode: taint
     severity: WARNING
-    message: Заголовки письма собраны из данных формы
+    message: Email headers built from form data
     metadata:
       ge:
         severity: high
@@ -176,7 +176,7 @@ rules:
     languages: [php]
     mode: taint
     severity: ERROR
-    message: unserialize от данных формы
+    message: unserialize on form data
     metadata:
       ge:
         severity: critical

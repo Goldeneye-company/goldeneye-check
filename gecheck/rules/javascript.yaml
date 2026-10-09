@@ -6,7 +6,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: ERROR
-    message: SQL-запрос собран из данных запроса
+    message: SQL query built from request data
     metadata:
       ge:
         severity: critical
@@ -45,7 +45,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: ERROR
-    message: Команда ОС собрана из данных запроса
+    message: OS command built from request data
     metadata:
       ge:
         severity: critical
@@ -74,7 +74,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: ERROR
-    message: Код выполняется из данных запроса
+    message: Code executed from request data
     metadata:
       ge:
         severity: critical
@@ -100,7 +100,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: WARNING
-    message: Данные запроса попадают в HTML без экранирования
+    message: Request data goes into HTML without escaping
     metadata:
       ge:
         severity: high
@@ -135,7 +135,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: WARNING
-    message: Путь к файлу собран из данных запроса
+    message: File path built from request data
     metadata:
       ge:
         severity: high
@@ -169,7 +169,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: WARNING
-    message: Сервер ходит по адресу из запроса
+    message: Server fetches a URL from the request
     metadata:
       ge:
         severity: high
@@ -199,7 +199,7 @@ rules:
     languages: [javascript, typescript]
     mode: taint
     severity: INFO
-    message: Редирект на адрес из запроса
+    message: Redirect to a URL from the request
     metadata:
       ge:
         severity: medium
@@ -220,7 +220,7 @@ rules:
   - id: ge.js.jwt-decode-without-verify
     languages: [javascript, typescript]
     severity: WARNING
-    message: jwt.decode не проверяет подпись
+    message: jwt.decode does not verify the signature
     metadata:
       ge:
         severity: high
@@ -241,7 +241,7 @@ rules:
   - id: ge.js.jwt-none-algorithm
     languages: [javascript, typescript]
     severity: ERROR
-    message: JWT принимает алгоритм none
+    message: JWT accepts the none algorithm
     metadata:
       ge:
         severity: critical
@@ -260,7 +260,7 @@ rules:
   - id: ge.js.hardcoded-credential
     languages: [javascript, typescript]
     severity: WARNING
-    message: Пароль или ключ записан прямо в коде
+    message: Password or key hardcoded in the source
     metadata:
       ge:
         severity: high
@@ -290,7 +290,7 @@ rules:
   - id: ge.js.cors-credentials-any-origin
     languages: [javascript, typescript]
     severity: WARNING
-    message: CORS открыт для любого сайта вместе с куками
+    message: CORS open to any site with cookies
     metadata:
       ge:
         severity: medium
@@ -313,7 +313,7 @@ rules:
   - id: ge.js.llm-no-output-limit
     languages: [javascript, typescript]
     severity: WARNING
-    message: Вызов LLM без лимита ответа
+    message: LLM call without a response limit
     metadata:
       ge:
         severity: medium
@@ -338,7 +338,7 @@ rules:
   - id: ge.js.llm-huge-output-limit
     languages: [javascript, typescript]
     severity: INFO
-    message: Слишком большой лимит ответа LLM
+    message: LLM response limit is too high
     metadata:
       ge:
         severity: medium
@@ -363,7 +363,7 @@ rules:
   - id: ge.js.llm-endpoint-without-auth
     languages: [javascript, typescript]
     severity: ERROR
-    message: Эндпоинт вызывает LLM без проверки пользователя
+    message: Endpoint calls an LLM without checking the user
     metadata:
       ge:
         severity: critical
@@ -418,7 +418,7 @@ rules:
   - id: ge.js.nosql-where
     languages: [javascript, typescript]
     severity: WARNING
-    message: MongoDB $where с подстановкой значений
+    message: MongoDB $where with interpolated values
     metadata:
       ge:
         severity: high
@@ -440,7 +440,7 @@ rules:
   - id: ge.js.template-autoescape-off
     languages: [javascript, typescript]
     severity: WARNING
-    message: Автоэкранирование шаблонов выключено
+    message: Template autoescaping is disabled
     metadata:
       ge:
         severity: high

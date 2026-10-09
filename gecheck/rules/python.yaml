@@ -4,7 +4,7 @@ rules:
   - id: ge.py.sql-injection
     languages: [python]
     severity: ERROR
-    message: SQL-запрос собран форматированием строки
+    message: SQL query built with string formatting
     metadata:
       ge:
         severity: critical
@@ -41,7 +41,7 @@ rules:
   - id: ge.py.command-injection
     languages: [python]
     severity: ERROR
-    message: Команда ОС с непостоянной строкой через shell
+    message: OS command with a non-constant string through the shell
     metadata:
       ge:
         severity: critical
@@ -67,7 +67,7 @@ rules:
   - id: ge.py.unsafe-deserialization
     languages: [python]
     severity: ERROR
-    message: Небезопасная десериализация
+    message: Unsafe deserialization
     metadata:
       ge:
         severity: critical
@@ -94,7 +94,7 @@ rules:
   - id: ge.py.code-injection
     languages: [python]
     severity: ERROR
-    message: eval/exec от непостоянных данных
+    message: eval/exec on non-constant data
     metadata:
       ge:
         severity: critical
@@ -118,7 +118,7 @@ rules:
   - id: ge.py.debug-enabled
     languages: [python]
     severity: WARNING
-    message: Режим отладки включён
+    message: Debug mode is enabled
     metadata:
       ge:
         severity: medium
@@ -143,7 +143,7 @@ rules:
   - id: ge.py.hardcoded-credential
     languages: [python]
     severity: WARNING
-    message: Пароль или ключ записан прямо в коде
+    message: Password or key hardcoded in the source
     metadata:
       ge:
         severity: high
@@ -169,7 +169,7 @@ rules:
   - id: ge.py.jwt-without-verify
     languages: [python]
     severity: ERROR
-    message: JWT без проверки подписи
+    message: JWT without signature verification
     metadata:
       ge:
         severity: critical
@@ -191,7 +191,7 @@ rules:
   - id: ge.py.llm-no-output-limit
     languages: [python]
     severity: WARNING
-    message: Вызов LLM без лимита ответа
+    message: LLM call without a response limit
     metadata:
       ge:
         severity: medium
@@ -216,7 +216,7 @@ rules:
   - id: ge.py.llm-huge-output-limit
     languages: [python]
     severity: INFO
-    message: Слишком большой лимит ответа LLM
+    message: LLM response limit is too high
     metadata:
       ge:
         severity: medium
@@ -241,7 +241,7 @@ rules:
   - id: ge.py.llm-endpoint-without-auth
     languages: [python]
     severity: ERROR
-    message: Эндпоинт вызывает LLM без проверки пользователя
+    message: Endpoint calls an LLM without checking the user
     metadata:
       ge:
         severity: critical

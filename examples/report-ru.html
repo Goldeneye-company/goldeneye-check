@@ -35,6 +35,8 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
 .f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
+.pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
+.pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
 .cta a{color:var(--gold);font-weight:600}
 footer{margin-top:28px;color:var(--muted);font-size:13px}
@@ -43,8 +45,8 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="brand"><i></i>GOLDENEYE CHECK</div>
 <h1>Отчёт о проверке кода</h1>
 <div class="meta"><span>Проект: <b>shop</b></span>
-<span>Дата: 2026-10-09</span>
-<span>Коммит: 02588f1</span>
+<span>Дата: 2026-10-13</span>
+<span>Коммит: 25f877e</span>
 </div>
 <section class="summary">
 <div class="card"><p class="label">Индекс защищённости</p>
@@ -59,11 +61,11 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Как исправить:</b> Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите ключи из этого файла, так как они остаются в истории.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Секрет в коде: Stripe secret key</h3><div class="loc">.env:1</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>значение sk_liv…P2</p>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>значение sk_liv…Ei</p>
 <p class="fix"><b>Как исправить:</b> Перевыпустите ключ в консоли сервиса, старый считайте скомпрометированным. Затем перенесите значение в переменную окружения или хранилище секретов.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</h3><div class="loc">.env.local:1</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…BQ</pre>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…45</pre>
 <p class="fix"><b>Как исправить:</b> Переменные с префиксами NEXT_PUBLIC_, VITE_, REACT_APP_ и EXPO_PUBLIC_ попадают в код, который загружает браузер. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL-запрос собирается форматированием строки</h3><div class="loc">api/main.py:19</div>
@@ -94,12 +96,12 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
 <p class="fix"><b>Как исправить:</b> Используйте подготовленные запросы: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Секрет в истории git: OpenAI API key</h3><div class="loc">src/config.js (в истории git, 2b74b4d6)</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит 2b74b4d6, значение sk-pro…OJ</p>
+<h3>Секрет в истории git: OpenAI API key</h3><div class="loc">src/config.js (в истории git, cd75b4d6)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит cd75b4d6, значение sk-pro…ja</p>
 <p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Секрет в истории git: Stripe secret key</h3><div class="loc">src/payments.js (в истории git, 2b74b4d6)</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит 2b74b4d6, значение sk_liv…pV</p>
+<h3>Секрет в истории git: Stripe secret key</h3><div class="loc">src/payments.js (в истории git, cd75b4d6)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит cd75b4d6, значение sk_liv…CH</p>
 <p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL-инъекция в запросе к базе данных</h3><div class="loc">src/server/users.js:9</div>
@@ -128,11 +130,11 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Как исправить:</b> Обновите lodash до версии 4.18.0 или новее и пересоберите lock-файл.</p></article>
 <article class="f" style="border-left-color:var(--high)">
 <h3>Вывод данных пользователя без экранирования (XSS)</h3><div class="loc">public/contact.php:4</div>
-<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>echo &quot;&lt;p&gt;Результаты для &quot; . $_GET[&#x27;email&#x27;] . &quot;&lt;/p&gt;&quot;; // GE:V18</pre>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/79.html' rel='noopener'>CWE-79</a><span class='tag'>opengrep</span></div><pre>echo &quot;&lt;p&gt;Results for &quot; . $_GET[&#x27;email&#x27;] . &quot;&lt;/p&gt;&quot;; // GE:V18</pre>
 <p class="fix"><b>Как исправить:</b> Выводите данные через htmlspecialchars($value, ENT_QUOTES, &#x27;UTF-8&#x27;).</p></article>
 <article class="f" style="border-left-color:var(--high)">
 <h3>Внедрение заголовков письма</h3><div class="loc">public/contact.php:7</div>
-<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/93.html' rel='noopener'>CWE-93</a><span class='tag'>opengrep</span></div><pre>mail(&quot;info@example.kz&quot;, &quot;Заявка с сайта&quot;, $_POST[&#x27;message&#x27;], $headers); // GE:V19</pre>
+<div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/93.html' rel='noopener'>CWE-93</a><span class='tag'>opengrep</span></div><pre>mail(&quot;info@example.kz&quot;, &quot;Website request&quot;, $_POST[&#x27;message&#x27;], $headers); // GE:V19</pre>
 <p class="fix"><b>Как исправить:</b> Не подставляйте пользовательские данные в заголовки письма. Проверяйте адрес через filter_var(..., FILTER_VALIDATE_EMAIL) и удаляйте переводы строк.</p></article>
 <article class="f" style="border-left-color:var(--high)">
 <h3>Вывод данных пользователя без экранирования (XSS)</h3><div class="loc">src/server/users.js:23</div>
@@ -188,7 +190,10 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/601.html' rel='noopener'>CWE-601</a><span class='tag'>opengrep</span></div><pre>app.get(&quot;/go&quot;, (req, res) =&gt; res.redirect(req.query.next)); // GE:V09</pre>
 <p class="fix"><b>Как исправить:</b> Перенаправляйте только на свои пути (начинаются с &#x27;/&#x27;, но не с &#x27;//&#x27;) или на домены из списка допустимых.</p></article>
 <h2>Что не проверялось</h2><p class="note">Логика прав доступа (например, может ли один пользователь открыть данные другого), настройки облачных сервисов и платёжных систем, работа под нагрузкой. Исходный код никуда не отправлялся. Для проверки зависимостей в базу OSV были отправлены названия и версии пакетов.</p>
+<section class="card pro"><h2>Проверка Pro</h2>
+<p>Эта проверка ищет типовые ошибки. Pro добавляет 15 правил для того, что чаще всего ломают в сервисах с оплатой и личным кабинетом: поддельные вебхуки оплаты, слабое хранение паролей, предсказуемые токены и коды, выдачу себе прав администратора через запрос, cookie и JWT без защиты, загрузку файлов без ограничений.</p><p>Pro сначала показывает, сколько проблем нашёл, и только потом предлагает их открыть. Утёкшие ключи и пароли он всегда показывает бесплатно. Работает на Windows.</p>
+<p><a href="https://goldeneye.kz/ru/check/" rel="noopener">Подробнее и цены</a></p></section>
 <section class="cta"><h2>Ручная проверка</h2><p>Специалисты GoldenEye могут проверить логику доступа, настройки серверов и облака и помочь с исправлением найденных проблем.</p>
 <p><a href="https://goldeneye.kz/ru/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>
-<footer>Сформировано GoldenEye Check 0.1.0 · rules 2026.10.0 · Движки: gitleaks 8.30.1, osv-scanner 2.6.0, opengrep 1.30.0, builtin 0.1.0 · 7.0 s</footer>
+<footer>Сформировано GoldenEye Check 0.1.0 · rules 2026.10.0</footer>
 </main></body></html>

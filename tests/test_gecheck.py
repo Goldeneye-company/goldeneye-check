@@ -179,6 +179,16 @@ class ReportTest(unittest.TestCase):
         b.line = 40
         self.assertEqual(a.fingerprint(), b.fingerprint())
 
+    def test_pro_block_only_in_lite_code_reports(self):
+        r = _result([_finding()])
+        self.assertIn("goldeneye.kz/en/check/", to_html(r, "en"))
+        self.assertIn("goldeneye.kz/ru/check/", to_markdown(r, "ru"))
+        r.kind = "site"
+        self.assertNotIn("/check/", to_html(r, "en"))
+        r.kind = "code"
+        r.engines["pro-rules"] = {"version": "x", "status": "ok", "findings": 0}
+        self.assertNotIn("/check/", to_html(r, "en"))
+
     def test_markdown_all_languages(self):
         for lang in ("ru", "kk", "en"):
             self.assertIn("GoldenEye Check", to_markdown(_result([_finding()]), lang))

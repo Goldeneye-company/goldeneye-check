@@ -28,15 +28,15 @@
     }
   },
   "scan": {
-    "started_at": "2026-10-09T17:33:36+00:00",
-    "duration_s": 7.0,
+    "started_at": "2026-10-13T06:25:03+00:00",
+    "duration_s": 8.7,
     "kind": "code",
     "project": {
       "id": "8d9001d32c6a703d",
       "name": "shop"
     },
     "git": {
-      "commit": "02588f1",
+      "commit": "25f877e",
       "branch": "master"
     },
     "options": {
@@ -72,23 +72,23 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": ".env is committed to git",
         "ru": "Файл .env хранится в git",
-        "kk": ".env файлы git-те сақталады",
-        "en": ".env is committed to git"
+        "kk": ".env файлы git-те сақталады"
       },
       "fix": {
+        "en": "Run git rm --cached .env, add .env* to .gitignore and rotate the keys from this file, since they remain in the history.",
         "ru": "Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите ключи из этого файла, так как они остаются в истории.",
-        "kk": "git rm --cached .env орындап, .gitignore-ға .env* қосыңыз және осы файлдағы кілттерді қайта шығарыңыз, себебі олар тарихта қалады.",
-        "en": "Run git rm --cached .env, add .env* to .gitignore and rotate the keys from this file, since they remain in the history."
+        "kk": "git rm --cached .env орындап, .gitignore-ға .env* қосыңыз және осы файлдағы кілттерді қайта шығарыңыз, себебі олар тарихта қалады."
       },
       "detail": {
+        "en": "the file contains values that look like real passwords and keys",
         "ru": "в файле есть значения, похожие на настоящие пароли и ключи",
-        "kk": "файлда нақты құпиясөздер мен кілттерге ұқсас мәндер бар",
-        "en": "the file contains values that look like real passwords and keys"
+        "kk": "файлда нақты құпиясөздер мен кілттерге ұқсас мәндер бар"
       }
     },
     {
-      "fingerprint": "8da880cfe33bcd314142649c",
+      "fingerprint": "691dd1547aeb64955af4c862",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -99,19 +99,19 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "Secret in code: Stripe secret key",
         "ru": "Секрет в коде: Stripe secret key",
-        "kk": "Кодтағы құпия: Stripe secret key",
-        "en": "Secret in code: Stripe secret key"
+        "kk": "Кодтағы құпия: Stripe secret key"
       },
       "fix": {
+        "en": "Rotate the key in the service console and treat the old one as compromised. Then move the value to an environment variable or a secrets store.",
         "ru": "Перевыпустите ключ в консоли сервиса, старый считайте скомпрометированным. Затем перенесите значение в переменную окружения или хранилище секретов.",
-        "kk": "Кілтті сервис консолінде қайта шығарыңыз, ескісін жария болған деп санаңыз. Содан кейін мәнді орта айнымалысына немесе құпиялар қоймасына көшіріңіз.",
-        "en": "Rotate the key in the service console and treat the old one as compromised. Then move the value to an environment variable or a secrets store."
+        "kk": "Кілтті сервис консолінде қайта шығарыңыз, ескісін жария болған деп санаңыз. Содан кейін мәнді орта айнымалысына немесе құпиялар қоймасына көшіріңіз."
       },
       "detail": {
-        "ru": "значение sk_liv…P2",
-        "kk": "мәні sk_liv…P2",
-        "en": "value sk_liv…P2"
+        "en": "value sk_liv…Ei",
+        "ru": "значение sk_liv…Ei",
+        "kk": "мәні sk_liv…Ei"
       }
     },
     {
@@ -126,14 +126,14 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY",
         "ru": "Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY",
-        "kk": "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жария айнымалысындағы құпия",
-        "en": "Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY"
+        "kk": "NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жария айнымалысындағы құпия"
       },
       "fix": {
+        "en": "Variables prefixed with NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ end up in code loaded by the browser. Remove the prefix, use the value only on the server and rotate the key.",
         "ru": "Переменные с префиксами NEXT_PUBLIC_, VITE_, REACT_APP_ и EXPO_PUBLIC_ попадают в код, который загружает браузер. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.",
-        "kk": "NEXT_PUBLIC_, VITE_, REACT_APP_ және EXPO_PUBLIC_ префикстері бар айнымалылар браузер жүктейтін кодқа түседі. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.",
-        "en": "Variables prefixed with NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ end up in code loaded by the browser. Remove the prefix, use the value only on the server and rotate the key."
+        "kk": "NEXT_PUBLIC_, VITE_, REACT_APP_ және EXPO_PUBLIC_ префикстері бар айнымалылар браузер жүктейтін кодқа түседі. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз."
       },
       "detail": null
     },
@@ -264,14 +264,14 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "Firebase: rules in firestore.rules allow access to everyone",
         "ru": "Firebase: правила в firestore.rules разрешают доступ всем",
-        "kk": "Firebase: firestore.rules ережелері барлығына рұқсат береді",
-        "en": "Firebase: rules in firestore.rules allow access to everyone"
+        "kk": "Firebase: firestore.rules ережелері барлығына рұқсат береді"
       },
       "fix": {
+        "en": "Allow access only to authenticated users and only to their own data, for example allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
         "ru": "Разрешите доступ только авторизованным пользователям и только к их данным, например allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
-        "kk": "Тек авторизацияланған пайдаланушыларға және тек өз деректеріне рұқсат беріңіз, мысалы allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;",
-        "en": "Allow access only to authenticated users and only to their own data, for example allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;"
+        "kk": "Тек авторизацияланған пайдаланушыларға және тек өз деректеріне рұқсат беріңіз, мысалы allow read, write: if request.auth != null && request.auth.uid == resource.data.owner;"
       },
       "detail": null
     },
@@ -299,7 +299,7 @@
       "detail": null
     },
     {
-      "fingerprint": "6e47cb854521cac3420b86a5",
+      "fingerprint": "2a08f58dc6a50dd8c60ddd36",
       "rule": "gitleaks.openai-api-key",
       "engine": "gitleaks",
       "severity": "critical",
@@ -308,25 +308,25 @@
       "file": "src/config.js",
       "line": null,
       "in_history": true,
-      "commit": "2b74b4d6",
+      "commit": "cd75b4d6",
       "title": {
+        "en": "Secret in git history: OpenAI API key",
         "ru": "Секрет в истории git: OpenAI API key",
-        "kk": "git тарихындағы құпия: OpenAI API key",
-        "en": "Secret in git history: OpenAI API key"
+        "kk": "git тарихындағы құпия: OpenAI API key"
       },
       "fix": {
+        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.",
         "ru": "Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.",
-        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.",
-        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated."
+        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет."
       },
       "detail": {
-        "ru": "коммит 2b74b4d6, значение sk-pro…OJ",
-        "kk": "коммит 2b74b4d6, мәні sk-pro…OJ",
-        "en": "commit 2b74b4d6, value sk-pro…OJ"
+        "en": "commit cd75b4d6, value sk-pro…ja",
+        "ru": "коммит cd75b4d6, значение sk-pro…ja",
+        "kk": "коммит cd75b4d6, мәні sk-pro…ja"
       }
     },
     {
-      "fingerprint": "9ff49f286b2b120fad3acbeb",
+      "fingerprint": "d806bceb91370cc038fc2735",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -335,21 +335,21 @@
       "file": "src/payments.js",
       "line": null,
       "in_history": true,
-      "commit": "2b74b4d6",
+      "commit": "cd75b4d6",
       "title": {
+        "en": "Secret in git history: Stripe secret key",
         "ru": "Секрет в истории git: Stripe secret key",
-        "kk": "git тарихындағы құпия: Stripe secret key",
-        "en": "Secret in git history: Stripe secret key"
+        "kk": "git тарихындағы құпия: Stripe secret key"
       },
       "fix": {
+        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.",
         "ru": "Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.",
-        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.",
-        "en": "The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated."
+        "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет."
       },
       "detail": {
-        "ru": "коммит 2b74b4d6, значение sk_liv…pV",
-        "kk": "коммит 2b74b4d6, мәні sk_liv…pV",
-        "en": "commit 2b74b4d6, value sk_liv…pV"
+        "en": "commit cd75b4d6, value sk_liv…CH",
+        "ru": "коммит cd75b4d6, значение sk_liv…CH",
+        "kk": "коммит cd75b4d6, мәні sk_liv…CH"
       }
     },
     {
@@ -456,14 +456,14 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "docker-compose: default database password (POSTGRES_PASSWORD)",
         "ru": "docker-compose: стандартный пароль базы данных (POSTGRES_PASSWORD)",
-        "kk": "docker-compose: дерекқордың стандартты құпиясөзі (POSTGRES_PASSWORD)",
-        "en": "docker-compose: default database password (POSTGRES_PASSWORD)"
+        "kk": "docker-compose: дерекқордың стандартты құпиясөзі (POSTGRES_PASSWORD)"
       },
       "fix": {
+        "en": "Set a long random password through a .env file that is not stored in git, and change the password on servers where this file was already used.",
         "ru": "Задайте длинный случайный пароль через .env, который не хранится в git, и смените пароль на серверах, где этот файл уже использовался.",
-        "kk": "git-те сақталмайтын .env арқылы ұзын кездейсоқ құпиясөз орнатыңыз және бұл файл қолданылған серверлерде құпиясөзді ауыстырыңыз.",
-        "en": "Set a long random password through a .env file that is not stored in git, and change the password on servers where this file was already used."
+        "kk": "git-те сақталмайтын .env арқылы ұзын кездейсоқ құпиясөз орнатыңыз және бұл файл қолданылған серверлерде құпиясөзді ауыстырыңыз."
       },
       "detail": null
     },
@@ -479,23 +479,23 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "Vulnerable dependency: lodash 4.17.15",
         "ru": "Уязвимая зависимость: lodash 4.17.15",
-        "kk": "Осал тәуелділік: lodash 4.17.15",
-        "en": "Vulnerable dependency: lodash 4.17.15"
+        "kk": "Осал тәуелділік: lodash 4.17.15"
       },
       "fix": {
+        "en": "Upgrade lodash to 4.18.0 or later and regenerate the lock file.",
         "ru": "Обновите lodash до версии 4.18.0 или новее и пересоберите lock-файл.",
-        "kk": "lodash пакетін 4.18.0 немесе одан жаңа нұсқаға жаңартып, lock-файлды қайта жинаңыз.",
-        "en": "Upgrade lodash to 4.18.0 or later and regenerate the lock file."
+        "kk": "lodash пакетін 4.18.0 немесе одан жаңа нұсқаға жаңартып, lock-файлды қайта жинаңыз."
       },
       "detail": {
+        "en": "vulnerabilities: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465",
         "ru": "уязвимости: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465",
-        "kk": "осалдықтар: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465",
-        "en": "vulnerabilities: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465"
+        "kk": "осалдықтар: CVE-2020-28500, CVE-2020-8203, CVE-2021-23337, CVE-2025-13465"
       }
     },
     {
-      "fingerprint": "60a37ebb04d2777d6ad75ad8",
+      "fingerprint": "0a202729a39e72718b59241e",
       "rule": "ge.php.xss",
       "engine": "opengrep",
       "severity": "high",
@@ -518,7 +518,7 @@
       "detail": null
     },
     {
-      "fingerprint": "71e47ab75fe34598473c8736",
+      "fingerprint": "f17647882e27f939f6c70b3a",
       "rule": "ge.php.mail-header-injection",
       "engine": "opengrep",
       "severity": "high",
@@ -713,14 +713,14 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "Supabase: RLS is not enabled for table public.profiles",
         "ru": "Supabase: для таблицы public.profiles не включён RLS",
-        "kk": "Supabase: public.profiles кестесі үшін RLS қосылмаған",
-        "en": "Supabase: RLS is not enabled for table public.profiles"
+        "kk": "Supabase: public.profiles кестесі үшін RLS қосылмаған"
       },
       "fix": {
+        "en": "Without RLS anyone with the public anon key can read and modify the table. Run alter table public.profiles enable row level security; and add access policies.",
         "ru": "Без RLS таблицу может читать и изменять любой, у кого есть публичный anon-ключ. Выполните alter table public.profiles enable row level security; и добавьте политики доступа.",
-        "kk": "RLS болмаса, жария anon-кілті бар кез келген адам кестені оқи және өзгерте алады. alter table public.profiles enable row level security; орындап, қол жеткізу саясаттарын қосыңыз.",
-        "en": "Without RLS anyone with the public anon key can read and modify the table. Run alter table public.profiles enable row level security; and add access policies."
+        "kk": "RLS болмаса, жария anon-кілті бар кез келген адам кестені оқи және өзгерте алады. alter table public.profiles enable row level security; орындап, қол жеткізу саясаттарын қосыңыз."
       },
       "detail": null
     },
@@ -805,14 +805,14 @@
       "in_history": false,
       "commit": null,
       "title": {
+        "en": "docker-compose: database port 5432 is exposed",
         "ru": "docker-compose: порт базы данных 5432 открыт",
-        "kk": "docker-compose: дерекқордың 5432 порты ашық",
-        "en": "docker-compose: database port 5432 is exposed"
+        "kk": "docker-compose: дерекқордың 5432 порты ашық"
       },
       "fix": {
+        "en": "Remove the port mapping or bind it to localhost: \"127.0.0.1:5432:5432\".",
         "ru": "Уберите публикацию порта или привяжите его к localhost: \"127.0.0.1:5432:5432\".",
-        "kk": "Портты жариялауды алып тастаңыз немесе оны localhost-қа байлаңыз: \"127.0.0.1:5432:5432\".",
-        "en": "Remove the port mapping or bind it to localhost: \"127.0.0.1:5432:5432\"."
+        "kk": "Портты жариялауды алып тастаңыз немесе оны localhost-қа байлаңыз: \"127.0.0.1:5432:5432\"."
       },
       "detail": null
     },

@@ -101,9 +101,19 @@ def to_markdown(result, lang="en") -> str:
                 lines.append(f"- {f.cwe}")
             lines.append("")
     limits = _limits_key(result)
-    lines += [f"## {t(UI, 'limits_title', lang)}", "", t(UI, limits, lang), "",
-              f"---", f"{t(UI, 'generated', lang)} {__version__} · goldeneye.kz", ""]
+    lines += [f"## {t(UI, 'limits_title', lang)}", "", t(UI, limits, lang), ""]
+    if _offer_pro(result):
+        lines += [f"## {t(UI, 'pro_title', lang)}", "", t(UI, 'pro_text', lang), "", t(UI, 'pro_how', lang), "",
+                  f"{t(UI, 'pro_link', lang)}: https://goldeneye.kz/{lang}/check/", ""]
+    lines += [f"## {t(UI, 'cta_title', lang)}", "", t(UI, 'cta_text', lang), "",
+              f"https://goldeneye.kz/{lang}/audit/ · info@goldeneye.kz", "",
+              "---", f"{t(UI, 'generated', lang)} {__version__} · rules {RULES_VERSION}", ""]
     return "\n".join(lines)
+
+
+def _offer_pro(result) -> bool:
+    """The Pro block is shown only in Lite code reports."""
+    return result.kind == "code" and "pro-rules" not in result.engines
 
 
 CSS = """
@@ -141,6 +151,8 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
 .f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
+.pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
+.pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
 .cta a{color:var(--gold);font-weight:600}
 footer{margin-top:28px;color:var(--muted);font-size:13px}
@@ -211,13 +223,15 @@ def to_html(result, lang="en") -> str:
 <div class="tags">{''.join(tags)}</div>{detail}{snippet}
 <p class="fix"><b>{e(t(UI, 'how_to_fix', lang))}:</b> {e(f.text('fix', lang))}</p></article>""")
 
-    engines = ", ".join(f"{k} {v['version']}" + ("" if v["status"] == "ok" else f" ({v['status']})")
-                        for k, v in result.engines.items())
     limits = _limits_key(result)
-    parts.append(f"""<h2>{e(t(UI, 'limits_title', lang))}</h2><p class="note">{e(t(UI, limits, lang))}</p>
-<section class="cta"><h2>{e(t(UI, 'cta_title', lang))}</h2><p>{e(t(UI, 'cta_text', lang))}</p>
+    parts.append(f"""<h2>{e(t(UI, 'limits_title', lang))}</h2><p class="note">{e(t(UI, limits, lang))}</p>""")
+    if _offer_pro(result):
+        parts.append(f"""<section class="card pro"><h2>{e(t(UI, 'pro_title', lang))}</h2>
+<p>{e(t(UI, 'pro_text', lang))}</p><p>{e(t(UI, 'pro_how', lang))}</p>
+<p><a href="https://goldeneye.kz/{lang}/check/" rel="noopener">{e(t(UI, 'pro_link', lang))}</a></p></section>""")
+    parts.append(f"""<section class="cta"><h2>{e(t(UI, 'cta_title', lang))}</h2><p>{e(t(UI, 'cta_text', lang))}</p>
 <p><a href="https://goldeneye.kz/{lang}/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>
-<footer>{e(t(UI, 'generated', lang))} {__version__} · rules {RULES_VERSION} · {e(t(UI, 'engines', lang))}: {e(engines)} · {result.duration} s</footer>
+<footer>{e(t(UI, 'generated', lang))} {__version__} · rules {RULES_VERSION}</footer>
 </main></body></html>""")
     return "\n".join(parts)
 

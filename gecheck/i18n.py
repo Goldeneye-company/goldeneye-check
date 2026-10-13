@@ -218,7 +218,6 @@ UI = {
     "none": {"ru": "Проблем не найдено. Логика прав доступа при этом не проверялась.",
              "kk": "Мәселе табылмады. Қол жеткізу құқықтарының логикасы тексерілген жоқ.",
              "en": "No issues found. Access-control logic was not checked."},
-    "engines": {"ru": "Движки", "kk": "Қозғалтқыштар", "en": "Engines"},
     "skipped": {"ru": "Не выполнено", "kk": "Орындалмады", "en": "Skipped"},
     "limits_title": {"ru": "Что не проверялось", "kk": "Не тексерілмеді", "en": "Not checked"},
     "limits": {
@@ -231,6 +230,18 @@ UI = {
         "kk": "Қол жеткізу құқықтарының логикасы (мысалы, бір пайдаланушы екіншісінің деректерін аша ала ма), бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Тексеру желіге қосылмай орындалды.",
         "en": "Access-control logic (for example, whether one user can open another user's data), cloud and payment settings, behaviour under load. The check ran without network access.",
     },
+    "pro_title": {"ru": "Проверка Pro", "kk": "Pro тексеруі", "en": "Pro check"},
+    "pro_text": {
+        "ru": "Эта проверка ищет типовые ошибки. Pro добавляет 15 правил для того, что чаще всего ломают в сервисах с оплатой и личным кабинетом: поддельные вебхуки оплаты, слабое хранение паролей, предсказуемые токены и коды, выдачу себе прав администратора через запрос, cookie и JWT без защиты, загрузку файлов без ограничений.",
+        "kk": "Бұл тексеру типтік қателерді іздейді. Pro төлем қабылдайтын және жеке кабинеті бар сервистерде жиі кездесетін мәселелер үшін 15 ереже қосады: жалған төлем вебхуктары, құпиясөздерді әлсіз сақтау, болжауға болатын токендер мен кодтар, сұраныс арқылы өзіне әкімші құқығын беру, қорғалмаған cookie мен JWT, шектеусіз файл жүктеу.",
+        "en": "This check looks for common mistakes. Pro adds 15 rules for what most often goes wrong in services with payments and user accounts: forged payment webhooks, weak password storage, predictable tokens and codes, users granting themselves admin rights through a request, unprotected cookies and JWTs, and unrestricted file uploads.",
+    },
+    "pro_how": {
+        "ru": "Pro сначала показывает, сколько проблем нашёл, и только потом предлагает их открыть. Утёкшие ключи и пароли он всегда показывает бесплатно. Работает на Windows.",
+        "kk": "Pro алдымен қанша мәселе тапқанын көрсетеді, содан кейін ғана оларды ашуды ұсынады. Ағып кеткен кілттер мен құпиясөздерді әрқашан тегін көрсетеді. Windows-та жұмыс істейді.",
+        "en": "Pro first shows how many issues it found and only then offers to unlock them. Leaked keys and passwords are always shown for free. Runs on Windows.",
+    },
+    "pro_link": {"ru": "Подробнее и цены", "kk": "Толығырақ және бағалар", "en": "Details and prices"},
     "cta_title": {"ru": "Ручная проверка", "kk": "Қолмен тексеру", "en": "Manual review"},
     "cta_text": {
         "ru": "Специалисты GoldenEye могут проверить логику доступа, настройки серверов и облака и помочь с исправлением найденных проблем.",

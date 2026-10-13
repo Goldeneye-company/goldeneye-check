@@ -29,8 +29,6 @@ class Finding:
     commit: Optional[str] = None
     # part of the fingerprint that does not depend on the line number
     anchor: Optional[str] = None
-    # the report shows only the severity and category
-    locked: bool = False
 
     def fingerprint(self) -> str:
         base = self.anchor if self.anchor is not None else re.sub(r"\s+", " ", (self.snippet or "")).strip()

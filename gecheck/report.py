@@ -15,10 +15,6 @@ def to_json(result, include_snippets=False) -> dict:
     """JSON without code snippets unless include_snippets is set."""
     findings = []
     for f in result.findings:
-        if f.locked:
-            findings.append({"fingerprint": f.fingerprint(), "severity": f.severity,
-                             "category": f.category, "locked": True})
-            continue
         item = {
             "fingerprint": f.fingerprint(), "rule": f.rule, "engine": f.engine,
             "severity": f.severity, "category": f.category, "cwe": f.cwe,
@@ -47,8 +43,6 @@ def to_json(result, include_snippets=False) -> dict:
 
 
 def _where(f, lang):
-    if f.locked:
-        return t(UI, "locked_where", lang)
     loc = f.file + (f":{f.line}" if f.line else "")
     if f.in_history:
         loc += f" ({t(UI, 'in_history', lang)}{', ' + f.commit if f.commit else ''})"
@@ -89,9 +83,6 @@ def to_markdown(result, lang="en") -> str:
             continue
         lines += [f"## {sev[s]} ({len(group)})", ""]
         for f in group:
-            if f.locked:
-                lines += [f"### 🔒 {f.text('title', lang)}", f"- {t(UI, 'locked_hint', lang)}", ""]
-                continue
             lines.append(f"### {f.text('title', lang)}")
             lines.append(f"- {t(UI, 'where', lang)}: `{_where(f, lang)}`")
             if f.detail:
@@ -150,7 +141,6 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .fix{margin:8px 0 0}.fix b{color:var(--green)}
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
-.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
 .pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
 .pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
@@ -204,11 +194,6 @@ def to_html(result, lang="en") -> str:
         parts.append(f"<h2><span class='dot' style='background:{SEV_COLOR[s]}'></span>{e(t(SEVERITY, s, lang))} · {len(group)}</h2>")
         for f in group:
             category = f"<span class='tag'>{e(CATEGORY.get(f.category, {}).get(lang, f.category))}</span>"
-            if f.locked:
-                parts.append(f"""<article class="f locked" style="border-left-color:{SEV_COLOR[s]}">
-<h3>🔒 {e(f.text('title', lang))}</h3><div class="tags">{category}</div>
-<p class="note">{e(t(UI, 'locked_hint', lang))}</p></article>""")
-                continue
             tags = [category]
             if f.cwe:
                 num = f.cwe.split("-")[-1]

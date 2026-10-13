@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Pro: `gecheck login`, `gecheck logout`, `gecheck balance`, and `gecheck scan --pro` / `--no-pro`. After login, `gecheck scan` offers to add the Pro rules from the goldeneye.kz server.
+- The report has a section about the Pro check. Engine versions and scan time are now only in `report.json`.
+- English is the default report language.
+
 ## 0.1.0 (October 9, 2026)
 
 First release.

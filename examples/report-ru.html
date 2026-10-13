@@ -34,7 +34,6 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .fix{margin:8px 0 0}.fix b{color:var(--green)}
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
-.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
 .pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
 .pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
@@ -46,7 +45,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <h1>Отчёт о проверке кода</h1>
 <div class="meta"><span>Проект: <b>shop</b></span>
 <span>Дата: 2026-10-13</span>
-<span>Коммит: 25f877e</span>
+<span>Коммит: 3ad613d</span>
 </div>
 <section class="summary">
 <div class="card"><p class="label">Индекс защищённости</p>
@@ -61,11 +60,11 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Как исправить:</b> Выполните git rm --cached .env, добавьте .env* в .gitignore и перевыпустите ключи из этого файла, так как они остаются в истории.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Секрет в коде: Stripe secret key</h3><div class="loc">.env:1</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>значение sk_liv…Ei</p>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>значение sk_liv…sY</p>
 <p class="fix"><b>Как исправить:</b> Перевыпустите ключ в консоли сервиса, старый считайте скомпрометированным. Затем перенесите значение в переменную окружения или хранилище секретов.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Секрет в публичной переменной NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</h3><div class="loc">.env.local:1</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…45</pre>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…rP</pre>
 <p class="fix"><b>Как исправить:</b> Переменные с префиксами NEXT_PUBLIC_, VITE_, REACT_APP_ и EXPO_PUBLIC_ попадают в код, который загружает браузер. Уберите префикс, используйте значение только на сервере и перевыпустите ключ.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL-запрос собирается форматированием строки</h3><div class="loc">api/main.py:19</div>
@@ -96,12 +95,12 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="tags"><span class='tag'>Инъекции</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
 <p class="fix"><b>Как исправить:</b> Используйте подготовленные запросы: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Секрет в истории git: OpenAI API key</h3><div class="loc">src/config.js (в истории git, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит cd75b4d6, значение sk-pro…ja</p>
+<h3>Секрет в истории git: OpenAI API key</h3><div class="loc">src/config.js (в истории git, e07aba0d)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит e07aba0d, значение sk-pro…kq</p>
 <p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Секрет в истории git: Stripe secret key</h3><div class="loc">src/payments.js (в истории git, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит cd75b4d6, значение sk_liv…CH</p>
+<h3>Секрет в истории git: Stripe secret key</h3><div class="loc">src/payments.js (в истории git, e07aba0d)</div>
+<div class="tags"><span class='tag'>Секреты</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>в истории git</span></div><p class='note'>коммит e07aba0d, значение sk_liv…Tu</p>
 <p class="fix"><b>Как исправить:</b> Значение удалено из файлов, но осталось в истории git и доступно всем, у кого есть копия репозитория. Перевыпустите ключ. Очистить историю можно через git filter-repo, но перевыпуск ключа всё равно нужен.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL-инъекция в запросе к базе данных</h3><div class="loc">src/server/users.js:9</div>
@@ -191,7 +190,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Как исправить:</b> Перенаправляйте только на свои пути (начинаются с &#x27;/&#x27;, но не с &#x27;//&#x27;) или на домены из списка допустимых.</p></article>
 <h2>Что не проверялось</h2><p class="note">Логика прав доступа (например, может ли один пользователь открыть данные другого), настройки облачных сервисов и платёжных систем, работа под нагрузкой. Исходный код никуда не отправлялся. Для проверки зависимостей в базу OSV были отправлены названия и версии пакетов.</p>
 <section class="card pro"><h2>Проверка Pro</h2>
-<p>Эта проверка ищет типовые ошибки. Pro добавляет 15 правил для того, что чаще всего ломают в сервисах с оплатой и личным кабинетом: поддельные вебхуки оплаты, слабое хранение паролей, предсказуемые токены и коды, выдачу себе прав администратора через запрос, cookie и JWT без защиты, загрузку файлов без ограничений.</p><p>Pro сначала показывает, сколько проблем нашёл, и только потом предлагает их открыть. Утёкшие ключи и пароли он всегда показывает бесплатно. Работает на Windows.</p>
+<p>Эта проверка ищет типовые ошибки. Pro добавляет 15 правил для того, что чаще всего ломают в сервисах с оплатой и личным кабинетом: поддельные вебхуки оплаты, слабое хранение паролей, предсказуемые токены и коды, выдачу себе прав администратора через запрос, cookie и JWT без защиты, загрузку файлов без ограничений.</p><p>Pro работает в этой же программе. Купите пакет проверок на сайте и войдите командой gecheck login: при следующей проверке программа предложит подключить правила Pro.</p>
 <p><a href="https://goldeneye.kz/ru/check/" rel="noopener">Подробнее и цены</a></p></section>
 <section class="cta"><h2>Ручная проверка</h2><p>Специалисты GoldenEye могут проверить логику доступа, настройки серверов и облака и помочь с исправлением найденных проблем.</p>
 <p><a href="https://goldeneye.kz/ru/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>

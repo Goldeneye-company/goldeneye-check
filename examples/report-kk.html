@@ -34,7 +34,6 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .fix{margin:8px 0 0}.fix b{color:var(--green)}
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
-.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
 .pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
 .pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
@@ -46,7 +45,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <h1>Кодты тексеру есебі</h1>
 <div class="meta"><span>Жоба: <b>shop</b></span>
 <span>Күні: 2026-10-13</span>
-<span>Коммит: 25f877e</span>
+<span>Коммит: 3ad613d</span>
 </div>
 <section class="summary">
 <div class="card"><p class="label">Қорғалу индексі</p>
@@ -61,11 +60,11 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Қалай түзету керек:</b> git rm --cached .env орындап, .gitignore-ға .env* қосыңыз және осы файлдағы кілттерді қайта шығарыңыз, себебі олар тарихта қалады.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Кодтағы құпия: Stripe secret key</h3><div class="loc">.env:1</div>
-<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>мәні sk_liv…Ei</p>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>мәні sk_liv…sY</p>
 <p class="fix"><b>Қалай түзету керек:</b> Кілтті сервис консолінде қайта шығарыңыз, ескісін жария болған деп санаңыз. Содан кейін мәнді орта айнымалысына немесе құпиялар қоймасына көшіріңіз.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY жария айнымалысындағы құпия</h3><div class="loc">.env.local:1</div>
-<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…45</pre>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…rP</pre>
 <p class="fix"><b>Қалай түзету керек:</b> NEXT_PUBLIC_, VITE_, REACT_APP_ және EXPO_PUBLIC_ префикстері бар айнымалылар браузер жүктейтін кодқа түседі. Префиксті алып тастап, мәнді тек серверде қолданыңыз және кілтті қайта шығарыңыз.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL-сұраныс жолды пішімдеу арқылы құрастырылады</h3><div class="loc">api/main.py:19</div>
@@ -96,12 +95,12 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="tags"><span class='tag'>Инъекциялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
 <p class="fix"><b>Қалай түзету керек:</b> Дайындалған сұраныстарды қолданыңыз: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>git тарихындағы құпия: OpenAI API key</h3><div class="loc">src/config.js (git тарихында, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит cd75b4d6, мәні sk-pro…ja</p>
+<h3>git тарихындағы құпия: OpenAI API key</h3><div class="loc">src/config.js (git тарихында, e07aba0d)</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит e07aba0d, мәні sk-pro…kq</p>
 <p class="fix"><b>Қалай түзету керек:</b> Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>git тарихындағы құпия: Stripe secret key</h3><div class="loc">src/payments.js (git тарихында, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит cd75b4d6, мәні sk_liv…CH</p>
+<h3>git тарихындағы құпия: Stripe secret key</h3><div class="loc">src/payments.js (git тарихында, e07aba0d)</div>
+<div class="tags"><span class='tag'>Құпиялар</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>git тарихында</span></div><p class='note'>коммит e07aba0d, мәні sk_liv…Tu</p>
 <p class="fix"><b>Қалай түзету керек:</b> Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Дерекқорға сұраныстағы SQL-инъекция</h3><div class="loc">src/server/users.js:9</div>
@@ -191,7 +190,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>Қалай түзету керек:</b> Тек өз жолдарыңызға (&#x27;/&#x27; белгісінен басталатын, бірақ &#x27;//&#x27; емес) немесе рұқсат етілген домендерге бағыттаңыз.</p></article>
 <h2>Не тексерілмеді</h2><p class="note">Қол жеткізу құқықтарының логикасы (мысалы, бір пайдаланушы екіншісінің деректерін аша ала ма), бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Бастапқы код ешқайда жіберілмеді. Тәуелділіктерді тексеру үшін OSV базасына пакеттердің атаулары мен нұсқалары жіберілді.</p>
 <section class="card pro"><h2>Pro тексеруі</h2>
-<p>Бұл тексеру типтік қателерді іздейді. Pro төлем қабылдайтын және жеке кабинеті бар сервистерде жиі кездесетін мәселелер үшін 15 ереже қосады: жалған төлем вебхуктары, құпиясөздерді әлсіз сақтау, болжауға болатын токендер мен кодтар, сұраныс арқылы өзіне әкімші құқығын беру, қорғалмаған cookie мен JWT, шектеусіз файл жүктеу.</p><p>Pro алдымен қанша мәселе тапқанын көрсетеді, содан кейін ғана оларды ашуды ұсынады. Ағып кеткен кілттер мен құпиясөздерді әрқашан тегін көрсетеді. Windows-та жұмыс істейді.</p>
+<p>Бұл тексеру типтік қателерді іздейді. Pro төлем қабылдайтын және жеке кабинеті бар сервистерде жиі кездесетін мәселелер үшін 15 ереже қосады: жалған төлем вебхуктары, құпиясөздерді әлсіз сақтау, болжауға болатын токендер мен кодтар, сұраныс арқылы өзіне әкімші құқығын беру, қорғалмаған cookie мен JWT, шектеусіз файл жүктеу.</p><p>Pro осы бағдарламаның ішінде жұмыс істейді. Сайттан тексерулер пакетін сатып алып, gecheck login командасымен кіріңіз: келесі тексеруде бағдарлама Pro ережелерін қосуды ұсынады.</p>
 <p><a href="https://goldeneye.kz/kk/check/" rel="noopener">Толығырақ және бағалар</a></p></section>
 <section class="cta"><h2>Қолмен тексеру</h2><p>GoldenEye мамандары қол жеткізу логикасын, серверлер мен бұлт баптауларын тексеріп, табылған мәселелерді түзетуге көмектесе алады.</p>
 <p><a href="https://goldeneye.kz/kk/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>

@@ -34,7 +34,6 @@ pre{background:var(--code);padding:10px 12px;overflow-x:auto;font:13px/1.45 ui-m
 .fix{margin:8px 0 0}.fix b{color:var(--green)}
 .note{color:var(--muted);font-size:14px}.warn{border-left:4px solid var(--gold)}
 .notice{border:1px solid var(--gold);margin:0 0 16px}.notice p{margin:0}
-.f.locked{background:repeating-linear-gradient(135deg,var(--card) 0 12px,var(--code) 12px 24px)}
 .pro{border-top:3px solid var(--gold);margin-top:28px}.pro h2{margin:0 0 6px}.pro p{margin:8px 0}
 .pro a{color:var(--green);font-weight:600}
 .cta{background:var(--ink);color:var(--bg);padding:24px;margin-top:36px}.cta h2{margin:0 0 6px;color:inherit}
@@ -46,7 +45,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <h1>Code check report</h1>
 <div class="meta"><span>Project: <b>shop</b></span>
 <span>Date: 2026-10-13</span>
-<span>Commit: 25f877e</span>
+<span>Commit: 3ad613d</span>
 </div>
 <section class="summary">
 <div class="card"><p class="label">Security score</p>
@@ -61,11 +60,11 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>How to fix:</b> Run git rm --cached .env, add .env* to .gitignore and rotate the keys from this file, since they remain in the history.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Secret in code: Stripe secret key</h3><div class="loc">.env:1</div>
-<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>value sk_liv…Ei</p>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span></div><p class='note'>value sk_liv…sY</p>
 <p class="fix"><b>How to fix:</b> Rotate the key in the service console and treat the old one as compromised. Then move the value to an environment variable or a secrets store.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>Secret in public variable NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY</h3><div class="loc">.env.local:1</div>
-<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…45</pre>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/200.html' rel='noopener'>CWE-200</a><span class='tag'>builtin</span></div><pre>NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY=eyJhbG…rP</pre>
 <p class="fix"><b>How to fix:</b> Variables prefixed with NEXT_PUBLIC_, VITE_, REACT_APP_ and EXPO_PUBLIC_ end up in code loaded by the browser. Remove the prefix, use the value only on the server and rotate the key.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL query built with string formatting</h3><div class="loc">api/main.py:19</div>
@@ -96,12 +95,12 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <div class="tags"><span class='tag'>Injection</span><a class='tag' href='https://cwe.mitre.org/data/definitions/89.html' rel='noopener'>CWE-89</a><span class='tag'>opengrep</span></div><pre>$result = mysqli_query($conn, &quot;SELECT * FROM orders WHERE email = &#x27;&quot; . $_GET[&#x27;email&#x27;] . &quot;&#x27;&quot;); // GE:V17</pre>
 <p class="fix"><b>How to fix:</b> Use prepared statements: $stmt = $pdo-&gt;prepare(&#x27;... WHERE id = ?&#x27;); $stmt-&gt;execute([$id]).</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Secret in git history: OpenAI API key</h3><div class="loc">src/config.js (in git history, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit cd75b4d6, value sk-pro…ja</p>
+<h3>Secret in git history: OpenAI API key</h3><div class="loc">src/config.js (in git history, e07aba0d)</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit e07aba0d, value sk-pro…kq</p>
 <p class="fix"><b>How to fix:</b> The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
-<h3>Secret in git history: Stripe secret key</h3><div class="loc">src/payments.js (in git history, cd75b4d6)</div>
-<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit cd75b4d6, value sk_liv…CH</p>
+<h3>Secret in git history: Stripe secret key</h3><div class="loc">src/payments.js (in git history, e07aba0d)</div>
+<div class="tags"><span class='tag'>Secrets</span><a class='tag' href='https://cwe.mitre.org/data/definitions/798.html' rel='noopener'>CWE-798</a><span class='tag'>gitleaks</span><span class='tag hist'>in git history</span></div><p class='note'>commit e07aba0d, value sk_liv…Tu</p>
 <p class="fix"><b>How to fix:</b> The value was removed from the files but remains in git history, available to anyone with a copy of the repository. Rotate the key. You can clean the history with git filter-repo, but the key still has to be rotated.</p></article>
 <article class="f" style="border-left-color:var(--crit)">
 <h3>SQL injection in a database query</h3><div class="loc">src/server/users.js:9</div>
@@ -191,7 +190,7 @@ footer{margin-top:28px;color:var(--muted);font-size:13px}
 <p class="fix"><b>How to fix:</b> Redirect only to your own paths (starting with &#x27;/&#x27; but not &#x27;//&#x27;) or to allowlisted domains.</p></article>
 <h2>Not checked</h2><p class="note">Access-control logic (for example, whether one user can open another user&#x27;s data), cloud and payment settings, behaviour under load. Source code was not sent anywhere. Package names and versions were sent to the OSV database for the dependency check.</p>
 <section class="card pro"><h2>Pro check</h2>
-<p>This check looks for common mistakes. Pro adds 15 rules for what most often goes wrong in services with payments and user accounts: forged payment webhooks, weak password storage, predictable tokens and codes, users granting themselves admin rights through a request, unprotected cookies and JWTs, and unrestricted file uploads.</p><p>Pro first shows how many issues it found and only then offers to unlock them. Leaked keys and passwords are always shown for free. Runs on Windows.</p>
+<p>This check looks for common mistakes. Pro adds 15 rules for what most often goes wrong in services with payments and user accounts: forged payment webhooks, weak password storage, predictable tokens and codes, users granting themselves admin rights through a request, unprotected cookies and JWTs, and unrestricted file uploads.</p><p>Pro works in this same program. Buy a package of checks on the website and log in with gecheck login: on the next check the program will offer to add the Pro rules.</p>
 <p><a href="https://goldeneye.kz/en/check/" rel="noopener">Details and prices</a></p></section>
 <section class="cta"><h2>Manual review</h2><p>GoldenEye specialists can review access logic, server and cloud settings and help fix the issues found.</p>
 <p><a href="https://goldeneye.kz/en/audit/" rel="noopener">goldeneye.kz</a> · info@goldeneye.kz</p></section>

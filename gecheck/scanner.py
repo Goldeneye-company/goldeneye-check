@@ -18,6 +18,8 @@ class Options:
     history: bool = True
     deps: bool = True
     offline: bool = False
+    pro_rules: Optional[Path] = None  # folder with Pro rules from the server
+    pro_version: str = ""
 
 
 @dataclass
@@ -67,9 +69,18 @@ class ScanResult:
 
     @property
     def project_id(self) -> str:
-        """First 16 characters of the sha256 of the origin URL or the folder name."""
-        base = self.git.get("remote") or self.root.name
-        return hashlib.sha256(base.encode("utf-8")).hexdigest()[:16]
+        return make_project_id(self.root, self.git)
+
+
+def make_project_id(root: Path, git: dict) -> str:
+    """First 16 characters of the sha256 of the origin URL or the folder name."""
+    base = git.get("remote") or root.name
+    return hashlib.sha256(base.encode("utf-8")).hexdigest()[:16]
+
+
+def project_id(root: Path) -> str:
+    root = Path(root).resolve()
+    return make_project_id(root, _git_info(root))
 
 
 # Which finding to keep when several engines report the same line with a secret
@@ -123,6 +134,9 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
     ]
     if options.deps:
         steps.insert(1, ("osv-scanner", osv.version(), lambda: osv.scan(root, warnings, offline=options.offline)))
+    if options.pro_rules:
+        steps.append(("pro-rules", options.pro_version,
+                      lambda: opengrep.scan(root, warnings, rules_dir=options.pro_rules, engine="opengrep-pro")))
 
     for name, ver, fn in steps:
         log(f"  {name}…")

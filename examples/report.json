@@ -28,15 +28,15 @@
     }
   },
   "scan": {
-    "started_at": "2026-10-13T06:25:03+00:00",
-    "duration_s": 8.7,
+    "started_at": "2026-10-13T17:35:16+00:00",
+    "duration_s": 8.0,
     "kind": "code",
     "project": {
       "id": "8d9001d32c6a703d",
       "name": "shop"
     },
     "git": {
-      "commit": "25f877e",
+      "commit": "3ad613d",
       "branch": "master"
     },
     "options": {
@@ -88,7 +88,7 @@
       }
     },
     {
-      "fingerprint": "691dd1547aeb64955af4c862",
+      "fingerprint": "2dc15295c20d7e8969630ba2",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -109,9 +109,9 @@
         "kk": "Кілтті сервис консолінде қайта шығарыңыз, ескісін жария болған деп санаңыз. Содан кейін мәнді орта айнымалысына немесе құпиялар қоймасына көшіріңіз."
       },
       "detail": {
-        "en": "value sk_liv…Ei",
-        "ru": "значение sk_liv…Ei",
-        "kk": "мәні sk_liv…Ei"
+        "en": "value sk_liv…sY",
+        "ru": "значение sk_liv…sY",
+        "kk": "мәні sk_liv…sY"
       }
     },
     {
@@ -299,7 +299,7 @@
       "detail": null
     },
     {
-      "fingerprint": "2a08f58dc6a50dd8c60ddd36",
+      "fingerprint": "75cb4f4e4f482375d543400e",
       "rule": "gitleaks.openai-api-key",
       "engine": "gitleaks",
       "severity": "critical",
@@ -308,7 +308,7 @@
       "file": "src/config.js",
       "line": null,
       "in_history": true,
-      "commit": "cd75b4d6",
+      "commit": "e07aba0d",
       "title": {
         "en": "Secret in git history: OpenAI API key",
         "ru": "Секрет в истории git: OpenAI API key",
@@ -320,13 +320,13 @@
         "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет."
       },
       "detail": {
-        "en": "commit cd75b4d6, value sk-pro…ja",
-        "ru": "коммит cd75b4d6, значение sk-pro…ja",
-        "kk": "коммит cd75b4d6, мәні sk-pro…ja"
+        "en": "commit e07aba0d, value sk-pro…kq",
+        "ru": "коммит e07aba0d, значение sk-pro…kq",
+        "kk": "коммит e07aba0d, мәні sk-pro…kq"
       }
     },
     {
-      "fingerprint": "d806bceb91370cc038fc2735",
+      "fingerprint": "a77aa32f29d5742337b47693",
       "rule": "gitleaks.stripe-access-token",
       "engine": "gitleaks",
       "severity": "critical",
@@ -335,7 +335,7 @@
       "file": "src/payments.js",
       "line": null,
       "in_history": true,
-      "commit": "cd75b4d6",
+      "commit": "e07aba0d",
       "title": {
         "en": "Secret in git history: Stripe secret key",
         "ru": "Секрет в истории git: Stripe secret key",
@@ -347,9 +347,9 @@
         "kk": "Мән файлдардан жойылған, бірақ git тарихында қалды және репозиторий көшірмесі бар кез келген адамға қолжетімді. Кілтті қайта шығарыңыз. Тарихты git filter-repo арқылы тазалауға болады, бірақ кілтті қайта шығару бәрібір қажет."
       },
       "detail": {
-        "en": "commit cd75b4d6, value sk_liv…CH",
-        "ru": "коммит cd75b4d6, значение sk_liv…CH",
-        "kk": "коммит cd75b4d6, мәні sk_liv…CH"
+        "en": "commit e07aba0d, value sk_liv…Tu",
+        "ru": "коммит e07aba0d, значение sk_liv…Tu",
+        "kk": "коммит e07aba0d, мәні sk_liv…Tu"
       }
     },
     {

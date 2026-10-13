@@ -65,6 +65,17 @@ Examples: [English](examples/report-en.html), [Russian](examples/report-ru.html)
 
 Things the program cannot check (spending limits, two-factor authentication, backups and so on) are listed in [CHECKLIST.md](CHECKLIST.md).
 
+## Pro
+
+Pro adds 15 rules for services with payments and user accounts. It works in this same program: buy a package of checks at [goldeneye.kz/en/check](https://goldeneye.kz/en/check/), run `gecheck login`, and `gecheck scan` will offer to add the Pro rules. The rules are downloaded from the server for one check and deleted after it. Only your email and an anonymised project ID are sent to the server.
+
+| Command | Purpose |
+|---|---|
+| `gecheck login` | log in with your email (a code is sent by email) |
+| `gecheck balance` | show how many Pro checks are left |
+| `gecheck scan . --pro` | add the Pro rules without asking, for scripts and CI (the token can be passed in `GECHECK_TOKEN`) |
+| `gecheck scan . --no-pro` | do not offer the Pro rules |
+
 ## Score
 
 The score starts at 100. Each critical finding subtracts 25, high 10, medium 4, low 1. Vulnerable dependencies lower the score by 30 at most. Grade A is 90 and above, B is 75 and above, C is below 75 or any high finding, D is below 50 or any critical finding, F is below 25.

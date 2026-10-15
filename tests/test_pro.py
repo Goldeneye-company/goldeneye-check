@@ -170,6 +170,7 @@ class ProClientTest(unittest.TestCase):
         code, out = self.run_cli("scan", str(self.project), "--pro", "--no-deps", "--no-history", "--fail-on", "none",
                                  "--out", str(out_dir))
         self.assertIn("free until", out)
+        self.assertIn("No check used", out)
         self.assertEqual(self.server.balance, 1)
 
         # answering "no" skips Pro

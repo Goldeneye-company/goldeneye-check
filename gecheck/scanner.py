@@ -139,7 +139,7 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
                       lambda: opengrep.scan(root, warnings, rules_dir=options.pro_rules, engine="opengrep-pro")))
 
     for name, ver, fn in steps:
-        log(f"  {name}…")
+        log(f"  {'Pro rules' if name == 'pro-rules' else name}…")
         try:
             found = fn()
             findings += found

@@ -105,6 +105,8 @@ def _pro_rules(root, forced):
         return skip
     if res.get("charged"):
         print(f"1 check used, {res.get('balance', 0)} left.")
+    else:
+        print("No check used: this is a free re-check.")
     return folder, res
 
 

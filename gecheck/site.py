@@ -3,10 +3,13 @@
 GET requests only, about 30 of them with a pause between them.
 """
 
+import base64
 import hashlib
+import os
 import re
 import socket
 import ssl
+import subprocess
 import time
 import urllib.error
 import urllib.request
@@ -77,14 +80,90 @@ def _f(key, severity, category, where, anchor=None, detail=None, **kw):
 
 # HTTPS and certificate
 
-def check_tls(host, port=443):
-    out = []
+UNKNOWN_ISSUER = 20  # X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+
+
+def _der(cert):
+    return cert if isinstance(cert, bytes) else cert.public_bytes(ssl._ssl.ENCODING_DER)
+
+
+def _self_signed(der) -> bool:
+    """Root certificates are self-signed. On doubt returns True, so no false report is made."""
+    import tempfile
+    try:
+        with tempfile.NamedTemporaryFile("w", suffix=".pem", delete=False) as fh:
+            fh.write(ssl.DER_cert_to_PEM_cert(der))
+        info = ssl._ssl._test_decode_cert(fh.name)
+        return info.get("issuer") == info.get("subject")
+    except Exception:
+        return True
+    finally:
+        try:
+            os.unlink(fh.name)
+        except (OSError, NameError):
+            pass
+
+
+def _connect(host, port):
+    """Returns (certificate, TLS version, incomplete chain).
+
+    The chain is incomplete when an intermediate certificate used for verification was not sent by
+    the server but taken from the local store (Windows and browsers fill such gaps, other clients fail).
+    On Windows such intermediates can even end the chain, so roots are told apart by being self-signed.
+    Python before 3.13 cannot show the chains, so there it is never reported.
+    """
     ctx = ssl.create_default_context()
+    with socket.create_connection((host, port), timeout=TIMEOUT) as sock:
+        with ctx.wrap_socket(sock, server_hostname=host) as tls:
+            incomplete = False
+            if hasattr(tls, "get_verified_chain"):
+                sent = {_der(c) for c in tls.get_unverified_chain() or []}
+                used = [_der(c) for c in tls.get_verified_chain() or []]
+                incomplete = any(c not in sent and not _self_signed(c) for c in used[1:])
+            return tls.getpeercert(), tls.version(), incomplete
+
+
+def _windows_fetch_root(host, port) -> bool:
+    """Windows downloads trusted root certificates only on demand: a browser triggers it, Python does not.
+
+    Building the chain with the Windows API makes it fetch the missing root (and intermediates),
+    so the next check can pass. Returns True if Windows trusts the certificate chain.
+    """
+    if os.name != "nt":
+        return False
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
     try:
         with socket.create_connection((host, port), timeout=TIMEOUT) as sock:
             with ctx.wrap_socket(sock, server_hostname=host) as tls:
-                cert = tls.getpeercert()
-                version = tls.version()
+                der = tls.getpeercert(binary_form=True)
+    except (OSError, ssl.SSLError):
+        return False
+    script = ("$b = [Console]::In.ReadToEnd().Trim();"
+              "$c = New-Object Security.Cryptography.X509Certificates.X509Certificate2 (,[Convert]::FromBase64String($b));"
+              "$ch = New-Object Security.Cryptography.X509Certificates.X509Chain;"
+              "$ch.ChainPolicy.RevocationMode = 'NoCheck';"
+              "if ($ch.Build($c)) { 'ok' }")
+    try:
+        proc = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+                              input=base64.b64encode(der).decode(), capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return False
+    return proc.stdout.strip() == "ok"
+
+
+def check_tls(host, port=443):
+    out = []
+    try:
+        try:
+            cert, version, incomplete = _connect(host, port)
+        except ssl.SSLCertVerificationError as e:
+            if e.verify_code != UNKNOWN_ISSUER or not _windows_fetch_root(host, port):
+                raise
+            cert, version, incomplete = _connect(host, port)
+        if incomplete:
+            out.append(_f("incomplete_chain", "medium", "config", f"https://{host}"))
     except ssl.SSLCertVerificationError as e:
         return [_f("cert_invalid", "critical", "config", f"https://{host}", detail=True, reason=str(e.verify_message or e)[:120])]
     except (OSError, ssl.SSLError):

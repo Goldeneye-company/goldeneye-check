@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- SARIF 2.1.0 report (`--format sarif`) for GitHub code scanning, DefectDojo and other tools.
+- gecheck site: on Windows, trusted root certificates that the system has not downloaded yet no longer cause a false "certificate is invalid" finding.
+- gecheck site: new finding when the server does not send its intermediate certificate (Python 3.13 or newer).
+
 ## 0.1.0 (October 21, 2026)
 
 First release.

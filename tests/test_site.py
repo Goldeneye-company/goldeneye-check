@@ -116,6 +116,54 @@ class SiteTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             site.normalize("ftp://a.kz")
 
+class CertRetryTest(unittest.TestCase):
+    """On Windows a missing root certificate is fetched by the system and the check is repeated."""
+
+    def setUp(self):
+        self.saved = (site._connect, site._windows_fetch_root)
+        self.calls = []
+
+    def tearDown(self):
+        site._connect, site._windows_fetch_root = self.saved
+
+    def _error(self, code, message):
+        e = site.ssl.SSLCertVerificationError(1, message)
+        e.verify_code, e.verify_message = code, message
+        return e
+
+    def _connect(self, *errors):
+        queue = list(errors)
+
+        def connect(host, port):
+            self.calls.append("connect")
+            if queue:
+                raise queue.pop(0)
+            return {"notAfter": "Jan  1 00:00:00 2099 GMT"}, "TLSv1.3", self.incomplete
+        self.incomplete = False
+        site._connect = connect
+
+    def test_unknown_issuer_fixed_by_windows(self):
+        self._connect(self._error(site.UNKNOWN_ISSUER, "unable to get local issuer certificate"))
+        site._windows_fetch_root = lambda host, port: True
+        self.assertEqual(site.check_tls("example.com"), [])
+        self.assertEqual(self.calls, ["connect", "connect"])
+
+    def test_incomplete_chain_is_reported(self):
+        self._connect()
+        self.incomplete = True
+        self.assertEqual([f.rule for f in site.check_tls("example.com")], ["ge.site.incomplete-chain"])
+
+    def test_unknown_issuer_not_trusted_by_windows(self):
+        self._connect(self._error(site.UNKNOWN_ISSUER, "unable to get local issuer certificate"))
+        site._windows_fetch_root = lambda host, port: False
+        self.assertEqual([f.rule for f in site.check_tls("example.com")], ["ge.site.cert-invalid"])
+
+    def test_other_errors_are_not_retried(self):
+        self._connect(self._error(10, "certificate has expired"))
+        site._windows_fetch_root = lambda host, port: self.fail("must not be called")
+        self.assertEqual([f.rule for f in site.check_tls("example.com")], ["ge.site.cert-invalid"])
+        self.assertEqual(self.calls, ["connect"])
+
 
 if __name__ == "__main__":
     unittest.main()

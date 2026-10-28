@@ -16,6 +16,14 @@ SITE_TEXTS = {
                 "en": "Reissue the certificate for the correct domain name and make sure the server sends the full certificate chain."},
         "detail": {"ru": "причина: {reason}", "kk": "себебі: {reason}", "en": "reason: {reason}"},
     },
+    "incomplete_chain": {
+        "cwe": "CWE-295",
+        "title": {"ru": "Сервер не отдаёт промежуточный сертификат", "kk": "Сервер аралық сертификатты бермейді",
+                  "en": "The server does not send the intermediate certificate"},
+        "fix": {"ru": "Браузеры на компьютерах часто достраивают цепочку сами, но часть клиентов (Firefox, мобильные приложения, curl, другие серверы) откроет сайт с ошибкой. Установите на сервере полную цепочку: сертификат сайта и промежуточные сертификаты (у Let's Encrypt это файл fullchain).",
+                "kk": "Компьютердегі браузерлер тізбекті жиі өздері толықтырады, бірақ кейбір клиенттер (Firefox, мобильді қосымшалар, curl, басқа серверлер) сайтты қатемен ашады. Серверде толық тізбекті орнатыңыз: сайт сертификаты және аралық сертификаттар (Let's Encrypt-те бұл fullchain файлы).",
+                "en": "Desktop browsers often complete the chain themselves, but some clients (Firefox, mobile apps, curl, other servers) will fail to open the site. Install the full chain on the server: the site certificate plus the intermediate certificates (for Let's Encrypt, the fullchain file)."},
+    },
     "cert_expiring": {
         "cwe": "CWE-298",
         "title": {"ru": "Сертификат HTTPS скоро истекает", "kk": "HTTPS сертификатының мерзімі жақында бітеді", "en": "The HTTPS certificate expires soon"},

@@ -189,7 +189,23 @@ class ReportTest(unittest.TestCase):
         r.engines["pro-rules"] = {"version": "x", "status": "ok", "findings": 0}
         self.assertNotIn("/check/", to_html(r, "en"))
 
+    def test_sarif(self):
+        from gecheck.sarif import to_sarif
+        r = _result([_finding("critical"), _finding("high", "x")])
+        data = to_sarif(r)
+        run = data["runs"][0]
+        self.assertEqual(data["version"], "2.1.0")
+        self.assertEqual([x["id"] for x in run["tool"]["driver"]["rules"]], ["ge.js.sql-injection"])
+        self.assertEqual([x["level"] for x in run["results"]], ["error", "error"])
+        loc = run["results"][0]["locations"][0]["physicalLocation"]
+        self.assertEqual((loc["artifactLocation"]["uri"], loc["region"]["startLine"]), ("src/a.js", 3))
+        self.assertNotIn("snippet", loc["region"])
+        self.assertIn("snippet", to_sarif(r, include_snippets=True)["runs"][0]["results"][0]["locations"][0]
+                      ["physicalLocation"]["region"])
+        self.assertEqual(run["results"][0]["partialFingerprints"]["goldeneye/v1"], r.findings[0].fingerprint())
+
     def test_markdown_all_languages(self):
+
         for lang in ("ru", "kk", "en"):
             self.assertIn("GoldenEye Check", to_markdown(_result([_finding()]), lang))
 

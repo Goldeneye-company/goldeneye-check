@@ -44,7 +44,7 @@ Examples: [English](examples/report-en.html), [Russian](examples/report-ru.html)
 |---|---|
 | `--lang ru`, `--lang kk` | report language (English by default) |
 | `--out folder` | where to save the reports |
-| `--format json` | report formats: `html`, `md`, `json`, comma-separated |
+| `--format json` | report formats: `html`, `md`, `json`, `sarif`, comma-separated |
 | `--no-history` | do not search git history for secrets |
 | `--offline` | check dependencies without network access |
 | `--fail-on high` | exit with code 1 if there are findings of high severity or above |
@@ -86,6 +86,17 @@ The score starts at 100. Each critical finding subtracts 25, high 10, medium 4, 
 - run: pip install https://github.com/Goldeneye-company/goldeneye-check/archive/refs/heads/main.zip && gecheck install
 - run: gecheck scan . --fail-on critical --format md,json
 ```
+
+To see the findings in the repository's Security tab, save a SARIF report and upload it. The job needs the `security-events: write` permission:
+
+```yaml
+- run: gecheck scan . --format sarif --out gecheck-report --fail-on none
+- uses: github/codeql-action/upload-sarif@v4
+  with:
+    sarif_file: gecheck-report/report.sarif
+```
+
+The same `report.sarif` file can be imported into DefectDojo and other tools that read SARIF 2.1.0. Code snippets are not included unless you add `--include-snippets`.
 
 ## Accuracy
 

@@ -1,4 +1,4 @@
-"""Reports in HTML, Markdown and JSON."""
+"""Reports in HTML, Markdown and JSON (SARIF is in sarif.py)."""
 
 import html
 import json
@@ -235,6 +235,12 @@ def write_reports(result, out_dir: Path, formats, lang="en", include_snippets=Fa
     if "json" in formats:
         p = out_dir / "report.json"
         p.write_text(json.dumps(to_json(result, include_snippets), ensure_ascii=False, indent=2), encoding="utf-8")
+        written.append(p)
+    if "sarif" in formats:
+        from .sarif import to_sarif
+        p = out_dir / "report.sarif"
+        p.write_text(json.dumps(to_sarif(result, lang, include_snippets), ensure_ascii=False, indent=2),
+                     encoding="utf-8")
         written.append(p)
     return written
 

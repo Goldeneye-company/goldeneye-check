@@ -246,7 +246,7 @@ def main(argv=None):
     p.add_argument("path", nargs="?", default=".", help="project folder (default: current folder)")
     p.add_argument("--lang", choices=LANGS, default="en", help="report language")
     p.add_argument("--out", help="where to save reports (default: <project>/.goldeneye-check)")
-    p.add_argument("--format", default="html,md,json", help="html, md, json, comma-separated")
+    p.add_argument("--format", default="html,md,json", help="html, md, json, sarif, comma-separated")
     p.add_argument("--no-history", action="store_true", help="do not search git history for secrets")
     p.add_argument("--no-deps", action="store_true", help="do not check dependencies")
     p.add_argument("--offline", action="store_true", help="check dependencies without network access")
@@ -262,7 +262,7 @@ def main(argv=None):
     p.add_argument("url", help="site address, for example example.com")
     p.add_argument("--lang", choices=LANGS, default="en", help="report language")
     p.add_argument("--out", help="where to save reports (default: ./.goldeneye-check/<site>)")
-    p.add_argument("--format", default="html,md,json", help="html, md, json, comma-separated")
+    p.add_argument("--format", default="html,md,json", help="html, md, json, sarif, comma-separated")
     p.add_argument("--yes-i-own-this", action="store_true", help="confirm that the site is yours without a prompt")
     p.add_argument("--fail-on", choices=(*SEVERITIES, "none"), default="critical",
                    help="exit code 1 if there are findings of this severity or above")

@@ -5,21 +5,51 @@ It is made for people who write code themselves or together with AI (Cursor, Cla
 
 The check runs on your computer. Your source code is not sent anywhere. Reports are available in English, Russian and Kazakh.
 
-## Installation
+## Quick start
 
-You need [Python](https://www.python.org/downloads/) 3.9 or newer. On Windows, select "Add python.exe to PATH" when installing Python.
+You do not need PyCharm or any other editor. Everything is done in a terminal, the window where you type commands.
+On macOS type `python3` instead of `python` in all commands below.
+
+**1. Install Python 3.9 or newer** from [python.org/downloads](https://www.python.org/downloads/). Keep the default options.
+To check, open a new terminal and run `python --version`. It should print a version number.
+
+**2. Open a terminal in the folder of the project you want to check.**
+
+- Cursor, VS Code, Windsurf: open the project, then Terminal → New Terminal. The terminal opens in the project folder.
+- Windows: open the project folder in Explorer, right-click an empty space and choose "Open in Terminal".
+- macOS: in Finder right-click the project folder and choose Services → New Terminal at Folder.
+
+**3. Install GoldenEye Check.** Copy and run these two commands, one after the other:
 
 ```bash
-pip install https://github.com/Goldeneye-company/goldeneye-check/archive/refs/heads/main.zip
+python -m pip install https://github.com/Goldeneye-company/goldeneye-check/archive/refs/heads/main.zip
 ```
 
 ```bash
-gecheck install
+python -m gecheck install
 ```
 
-The second command downloads the scanning engines (about 135 MB) to `~/.goldeneye-check/engines`. You can choose another folder with the `GECHECK_HOME` environment variable. Supported platforms: Windows x64, Linux x64 and macOS on Apple Silicon.
+The first command installs the program, the second downloads the scanning engines (about 135 MB). This is done once.
 
-If the system says the `gecheck` command is not found, the Scripts folder of your Python is not in PATH. In that case run the program through Python: `python -m gecheck install`, `python -m gecheck scan .` and so on. pip shows the path to this folder in a warning during installation.
+**4. Check the project:**
+
+```bash
+python -m gecheck scan .
+```
+
+The dot means "this folder". When the check is finished, the report opens in your browser.
+To check a project in another folder, give its path in quotes: `python -m gecheck scan "C:\Users\me\projects\my-app"`.
+
+### Short command
+
+pip also installs a short `gecheck` command (`gecheck scan .`), but it only works if the Scripts folder of Python is in PATH.
+The Python install manager on Windows does not add it, so the short command is often "not recognized". `python -m gecheck` always works.
+The rest of this page uses the short form; put `python -m` in front of it if needed.
+
+### Where things are stored
+
+The engines are saved to `~/.goldeneye-check/engines`. You can choose another folder with the `GECHECK_HOME` environment variable.
+Supported platforms: Windows x64, Linux x64 and macOS on Apple Silicon.
 
 ## Usage
 
@@ -36,6 +66,7 @@ gecheck site example.com
 ```
 
 Reports are saved to the `.goldeneye-check` folder inside the project: `report.html`, `report.md` and `report.json`.
+The HTML report opens in the browser automatically; add `--no-open` to turn this off.
 Examples: [English](examples/report-en.html), [Russian](examples/report-ru.html), [Kazakh](examples/report-kk.html).
 
 `gecheck scan` options:
@@ -48,6 +79,7 @@ Examples: [English](examples/report-en.html), [Russian](examples/report-ru.html)
 | `--no-history` | do not search git history for secrets |
 | `--offline` | check dependencies without network access |
 | `--fail-on high` | exit with code 1 if there are findings of high severity or above |
+| `--no-open` | do not open the report in the browser |
 
 ## What is checked
 

@@ -10,11 +10,43 @@ from .model import SEV_RANK, SEVERITIES
 EXIT_OK, EXIT_FINDINGS, EXIT_ERROR = 0, 1, 3
 
 
+def _cmd() -> str:
+    """How to call the program in this terminal.
+
+    pip puts the gecheck command into the Scripts folder of Python, and that folder is often
+    not in PATH (the Python install manager on Windows does not add it). python -m gecheck always works.
+    """
+    import shutil
+    if shutil.which("gecheck"):
+        return "gecheck"
+    return ("python" if os.name == "nt" else "python3") + " -m gecheck"
+
+
 def cmd_install(args):
     from .install import install
     print("GoldenEye Check: installing engines")
     install(force=args.force)
+    cmd = _cmd()
+    print()
+    print("Ready. Open the folder of the project you want to check in the terminal and run:")
+    print(f"  {cmd} scan .")
+    print("or give the path to the project:")
+    print(f"  {cmd} scan \"{Path.home() / 'projects' / 'my-app'}\"")
+    if cmd != "gecheck":
+        print("The short gecheck command is not available in this terminal, so use the commands above.")
     return EXIT_OK
+
+
+def _open_report(written, no_open):
+    """Opens report.html in the browser when a person runs the program."""
+    html = next((p for p in written if str(p).endswith(".html")), None)
+    if html is None or no_open or os.environ.get("CI") or not _interactive():
+        return
+    import webbrowser
+    try:
+        webbrowser.open(Path(html).resolve().as_uri())
+    except Exception:  # no browser, the path is printed anyway
+        pass
 
 
 def cmd_scan(args):
@@ -50,8 +82,9 @@ def cmd_scan(args):
     out_dir = Path(args.out).resolve() if args.out else root / ".goldeneye-check"
     formats = {f.strip() for f in args.format.split(",") if f.strip()}
     written = write_reports(result, out_dir, formats, args.lang, include_snippets=args.include_snippets)
-
-    return _summary(result, written, args.fail_on)
+    code = _summary(result, written, args.fail_on)
+    _open_report(written, args.no_open)
+    return code
 
 
 def _pro_rules(root, forced):
@@ -68,13 +101,13 @@ def _pro_rules(root, forced):
     tok = pro.token()
     if not tok:
         if forced:
-            print("To use Pro, log in first: gecheck login", file=sys.stderr)
+            print(f"To use Pro, log in first: {_cmd()} login", file=sys.stderr)
         return skip
     if not forced and not _interactive():
         print("Pro rules are not used. Add --pro to use them when running from a script.")
         return skip
     if not engine_path("opengrep").exists():
-        print("Pro needs the engines. Run gecheck install first.", file=sys.stderr)
+        print(f"Pro needs the engines. Run {_cmd()} install first.", file=sys.stderr)
         return skip
     pid = project_id(root)
     try:
@@ -142,7 +175,7 @@ def cmd_balance(args):
     from . import pro
     tok = pro.token()
     if not tok:
-        print(f"Not logged in. To use Pro, buy a package ({pro.BUY_URL}) and run gecheck login")
+        print(f"Not logged in. To use Pro, buy a package ({pro.BUY_URL}) and run {_cmd()} login")
         return EXIT_ERROR
     try:
         res = pro.call("balance.php", token=tok)
@@ -216,7 +249,9 @@ def cmd_site(args):
     out_dir = Path(args.out).resolve() if args.out else Path.cwd() / ".goldeneye-check" / host
     formats = {f.strip() for f in args.format.split(",") if f.strip()}
     written = write_reports(result, out_dir, formats, args.lang)
-    return _summary(result, written, args.fail_on)
+    code = _summary(result, written, args.fail_on)
+    _open_report(written, args.no_open)
+    return code
 
 
 def cmd_rules(args):
@@ -256,6 +291,7 @@ def main(argv=None):
     pro_mode = p.add_mutually_exclusive_group()
     pro_mode.add_argument("--pro", action="store_true", help="add the Pro rules without asking (uses 1 check)")
     pro_mode.add_argument("--no-pro", action="store_true", help="do not offer the Pro rules")
+    p.add_argument("--no-open", action="store_true", help="do not open the report in the browser")
     p.set_defaults(func=cmd_scan)
 
     p = sub.add_parser("site", help="check a published website (your own only)")
@@ -264,6 +300,7 @@ def main(argv=None):
     p.add_argument("--out", help="where to save reports (default: ./.goldeneye-check/<site>)")
     p.add_argument("--format", default="html,md,json", help="html, md, json, sarif, comma-separated")
     p.add_argument("--yes-i-own-this", action="store_true", help="confirm that the site is yours without a prompt")
+    p.add_argument("--no-open", action="store_true", help="do not open the report in the browser")
     p.add_argument("--fail-on", choices=(*SEVERITIES, "none"), default="critical",
                    help="exit code 1 if there are findings of this severity or above")
     p.set_defaults(func=cmd_site)

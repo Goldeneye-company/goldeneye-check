@@ -5,6 +5,9 @@
 - SARIF 2.1.0 report (`--format sarif`) for GitHub code scanning, DefectDojo and other tools.
 - gecheck site: on Windows, trusted root certificates that the system has not downloaded yet no longer cause a false "certificate is invalid" finding.
 - gecheck site: new finding when the server does not send its intermediate certificate (Python 3.13 or newer).
+- The HTML report opens in the browser after `gecheck scan` and `gecheck site` (not in CI or scripts). `--no-open` turns it off.
+- `gecheck install` says what to run next. When the short `gecheck` command is not in PATH (the default with the Python install manager on Windows), the program suggests `python -m gecheck` in all its hints.
+- README: step-by-step quick start without an IDE.
 
 ## 0.1.0 (October 21, 2026)
 

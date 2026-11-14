@@ -210,6 +210,27 @@ class ReportTest(unittest.TestCase):
             self.assertIn("GoldenEye Check", to_markdown(_result([_finding()]), lang))
 
 
+@unittest.skipUnless(engine_path("gitleaks").exists(), "engines are not installed: gecheck install")
+class OpenAIKeyEndingTest(unittest.TestCase):
+    """The default gitleaks rule misses OpenAI keys that end with "-"; our extra rule finds them, once."""
+
+    def test_any_last_character(self):
+        from gecheck.engines import gitleaks
+        import random
+        import string
+        rnd = random.Random(20261114)  # the same key in every run; gitleaks skips keys with low entropy
+        part = "".join(rnd.choice(string.ascii_letters + string.digits) for _ in range(74))
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            for name, end in (("letter", "A"), ("hyphen", "-"), ("underscore", "_")):
+                key = f"sk-proj-{part}T3BlbkFJ{part[:73]}{end}"
+                (tmp / f"{name}.js").write_text(f'export const K = "{key}";\n', encoding="utf-8")
+            found = gitleaks.scan(tmp, [], history=False)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        self.assertEqual(sorted(f.file for f in found), ["hyphen.js", "letter.js", "underscore.js"])
+
+
 @unittest.skipUnless(all(engine_path(n).exists() for n in NAMES), "engines are not installed: gecheck install")
 class FixtureTest(unittest.TestCase):
     """Full run on the test project."""

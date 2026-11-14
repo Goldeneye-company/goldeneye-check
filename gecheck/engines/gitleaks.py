@@ -16,6 +16,7 @@ from .base import rel_path, run_engine
 # Names for the report; other rules show their RuleID
 KINDS = {
     "openai-api-key": "OpenAI API key",
+    "openai-api-key-dash": "OpenAI API key",
     "anthropic-api-key": "Anthropic API key",
     "anthropic-admin-api-key": "Anthropic Admin API key",
     "stripe-access-token": "Stripe secret key",
@@ -44,8 +45,20 @@ def severity_for(file: str, secret: str, rule_id: str) -> str:
 
 
 _SKIP_RE = r"(^|[\\/])(" + "|".join(d.replace(".", r"\.") for d in SKIP_DIRS) + r")([\\/]|$)"
+# The default openai-api-key rule ends with \b, so it misses keys whose last character is "-"
+# (about 1 key in 64). This rule finds only such keys, so nothing is reported twice.
+OPENAI_DASH = (r"\b(sk-(?:proj|svcacct|admin)-(?:[A-Za-z0-9_-]{74}|[A-Za-z0-9_-]{58})T3BlbkFJ"
+               r"(?:[A-Za-z0-9_-]{73}|[A-Za-z0-9_-]{57})-)(?:[\x60'\"\s;,)]|\\[nr]|$)")
+
 CONFIG = f"""[extend]
 useDefault = true
+
+[[rules]]
+id = "openai-api-key-dash"
+description = "OpenAI API key ending with a hyphen"
+regex = '''{OPENAI_DASH}'''
+secretGroup = 1
+keywords = ["t3blbkfj"]
 
 [[allowlists]]
 description = "GoldenEye Check: service folders and builds"

@@ -8,6 +8,7 @@
 - The HTML report opens in the browser after `gecheck scan` and `gecheck site` (not in CI or scripts). `--no-open` turns it off.
 - `gecheck install` says what to run next. When the short `gecheck` command is not in PATH (the default with the Python install manager on Windows), the program suggests `python -m gecheck` in all its hints.
 - README: step-by-step quick start without an IDE.
+- Secrets: OpenAI keys that end with a hyphen are now found. The default gitleaks rule missed them (about 1 key in 64).
 
 ## 0.1.0 (October 21, 2026)
 

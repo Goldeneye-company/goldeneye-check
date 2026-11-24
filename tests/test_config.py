@@ -204,6 +204,17 @@ class ConfigChecksTest(Project):
         self.write("index.php", "<?php\nsession_start();\n$t = date('Y-m-d H:i:s');\n")
         self.assertEqual(self.rules(), [])
 
+    def test_php_and_database_time_zones(self):
+        self.write("Dockerfile", "FROM php:8.3-apache\n")
+        self.write("index.php", "<?php\n$t = date('Y-m-d H:i:s');\n")
+        compose = "services:\n  app:\n    build: .\n  db:\n    image: postgres:17\n"
+        self.write("docker-compose.yml", compose)
+        sev = {f.rule: f.severity for f in config.scan(self.dir, [])}
+        self.assertEqual(sev["ge.config.php-timezone"], "low")  # both on implicit UTC
+        self.write("docker-compose.yml", compose + "    environment:\n      TZ: Asia/Almaty\n")
+        sev = {f.rule: f.severity for f in config.scan(self.dir, [])}
+        self.assertEqual(sev["ge.config.php-timezone"], "medium")
+
     def test_tls_terminator_or_localhost_port(self):
         self.write("docker-compose.yml", "services:\n  web:\n    image: node:22@sha256:1\n    ports:\n"
                                          "      - \"127.0.0.1:3000:3000\"\n")

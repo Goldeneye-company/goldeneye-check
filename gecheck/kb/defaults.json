@@ -8,13 +8,13 @@
       "runtime": "php",
       "user": "root",
       "ini_dir": "/usr/local/etc/php",
-      "source": "The official php images ship php.ini-development and php.ini-production but no active php.ini, so PHP built-in defaults apply.",
+      "source": "The official php images ship php.ini-development and php.ini-production but no active php.ini, so PHP built-in defaults apply. Since PHP 8.2 date.timezone defaults to UTC (earlier versions: empty, which also falls back to UTC with a warning).",
       "settings": {
         "display_errors": "1",
         "expose_php": "1",
         "session.use_strict_mode": "0",
         "session.cookie_secure": "0",
-        "date.timezone": "",
+        "date.timezone": "UTC",
         "zend.exception_ignore_args": "0"
       },
       "production_ini": {
@@ -33,7 +33,7 @@
             "-r",
             "echo ini_get('display_errors'), '|', ini_get('expose_php'), '|', ini_get('session.use_strict_mode'), '|', ini_get('date.timezone');"
           ],
-          "expect": "^1\\|1\\|0\\|$"
+          "expect": "^1\\|1\\|0\\|UTC$"
         }
       ]
     },
@@ -47,7 +47,7 @@
         "ServerSignature": "On",
         "access_log_query": "1"
       },
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "php:8.3-apache",
@@ -82,7 +82,7 @@
         "server_tokens": "on",
         "access_log_query": "1"
       },
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "nginx:1.27-alpine",
@@ -99,13 +99,14 @@
       "id": "postgres",
       "match": "^(docker\\.io/)?(library/)?postgres:",
       "runtime": "postgres",
-      "source": "docker-library/postgres: the role from POSTGRES_USER (default postgres) is created by initdb as the cluster superuser.",
+      "source": "docker-library/postgres: the role from POSTGRES_USER (default postgres) is created by initdb as the cluster superuser. The TimeZone setting is UTC unless TZ, PGTZ or -c timezone= set another zone.",
       "settings": {
         "user_env": "POSTGRES_USER",
         "default_user": "postgres",
-        "env_user_is_superuser": "1"
+        "env_user_is_superuser": "1",
+        "timezone": "UTC"
       },
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "postgres:17-alpine",
@@ -140,7 +141,7 @@
       "user": "root",
       "source": "The node image has a node user but runs as root unless USER is set.",
       "settings": {},
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "node:22-alpine",
@@ -159,7 +160,7 @@
       "user": "root",
       "source": "The python image runs as root unless USER is set.",
       "settings": {},
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "python:3.13-slim",
@@ -178,7 +179,7 @@
       "user": "root",
       "source": "Official JDK and JRE images run as root unless USER is set. JDWP and JMX remote are off unless JAVA_TOOL_OPTIONS, JAVA_OPTS or the start command turn them on.",
       "settings": {},
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "eclipse-temurin:21-jre",
@@ -197,7 +198,7 @@
       "user": "root",
       "source": "maven and gradle are build images: a full JDK, the build tool and its cache, root user. They are meant for a build stage, not for the running container.",
       "settings": {},
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "maven:3-eclipse-temurin-21",
@@ -219,7 +220,7 @@
         "showServerInfo": "true",
         "webapps": "empty"
       },
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "tomcat:10.1-jre21",
@@ -239,7 +240,7 @@
       "user": "root",
       "source": "golang is a build image: the Go toolchain, a shell and package manager, root user. A Go binary is usually copied into distroless or scratch for the running container.",
       "settings": {},
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "golang:1.23-alpine",

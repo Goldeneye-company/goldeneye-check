@@ -132,17 +132,20 @@ CONFIG_TEXTS = {
     },
     "php_timezone": {
         "title": {
-            "ru": "Время для базы данных считается в PHP без заданного часового пояса",
-            "kk": "Дерекқорға арналған уақыт PHP-де белгіленген уақыт белдеуінсіз есептеледі",
-            "en": "Time for the database is computed in PHP without a set time zone",
+            "ru": "Время для базы данных считается в PHP (часовой пояс PHP {php_tz}, базы {db_tz})",
+            "kk": "Дерекқорға арналған уақыт PHP-де есептеледі (PHP уақыт белдеуі {php_tz}, дерекқордікі {db_tz})",
+            "en": "Time for the database is computed in PHP (PHP time zone {php_tz}, database {db_tz})",
         },
         "fix": {
-            "ru": "Считайте сроки в SQL: CURRENT_TIMESTAMP + make_interval(hours => ?), или задайте date.timezone=UTC "
-                  "в ini и тот же часовой пояс в сессии БД. Иначе ссылки и токены истекают не тогда, когда задумано.",
-            "kk": "Мерзімдерді SQL-де есептеңіз: CURRENT_TIMESTAMP + make_interval(hours => ?), немесе ini ішінде "
-                  "date.timezone=UTC және дерекқор сессиясында сол уақыт белдеуін орнатыңыз. Әйтпесе сілтемелер мен токендер жоспарланған уақытта аяқталмайды.",
-            "en": "Compute times in SQL: CURRENT_TIMESTAMP + make_interval(hours => ?), or set date.timezone=UTC "
-                  "in the ini and the same zone in the database session. Otherwise links and tokens expire at the wrong time.",
+            "ru": "Считайте сроки в SQL: CURRENT_TIMESTAMP + make_interval(hours => ?), или явно задайте один и тот же "
+                  "часовой пояс в date.timezone и в сессии БД. Строка без пояса записывается в TIMESTAMPTZ по поясу сессии БД: "
+                  "сроки верны, только пока оба пояса совпадают, и сдвигаются, как только один из них поменяют.",
+            "kk": "Мерзімдерді SQL-де есептеңіз: CURRENT_TIMESTAMP + make_interval(hours => ?), немесе date.timezone ішінде "
+                  "және дерекқор сессиясында бірдей уақыт белдеуін анық орнатыңыз. Белдеуі жоқ жол TIMESTAMPTZ-ке дерекқор сессиясының "
+                  "белдеуі бойынша жазылады: мерзімдер екі белдеу сәйкес келгенде ғана дұрыс, біреуі өзгерсе, жылжиды.",
+            "en": "Compute times in SQL: CURRENT_TIMESTAMP + make_interval(hours => ?), or set the same time zone explicitly "
+                  "in date.timezone and in the database session. A string without a zone is stored in TIMESTAMPTZ using the "
+                  "database session zone: times are right only while both zones match and shift as soon as one of them changes.",
         },
     },
     "server_tokens": {

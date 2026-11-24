@@ -41,6 +41,7 @@
     {"id": "S-7", "severity": "medium", "category": "L", "title": "No CSP, inline onclick handler",
      "where": [["public/index.php", 134], ["src/bootstrap.php", 11]]},
     {"id": "S-8", "severity": "medium", "category": "J", "title": "Expiry computed in PHP without a time zone, stored as TIMESTAMPTZ",
+     "note": "The manual review rated this medium assuming PHP has no time zone. The KB check on php:8.3-apache (24.11.2026) showed date.timezone defaults to UTC, as does PostgreSQL, so the times are correct today and break only when one zone changes: the scanner reports it as low.",
      "where": [["public/index.php", 114]]},
     {"id": "S-9", "severity": "medium", "category": "M", "title": "Containers not hardened, images not pinned by digest",
      "where": [["Dockerfile", 1], ["docker-compose.yml", 2], ["docker-compose.yml", 21], ["docker-compose.yml", 22]]},

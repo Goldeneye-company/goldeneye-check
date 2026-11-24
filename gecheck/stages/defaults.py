@@ -123,11 +123,18 @@ def check_php(ctx: Context) -> list:
             hit = _first(ctx, re.compile(r"\bsession_start\s*\("))
             if hit:
                 out.append(make("php_session_strict", "medium", *hit, anchor="use_strict_mode"))
-        if not eff.get("date.timezone", ("",))[0] and not _first(ctx, re.compile(r"date_default_timezone_set\s*\(")):
+        php_tz, origin = eff.get("date.timezone", ("UTC", "image"))
+        explicit = origin != "image" or _first(ctx, re.compile(r"date_default_timezone_set\s*\("))
+        db_tz = _db_timezone(ctx)
+        differ = db_tz is not None and _tz(php_tz) != _tz(db_tz)
+        # Both sides on their implicit UTC defaults: correct today, breaks when either zone is set (low).
+        # Zones that differ: links and tokens expire at the wrong time now (medium).
+        if differ or not explicit:
             for rel, code in sorted(_php_files(ctx)):
                 for i, line in enumerate(code.splitlines(), 1):
                     if re.search(r"""\bdate\(\s*['"]Y-m-d[ T]H:i""", line):
-                        out.append(make("php_timezone", "medium", rel, i, anchor=f"date:{i}"))
+                        out.append(make("php_timezone", "medium" if differ else "low", rel, i,
+                                        anchor=f"date:{i}", php_tz=php_tz or "UTC", db_tz=db_tz or "?"))
     return out
 
 
@@ -174,6 +181,26 @@ def check_web_servers(ctx: Context) -> list:
             out.append(make("server_tokens", "low", c.image_file, c.image_line, anchor=directive,
                             tokens=f"{directive} {e['settings'].get(directive, 'on')}"))
     return out
+
+
+def _tz(name: str) -> str:
+    name = (name or "UTC").strip().upper()
+    return "UTC" if name in ("UTC", "ETC/UTC", "Z", "GMT", "ETC/GMT", "UCT") else name
+
+
+def _db_timezone(ctx: Context):
+    """Time zone of the PostgreSQL service: TZ, PGTZ or -c timezone=, otherwise the image default (UTC)."""
+    for c in ctx.containers:
+        if c.service is None or not any(e["runtime"] == "postgres" for e in kb.entries_for(c.image)):
+            continue
+        env = _env(c.service)
+        for key in ("PGTZ", "TZ"):
+            if key in env and env[key][0]:
+                return _resolve(env[key][0])[1] or "UTC"
+        command = yamlish.text(c.service.get("command")) or ""
+        m = re.search(r"timezone\s*=\s*['\"]?([\w/+-]+)", command, re.I)
+        return m.group(1) if m else "UTC"
+    return None
 
 
 # Category M: database superuser

@@ -29,6 +29,14 @@ class Finding:
     commit: Optional[str] = None
     # part of the fingerprint that does not depend on the line number
     anchor: Optional[str] = None
+    # Methodology fields (gecheck/methodology.py): detector type, category A-O,
+    # ISO/IEC 27002:2022 controls, confidence, effort and readiness stage of the fix
+    detector: Optional[str] = None
+    category_code: Optional[str] = None
+    iso: list = field(default_factory=list)
+    confidence: Optional[str] = None
+    effort: Optional[str] = None
+    stage: Optional[str] = None
 
     def fingerprint(self) -> str:
         base = self.anchor if self.anchor is not None else re.sub(r"\s+", " ", (self.snippet or "")).strip()

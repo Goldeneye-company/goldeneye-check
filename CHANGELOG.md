@@ -9,6 +9,12 @@
 - `gecheck install` says what to run next. When the short `gecheck` command is not in PATH (the default with the Python install manager on Windows), the program suggests `python -m gecheck` in all its hints.
 - README: step-by-step quick start without an IDE.
 - Secrets: OpenAI keys that end with a hyphen are now found. The default gitleaks rule missed them (about 1 key in 64).
+- Implicit configuration: a knowledge base of image defaults (`gecheck/kb/defaults.json`) for php, Apache, nginx, PostgreSQL, MySQL, node and python images. The scanner combines it with the files the Dockerfile copies into the configuration folders and finds settings that nobody set: PHP showing errors to users, no session strict mode, no time zone, the application using the PostgreSQL superuser, server version in headers.
+- Java and Go: the knowledge base covers JDK images, maven, gradle, Tomcat, golang and distroless images, Spring Boot and Gin. New findings: a build image (golang, maven, gradle) used for the running container, the JDWP debugger or JMX without authentication turned on, Tomcat default applications copied back, Spring Boot actuator endpoints exposed, the H2 console on, stack traces in error responses, Gin in debug mode, net/http/pprof in production code, Go HTTP servers without timeouts.
+- docker-compose and Dockerfile checks: secrets with a default value (`${VAR:-value}`), the application published over plain HTTP without a TLS proxy, containers without `read_only`, `cap_drop`, `no-new-privileges`, resource limits or a non-root user, images not pinned by digest.
+- Code checks: secrets that fall back to a literal when the environment variable is missing (PHP, JavaScript, Python), a default password printed on a page, session cookies without the Secure flag.
+- Findings of the new checks carry the detector type, category A-O, ISO/IEC 27002:2022 controls, confidence, effort and the readiness stage of the fix (JSON report).
+- Reference project test (`tests/test_corpus.py`): a real PHP application with 27 known problems.
 
 ## 0.1.0 (October 21, 2026)
 

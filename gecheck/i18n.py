@@ -265,6 +265,10 @@ from .i18n_site import SITE_TEXTS, SITE_UI  # noqa: E402
 
 UI.update(SITE_UI)
 
+from .i18n_config import CONFIG_TEXTS  # noqa: E402
+
+TEXTS.update(CONFIG_TEXTS)
+
 
 def t(table: dict, key: str, lang: str, **kw) -> str:
     entry = table[key]

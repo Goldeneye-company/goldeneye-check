@@ -1,0 +1,345 @@
+{
+  "about": "What official images and runtimes do when a setting is not set (methodology, stage 5). Each entry has the date it was last confirmed on a real image and the command that confirms it; bench/verify_kb.py runs these commands in CI. 'checked': null means the value comes from documentation and source code and has not been confirmed on an image yet.",
+  "version": "2026-11-20",
+  "images": [
+    {
+      "id": "php",
+      "match": "^(docker\\.io/)?(library/)?php:",
+      "runtime": "php",
+      "user": "root",
+      "ini_dir": "/usr/local/etc/php",
+      "source": "The official php images ship php.ini-development and php.ini-production but no active php.ini, so PHP built-in defaults apply.",
+      "settings": {
+        "display_errors": "1",
+        "expose_php": "1",
+        "session.use_strict_mode": "0",
+        "session.cookie_secure": "0",
+        "date.timezone": "",
+        "zend.exception_ignore_args": "0"
+      },
+      "production_ini": {
+        "file": "php.ini-production",
+        "settings": {
+          "display_errors": "0",
+          "zend.exception_ignore_args": "1"
+        }
+      },
+      "checked": null,
+      "verify": [
+        {
+          "image": "php:8.3-apache",
+          "run": [
+            "php",
+            "-r",
+            "echo ini_get('display_errors'), '|', ini_get('expose_php'), '|', ini_get('session.use_strict_mode'), '|', ini_get('date.timezone');"
+          ],
+          "expect": "^1\\|1\\|0\\|$"
+        }
+      ]
+    },
+    {
+      "id": "php-apache",
+      "match": "^(docker\\.io/)?(library/)?php:[^ ]*apache",
+      "runtime": "apache",
+      "source": "Debian apache2 package: conf-enabled/security.conf sets ServerTokens OS and ServerSignature On; the combined access log contains the request line with the query string.",
+      "settings": {
+        "ServerTokens": "OS",
+        "ServerSignature": "On",
+        "access_log_query": "1"
+      },
+      "checked": null,
+      "verify": [
+        {
+          "image": "php:8.3-apache",
+          "run": [
+            "sh",
+            "-c",
+            "grep -hE '^Server(Tokens|Signature)' /etc/apache2/conf-enabled/security.conf | tr '\\n' '|'"
+          ],
+          "expect": "^ServerTokens OS\\|ServerSignature On\\|$"
+        }
+      ]
+    },
+    {
+      "id": "httpd",
+      "match": "^(docker\\.io/)?(library/)?httpd:",
+      "runtime": "apache",
+      "source": "The httpd image ships the upstream httpd.conf, where ServerTokens is not set (Full) and the default access log contains the query string.",
+      "settings": {
+        "ServerTokens": "Full",
+        "ServerSignature": "Off",
+        "access_log_query": "1"
+      },
+      "checked": null,
+      "verify": []
+    },
+    {
+      "id": "nginx",
+      "match": "^(docker\\.io/)?(library/)?nginx:",
+      "runtime": "nginx",
+      "source": "nginx: server_tokens on by default; the main log format contains $request with the query string.",
+      "settings": {
+        "server_tokens": "on",
+        "access_log_query": "1"
+      },
+      "checked": null,
+      "verify": [
+        {
+          "image": "nginx:1.27-alpine",
+          "run": [
+            "sh",
+            "-c",
+            "nginx -T 2>/dev/null | grep -c server_tokens || true"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "postgres",
+      "match": "^(docker\\.io/)?(library/)?postgres:",
+      "runtime": "postgres",
+      "source": "docker-library/postgres: the role from POSTGRES_USER (default postgres) is created by initdb as the cluster superuser.",
+      "settings": {
+        "user_env": "POSTGRES_USER",
+        "default_user": "postgres",
+        "env_user_is_superuser": "1"
+      },
+      "checked": null,
+      "verify": [
+        {
+          "image": "postgres:17-alpine",
+          "env": {
+            "POSTGRES_USER": "app",
+            "POSTGRES_PASSWORD": "verify-only"
+          },
+          "run": [
+            "sh",
+            "-c",
+            "docker-entrypoint.sh postgres >/dev/null 2>&1 & until pg_isready -q -U app; do sleep 1; done; psql -U app -d app -tAc 'select rolsuper from pg_roles where rolname = current_user'"
+          ],
+          "expect": "^t$"
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "match": "^(docker\\.io/)?(library/)?(mysql|mariadb):",
+      "runtime": "mysql",
+      "source": "MYSQL_USER gets rights only on MYSQL_DATABASE; root is the superuser.",
+      "settings": {
+        "superuser": "root"
+      },
+      "checked": null,
+      "verify": []
+    },
+    {
+      "id": "node",
+      "match": "^(docker\\.io/)?(library/)?node:",
+      "runtime": "node",
+      "user": "root",
+      "source": "The node image has a node user but runs as root unless USER is set.",
+      "settings": {},
+      "checked": null,
+      "verify": [
+        {
+          "image": "node:22-alpine",
+          "run": [
+            "id",
+            "-u"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "python",
+      "match": "^(docker\\.io/)?(library/)?python:",
+      "runtime": "python",
+      "user": "root",
+      "source": "The python image runs as root unless USER is set.",
+      "settings": {},
+      "checked": null,
+      "verify": [
+        {
+          "image": "python:3.13-slim",
+          "run": [
+            "id",
+            "-u"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "java",
+      "match": "^(docker\\.io/)?(library/)?(eclipse-temurin|openjdk|amazoncorretto|ibm-semeru-runtimes|sapmachine):|^(bellsoft/liberica[\\w-]*|azul/zulu-openjdk[\\w-]*):",
+      "runtime": "java",
+      "user": "root",
+      "source": "Official JDK and JRE images run as root unless USER is set. JDWP and JMX remote are off unless JAVA_TOOL_OPTIONS, JAVA_OPTS or the start command turn them on.",
+      "settings": {},
+      "checked": null,
+      "verify": [
+        {
+          "image": "eclipse-temurin:21-jre",
+          "run": [
+            "id",
+            "-u"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "java-build",
+      "match": "^(docker\\.io/)?(library/)?(maven|gradle):",
+      "runtime": "build",
+      "user": "root",
+      "source": "maven and gradle are build images: a full JDK, the build tool and its cache, root user. They are meant for a build stage, not for the running container.",
+      "settings": {},
+      "checked": null,
+      "verify": [
+        {
+          "image": "maven:3-eclipse-temurin-21",
+          "run": [
+            "id",
+            "-u"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "tomcat",
+      "match": "^(docker\\.io/)?(library/)?tomcat:",
+      "runtime": "tomcat",
+      "user": "root",
+      "source": "The official tomcat image ships an empty webapps folder (default applications are in webapps.dist). ErrorReportValve shows the server version on error pages (showServerInfo is true by default).",
+      "settings": {
+        "showServerInfo": "true",
+        "webapps": "empty"
+      },
+      "checked": null,
+      "verify": [
+        {
+          "image": "tomcat:10.1-jre21",
+          "run": [
+            "sh",
+            "-c",
+            "ls /usr/local/tomcat/webapps | wc -l; id -u"
+          ],
+          "expect": "^0\\s+0$"
+        }
+      ]
+    },
+    {
+      "id": "golang",
+      "match": "^(docker\\.io/)?(library/)?golang:",
+      "runtime": "build",
+      "user": "root",
+      "source": "golang is a build image: the Go toolchain, a shell and package manager, root user. A Go binary is usually copied into distroless or scratch for the running container.",
+      "settings": {},
+      "checked": null,
+      "verify": [
+        {
+          "image": "golang:1.23-alpine",
+          "run": [
+            "id",
+            "-u"
+          ],
+          "expect": "^0$"
+        }
+      ]
+    },
+    {
+      "id": "distroless",
+      "match": "^gcr\\.io/distroless/|^cgr\\.dev/chainguard/|^scratch$",
+      "runtime": "minimal",
+      "source": "Minimal images without a shell or package manager. The :nonroot tags run as user 65532.",
+      "settings": {},
+      "checked": null,
+      "verify": []
+    }
+  ],
+  "tls_terminators": [
+    "caddy",
+    "traefik",
+    "nginx",
+    "haproxy",
+    "envoy",
+    "httpd"
+  ],
+  "web_ports": [
+    80,
+    8000,
+    8080,
+    8081,
+    8888,
+    3000,
+    5000,
+    4000,
+    1337
+  ],
+  "frameworks": [
+    {
+      "id": "spring-boot",
+      "detect": "spring-boot in pom.xml or build.gradle",
+      "source": "Spring Boot 2.x and 3.x reference documentation.",
+      "settings": {
+        "management.endpoints.web.exposure.include": "health",
+        "spring.h2.console.enabled": "false",
+        "server.error.include-stacktrace": "never",
+        "management.endpoint.shutdown.enabled": "false"
+      },
+      "unsafe": {
+        "management.endpoints.web.exposure.include": [
+          "*",
+          "env",
+          "heapdump",
+          "configprops",
+          "beans",
+          "threaddump",
+          "jolokia",
+          "shutdown",
+          "loggers",
+          "mappings",
+          "logfile"
+        ],
+        "spring.h2.console.enabled": [
+          "true"
+        ],
+        "server.error.include-stacktrace": [
+          "always",
+          "on_param",
+          "on-param",
+          "on_trace_param"
+        ],
+        "management.endpoint.shutdown.enabled": [
+          "true"
+        ],
+        "management.endpoint.shutdown.access": [
+          "unrestricted"
+        ]
+      },
+      "checked": null
+    },
+    {
+      "id": "gin",
+      "detect": "github.com/gin-gonic/gin in go.mod",
+      "source": "Gin runs in debug mode unless GIN_MODE=release or gin.SetMode(gin.ReleaseMode).",
+      "settings": {
+        "GIN_MODE": "debug"
+      },
+      "checked": null
+    },
+    {
+      "id": "go-net-http",
+      "detect": "net/http server in Go code",
+      "source": "http.ListenAndServe and an http.Server without ReadHeaderTimeout have no timeouts; importing net/http/pprof registers /debug/pprof/ on the default mux.",
+      "settings": {
+        "ReadHeaderTimeout": "0"
+      },
+      "checked": null
+    }
+  ]
+}

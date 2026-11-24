@@ -24,4 +24,4 @@ gecheck = "gecheck.cli:main"
 include = ["gecheck*"]
 
 [tool.setuptools.package-data]
-gecheck = ["rules/*.yaml"]
+gecheck = ["rules/*.yaml", "kb/*.json"]

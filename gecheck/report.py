@@ -21,6 +21,9 @@ def to_json(result, include_snippets=False) -> dict:
             "file": f.file, "line": f.line, "in_history": f.in_history, "commit": f.commit,
             "title": f.title, "fix": f.fix, "detail": f.detail or None,
         }
+        if f.category_code:
+            item.update({"detector": f.detector, "category_code": f.category_code, "iso": f.iso,
+                         "confidence": f.confidence, "effort": f.effort, "stage": f.stage})
         if include_snippets and f.snippet:
             item["snippet"] = f.snippet
         findings.append(item)

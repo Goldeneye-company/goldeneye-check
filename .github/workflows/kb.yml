@@ -1,0 +1,26 @@
+name: kb
+
+# Confirms the KB of image defaults on real images once a week and when the KB changes.
+# A failure means an image changed its defaults: update gecheck/kb/defaults.json.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - gecheck/kb/**
+      - bench/verify_kb.py
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: python bench/verify_kb.py

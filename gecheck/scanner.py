@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from . import __version__
-from .engines import builtin, gitleaks, opengrep, osv
+from .engines import builtin, config, gitleaks, opengrep, osv
 from .engines.base import EngineMissing
 from .model import SEV_RANK, SEVERITIES, Finding
 
@@ -84,7 +84,7 @@ def project_id(root: Path) -> str:
 
 
 # Which finding to keep when several engines report the same line with a secret
-SECRET_PRIORITY = {"builtin": 0, "gitleaks": 1, "opengrep": 2}
+SECRET_PRIORITY = {"builtin": 0, "config": 0, "gitleaks": 1, "opengrep": 2}
 
 
 def _dedupe(findings):
@@ -131,6 +131,7 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
         ("gitleaks", gitleaks.version(), lambda: gitleaks.scan(root, warnings, history=options.history)),
         ("opengrep", opengrep.version(), lambda: opengrep.scan(root, warnings)),
         ("builtin", __version__, lambda: builtin.scan(root, warnings)),
+        ("config", __version__, lambda: config.scan(root, warnings)),
     ]
     if options.deps:
         steps.insert(1, ("osv-scanner", osv.version(), lambda: osv.scan(root, warnings, offline=options.offline)))

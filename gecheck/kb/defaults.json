@@ -116,7 +116,7 @@
           "run": [
             "sh",
             "-c",
-            "docker-entrypoint.sh postgres >/dev/null 2>&1 & until pg_isready -q -U app; do sleep 1; done; psql -U app -d app -tAc 'select rolsuper from pg_roles where rolname = current_user'"
+            "docker-entrypoint.sh postgres >/dev/null 2>&1 & for i in $(seq 90); do out=$(psql -U app -d postgres -tAc 'select rolsuper from pg_roles where rolname = current_user' 2>/dev/null) && [ -n \"$out\" ] && break; sleep 1; done; echo \"$out\""
           ],
           "expect": "^t$"
         }

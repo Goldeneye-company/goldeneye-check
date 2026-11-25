@@ -1,0 +1,10 @@
+.env
+secrets/
+backups/
+uploads/
+.goldeneye-check/
+.idea/
+.vscode/
+*.log
+*.sqlite
+certs/

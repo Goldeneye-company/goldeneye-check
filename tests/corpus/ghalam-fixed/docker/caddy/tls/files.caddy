@@ -1,0 +1,2 @@
+# Own certificate: the full chain and the private key in the ./certs folder on the server.
+tls /etc/caddy/certs/fullchain.pem /etc/caddy/certs/privkey.pem

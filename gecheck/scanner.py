@@ -34,6 +34,8 @@ class ScanResult:
     options: Options = field(default_factory=Options)
     kind: str = "code"  # "code" or "site"
     notice: Optional[dict] = None  # message above the list of findings, per language
+    measures: list = field(default_factory=list)  # confirmed measures (methodology, stage 7)
+    inventory: object = None  # file inventory (methodology, stage 2)
 
     @property
     def counts(self):
@@ -125,13 +127,13 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
     root = Path(root).resolve()
     started = datetime.now(timezone.utc)
     t0 = time.monotonic()
-    findings, warnings, engines = [], [], {}
+    findings, warnings, engines, extras = [], [], {}, {}
 
     steps = [
         ("gitleaks", gitleaks.version(), lambda: gitleaks.scan(root, warnings, history=options.history)),
         ("opengrep", opengrep.version(), lambda: opengrep.scan(root, warnings)),
         ("builtin", __version__, lambda: builtin.scan(root, warnings)),
-        ("config", __version__, lambda: config.scan(root, warnings)),
+        ("config", __version__, lambda: config.scan(root, warnings, extras)),
     ]
     if options.deps:
         steps.insert(1, ("osv-scanner", osv.version(), lambda: osv.scan(root, warnings, offline=options.offline)))
@@ -156,4 +158,5 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
     findings.sort(key=lambda f: (SEV_RANK.get(f.severity, 9), f.file, f.line or 0))
     return ScanResult(root=root, findings=findings, warnings=warnings, engines=engines,
                       started_at=started.isoformat(timespec="seconds"),
-                      duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options)
+                      duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options,
+                      measures=extras.get("measures", []), inventory=extras.get("inventory"))

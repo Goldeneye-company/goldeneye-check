@@ -79,6 +79,14 @@ rules:
           - pattern: htmlentities(...)
           - pattern: intval(...)
           - pattern: json_encode(...)
+          # escaping helpers: Laravel e(), WordPress esc_*(), the common h() and esc()
+          - pattern: e(...)
+          - pattern: h(...)
+          - pattern: esc(...)
+          - pattern: esc_html(...)
+          - pattern: esc_attr(...)
+          - pattern: esc_url(...)
+          - pattern: rawurlencode(...)
       - *php_validated
     pattern-sinks:
       - pattern-either:

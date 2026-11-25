@@ -114,7 +114,8 @@ class RuleMetadataTest(unittest.TestCase):
     def test_rules_have_texts_and_valid_categories(self):
         for key, (category, detector, cwe, *_rest) in RULES.items():
             self.assertIn(category, CATEGORIES, key)
-            self.assertTrue(cwe.startswith("CWE-"), key)
+            # no CWE fits a missing backup; every other rule has one
+            self.assertTrue(cwe.startswith("CWE-") if key != "no_backup" else cwe is None, key)
             for part in ("title", "fix"):
                 for lang in LANGS:
                     self.assertTrue(TEXTS[key][part][lang], f"{key} {part} {lang}")
@@ -170,6 +171,12 @@ SAFE_COMPOSE = """services:
     environment:
       POSTGRES_USER: owner
       POSTGRES_PASSWORD_FILE: /run/secrets/pg
+  backup:
+    image: prodrigestivill/postgres-backup-local:17@sha256:dddd
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
 """
 
 SAFE_DOCKERFILE = """FROM php:8.3-apache@sha256:cccc
@@ -201,7 +208,8 @@ class ConfigChecksTest(Project):
         self.write("Dockerfile", SAFE_DOCKERFILE)
         self.write("docker/php/app.ini", "expose_php = Off\nsession.use_strict_mode = 1\ndate.timezone = UTC\n")
         self.write("docker/apache/security.conf", "ServerTokens Prod\nServerSignature Off\n")
-        self.write("index.php", "<?php\nsession_start();\n$t = date('Y-m-d H:i:s');\n")
+        self.write("index.php", "<?php\nset_exception_handler(function ($e) { error_log((string) $e); });\n"
+                                "session_start();\n$t = date('Y-m-d H:i:s');\n")
         self.assertEqual(self.rules(), [])
 
     def test_php_and_database_time_zones(self):

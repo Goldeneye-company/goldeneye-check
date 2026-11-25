@@ -1,0 +1,2 @@
+# Certificate from the Caddy internal CA. Install the root certificate on the clients (DEPLOY.md).
+tls internal

@@ -74,9 +74,21 @@ def compare(result, expected: dict) -> dict:
 
     total = {s: sum(1 for i in expected["findings"] if i["severity"] == s) for s in SEVERITIES}
     got = {s: sum(1 for i in found if i["severity"] == s) for s in SEVERITIES}
+
+    known = {(rel, line) for i in expected["findings"] for rel, line in i["where"]}
+    accepted = {(a["rule"], rel, line) for a in expected.get("accepted", []) for rel, line in a["where"]}
+    unexpected = [f for f in result.findings
+                  if (f.file, f.line) not in known and (f.file, None) not in known
+                  and (f.rule, f.file, f.line) not in accepted]
+
+    recognised, unrecognised = [], []
+    for measure in expected.get("confirmed", []):
+        hit = any(m.file == rel and set(m.lines) & set(lines) and set(m.cwe) & set(measure["cwe"])
+                  for m in result.measures for rel, lines in measure["where"])
+        (recognised if hit else unrecognised).append(measure["id"])
     return {"found": found, "missed": missed, "false_positives": false_positives,
             "total": total, "got": got, "grade": result.grade, "score": result.score,
-            "all_findings": result.findings}
+            "unexpected": unexpected, "recognised": recognised, "unrecognised": unrecognised}
 
 
 def criteria_met(cmp: dict, criteria: dict) -> list:
@@ -94,6 +106,8 @@ def criteria_met(cmp: dict, criteria: dict) -> list:
     max_grade = criteria.get("max_grade")
     if max_grade and GRADES.index(cmp["grade"]) < GRADES.index(max_grade):
         problems.append(f"grade {cmp['grade']}, must be {max_grade} or lower")
+    if "max_findings" in criteria and len(cmp["unexpected"]) > criteria["max_findings"]:
+        problems.append(f"{len(cmp['unexpected'])} findings, at most {criteria['max_findings']} allowed")
     return problems
 
 
@@ -105,10 +119,12 @@ def describe(name: str, cmp: dict) -> str:
         lines.append("  missed: " + ", ".join(i["id"] for i in cmp["missed"]))
     for mid, rule, rel, line in cmp["false_positives"]:
         lines.append(f"  false positive on {mid}: {rule} {rel}:{line}")
-    known = {(rel, line) for i in cmp["found"] for rel, line in i["where"]}
-    extra = [f for f in cmp["all_findings"] if (f.file, f.line) not in known and (f.file, None) not in known]
-    for f in extra:
+    for f in cmp["unexpected"]:
         lines.append(f"  not in expected: {f.rule} {f.severity} {f.file}:{f.line}")
+    if cmp["recognised"] or cmp["unrecognised"]:
+        lines.append(f"  confirmed measures recognised: {len(cmp['recognised'])} of "
+                     f"{len(cmp['recognised']) + len(cmp['unrecognised'])}"
+                     + (" (missed: " + ", ".join(cmp["unrecognised"]) + ")" if cmp["unrecognised"] else ""))
     return "\n".join(lines)
 
 
@@ -130,10 +146,28 @@ class GhalamCorpusTest(unittest.TestCase):
     def test_no_false_positives_on_confirmed_measures(self):
         self.assertEqual(self.cmp["false_positives"], [])
 
+    def test_confirmed_measures_recognised(self):
+        """Stage 7: every measure the manual review confirmed is in the scanner's list of confirmed measures."""
+        self.assertEqual(self.cmp["unrecognised"], [])
+
     def test_methodology_criteria(self):
         if not self.expected.get("strict"):
             self.skipTest("criteria are enforced from version 0.2.0 (strict: true)")
         self.assertEqual(criteria_met(self.cmp, self.expected["criteria"]), [])
+
+
+@unittest.skipUnless(engines_ready(), "engines are not installed: gecheck install")
+class GhalamFixedCorpusTest(unittest.TestCase):
+    """The fixed version: no findings except what its README knowingly leaves open."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.expected = json.loads((CORPUS / "ghalam-fixed" / "expected.json").read_text(encoding="utf-8"))
+        cls.cmp = compare(scan_corpus("ghalam-fixed"), cls.expected)
+        print("\n" + describe("ghalam-fixed", cls.cmp), file=sys.stderr)
+
+    def test_no_findings(self):
+        self.assertEqual([f"{f.rule} {f.file}:{f.line}" for f in self.cmp["unexpected"]], [])
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+# Scripts and configuration for Linux containers always use LF, otherwise sh and Apache cannot read them.
+*.sh text eol=lf
+*.sql text eol=lf
+*.conf text eol=lf
+*.ini text eol=lf
+Caddyfile text eol=lf
+Dockerfile text eol=lf

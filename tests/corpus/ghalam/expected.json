@@ -1,6 +1,6 @@
 {
   "about": "Expected results for the ghalam corpus (methodology, section 8). A finding counts as found when the scanner reports any of its 'where' locations; a location without a line matches any finding in that file. 'category' is checked once findings carry category codes.",
-  "baseline": {"critical": 2, "high": 2, "medium": 3, "low": 0},
+  "baseline": {"critical": 3, "high": 5, "medium": 5, "low": 4},
   "strict": false,
   "criteria": {"critical": "all", "high": "all", "medium": 8, "max_grade": "D"},
   "findings": [
@@ -37,7 +37,7 @@
     {"id": "S-5", "severity": "medium", "category": "J", "title": "Token in the query string ends up in access logs and history",
      "where": [["public/index.php", 118], ["public/index.php", 35]]},
     {"id": "S-6", "severity": "medium", "category": "O", "title": "password_hash (bcrypt) runs on every request for the seed admin",
-     "where": [["src/bootstrap.php", 61]]},
+     "where": [["src/bootstrap.php", 61], ["src/bootstrap.php", 36]]},
     {"id": "S-7", "severity": "medium", "category": "L", "title": "No CSP, inline onclick handler",
      "where": [["public/index.php", 134], ["src/bootstrap.php", 11]]},
     {"id": "S-8", "severity": "medium", "category": "J", "title": "Expiry computed in PHP without a time zone, stored as TIMESTAMPTZ",
@@ -57,7 +57,7 @@
     {"id": "L-4", "severity": "low", "category": "B", "title": "No account management: password change, policy, disabling",
      "where": [["public/index.php", null]]},
     {"id": "L-5", "severity": "low", "category": "O", "title": "No disk quotas",
-     "where": [["php/uploads.ini", null], ["public/index.php", 92]]},
+     "where": [["php/uploads.ini", null], ["public/index.php", 92], ["public/index.php", 97]]},
     {"id": "L-6", "severity": "low", "category": "G", "title": "Link password is 48 bits",
      "where": [["public/index.php", 112]]},
     {"id": "L-7", "severity": "low", "category": "G", "title": "Link and password kept in plain text in the session file",

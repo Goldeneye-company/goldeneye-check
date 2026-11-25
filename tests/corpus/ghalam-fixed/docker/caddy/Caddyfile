@@ -1,0 +1,28 @@
+# TLS proxy (ISO 27002: 8.20, 8.24). TLS_MODE sets the certificate mode (see DEPLOY.md):
+#   auto     - Let's Encrypt for a public domain, internal CA for localhost;
+#   internal - Caddy internal CA (internal network, the root certificate is given to clients);
+#   files    - your own certificate from ./certs (corporate CA).
+# TRUSTED_PROXIES - addresses of an external proxy (for example nginx) allowed to pass the client IP.
+# Requests are not logged: the URL carries the link token.
+{
+	admin off
+	servers {
+		trusted_proxies static {$TRUSTED_PROXIES:127.0.0.1/32}
+	}
+}
+
+{$SITE_ADDRESS:localhost} {
+	import /etc/caddy/tls/{$TLS_MODE:auto}.caddy
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+		-Via
+	}
+	request_body {
+		max_size 110MB
+	}
+	reverse_proxy app:8080 {
+		# The application gets a single client address, already checked against trusted_proxies.
+		header_up X-Forwarded-For {client_ip}
+	}
+}

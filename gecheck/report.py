@@ -42,6 +42,9 @@ def to_json(result, include_snippets=False) -> dict:
         "warnings": result.warnings,
         "notice": result.notice,
         "findings": findings,
+        "measures": [{"key": m.key, "category_code": m.category, "cwe": m.cwe, "file": m.file, "lines": m.lines}
+                     for m in getattr(result, "measures", None) or []],
+        "inventory": result.inventory.to_json() if getattr(result, "inventory", None) else None,
     }
 
 
@@ -224,8 +227,19 @@ def to_html(result, lang="en") -> str:
     return "\n".join(parts)
 
 
+def _ignore_reports(out_dir: Path):
+    """Reports name internal addresses and open problems: the .goldeneye-check folder excludes itself from git."""
+    folder = next((p for p in (out_dir, out_dir.parent) if p.name == ".goldeneye-check"), None)
+    if folder is not None and not (folder / ".gitignore").exists():
+        try:
+            (folder / ".gitignore").write_text("*\n", encoding="utf-8")
+        except OSError:
+            pass
+
+
 def write_reports(result, out_dir: Path, formats, lang="en", include_snippets=False):
     out_dir.mkdir(parents=True, exist_ok=True)
+    _ignore_reports(out_dir)
     written = []
     if "html" in formats:
         p = out_dir / "report.html"

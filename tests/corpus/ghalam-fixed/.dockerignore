@@ -1,0 +1,10 @@
+# Secrets, reports and service files stay out of the build context and the image.
+.env
+secrets/
+backups/
+.goldeneye-check/
+.git/
+.idea/
+.vscode/
+*.log
+certs/

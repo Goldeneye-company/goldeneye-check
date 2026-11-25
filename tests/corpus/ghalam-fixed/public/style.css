@@ -1,0 +1,36 @@
+/* No external fonts: the CSP allows only the own origin, and visitor IPs are not sent to third parties. */
+:root { font-family: Manrope, system-ui, sans-serif; color: #eef2ff; background: #070912; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 75% 10%, #242153 0, transparent 28%), radial-gradient(circle at 10% 55%, #142949 0, transparent 25%), #070912; }
+.stars { position: fixed; inset: 0; pointer-events: none; opacity: .35; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 38px 38px; mask-image: linear-gradient(to bottom, #000, transparent 80%); }
+header { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; max-width: 1180px; margin: auto; padding: 28px 24px; border-bottom: 1px solid #ffffff12; }
+.brand { display: flex; align-items: center; gap: 11px; color: #fff; text-decoration: none; font-weight: 700; letter-spacing: .2em; }
+.planet { width: 26px; height: 26px; border: 2px solid #9d8cff; border-radius: 50%; box-shadow: 0 0 25px #7160ff; position: relative; }
+.planet:after { content: ''; position: absolute; width: 34px; border-top: 1px solid #77dcff; transform: rotate(-24deg); left: -6px; top: 12px; }
+nav { display: flex; align-items: center; gap: 22px; color: #8e97ae; font-size: 13px; } nav a { color: #c6bcff; }
+main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 44px 24px 80px; }
+footer { position: relative; z-index: 1; padding: 24px; text-align: center; color: #596178; font-size: 12px; letter-spacing: .12em; }
+h1 { font-size: clamp(32px, 5vw, 54px); line-height: 1.05; margin: 8px 0 12px; letter-spacing: -.04em; } h2 { margin: 5px 0 20px; font-size: 21px; } p { line-height: 1.6; }
+.muted { color: #8e97ae; }.eyebrow, .step { margin: 0; color: #8d7dff; font-size: 11px; font-weight: 700; letter-spacing: .2em; }.step { float: right; font-size: 16px; }
+.hero { display: flex; justify-content: space-between; align-items: end; margin-bottom: 34px; }.status { color: #8e97ae; font-size: 12px; padding-bottom: 8px; }.status i { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #45e6a8; box-shadow: 0 0 12px #45e6a8; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+section, .auth-card { background: linear-gradient(145deg, #111521e8, #0b0e18e8); border: 1px solid #ffffff14; border-radius: 18px; padding: 28px; box-shadow: 0 25px 65px #0005; backdrop-filter: blur(16px); }
+.wide, .new-link { margin-top: 20px; }.new-link { border-color: #8d7dff66; box-shadow: 0 0 40px #6d5cff16; }
+.auth-card, .download-card { max-width: 480px; margin: 7vh auto; }.public-main { min-height: 72vh; display: grid; place-items: center; }.download-card { width: min(100%, 540px); text-align: center; }
+.file-orbit { margin: 0 auto 22px; width: 76px; height: 76px; display: grid; place-items: center; border: 1px solid #8d7dff66; border-radius: 50%; font-size: 28px; color: #b7adff; box-shadow: 0 0 45px #7666ff2c; }
+.plain-form { background: none; padding: 0; border: 0; box-shadow: none; margin-top: 22px; text-align: left; }
+label { display: block; color: #aeb5c9; font-size: 12px; margin: 14px 0; }
+input, select { display: block; width: 100%; margin-top: 7px; padding: 12px 13px; border: 1px solid #ffffff18; border-radius: 9px; outline: none; background: #070a12bb; color: #eef2ff; font: inherit; font-size: 14px; }
+input:focus, select:focus { border-color: #8d7dff; box-shadow: 0 0 0 3px #8d7dff18; }
+button { display: flex; justify-content: space-between; width: 100%; border: 0; border-radius: 9px; padding: 13px 16px; margin-top: 18px; color: white; background: linear-gradient(100deg, #6655e9, #836de8); font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px #5545dd33; }
+button:hover { filter: brightness(1.1); }.drop { border: 1px dashed #ffffff25; padding: 18px; border-radius: 10px; text-align: center; }.drop input { border: 0; padding: 5px; background: none; }.drop span, .drop small { display: block; margin-top: 7px; }.drop small { color: #596178; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.alert { padding: 12px 15px; border-radius: 8px; font-size: 13px; }.error { color: #ffb4bd; background: #ff4e6415; border: 1px solid #ff4e6430; }.notice { color: #a7f3d0; background: #2bd99512; border: 1px solid #2bd99530; }.demo, .counter { text-align: center; color: #687086; font-size: 12px; }
+.section-title { display: flex; justify-content: space-between; align-items: center; }.section-title > span { color: #656d82; font-size: 12px; }.table-wrap { overflow-x: auto; } table { width: 100%; border-collapse: collapse; font-size: 13px; } th { color: #687086; text-align: left; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; } th, td { padding: 14px 10px; border-bottom: 1px solid #ffffff0d; white-space: nowrap; } code { color: #aeb5c9; background: #ffffff0b; padding: 4px 6px; border-radius: 5px; }
+.badge { display: inline-block; padding: 5px 8px; border-radius: 99px; font-size: 10px; }.badge.active { color: #75ebbd; background: #37d89b17; }.badge.closed { color: #8890a5; background: #ffffff0b; }.inline { margin: 0; }.link-button { width: auto; display: inline; margin: 0; padding: 0; background: none; box-shadow: none; color: #b7adff; font-size: 12px; }.empty { text-align: center; color: #596178; padding: 28px; }
+@media (max-width: 720px) { .grid { grid-template-columns: 1fr; }.hero { display: block; }.status { margin-top: 20px; } nav span { display: none; } main { padding-top: 28px; } }
+
+.secret-block { margin: 18px 0; padding: 16px; border: 1px solid #ffffff14; border-radius: 12px; background: #070a1299; }
+.step-title { margin: 0 0 4px; color: #aeb5c9; font-size: 13px; } .step-title strong { color: #ffd38a; }
+.copy-button { width: auto; display: inline-flex; margin-top: 10px; padding: 9px 14px; font-size: 13px; }
+.hint { color: #8e97ae; font-size: 12px; }
+nav form.inline { display: inline; } nav .link-button { font-size: 13px; }

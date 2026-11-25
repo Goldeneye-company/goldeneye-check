@@ -24,7 +24,7 @@
           "zend.exception_ignore_args": "1"
         }
       },
-      "checked": null,
+      "checked": "2026-11-24",
       "verify": [
         {
           "image": "php:8.3-apache",

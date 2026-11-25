@@ -14,7 +14,12 @@
 - docker-compose and Dockerfile checks: secrets with a default value (`${VAR:-value}`), the application published over plain HTTP without a TLS proxy, containers without `read_only`, `cap_drop`, `no-new-privileges`, resource limits or a non-root user, images not pinned by digest.
 - Code checks: secrets that fall back to a literal when the environment variable is missing (PHP, JavaScript, Python), a default password printed on a page, session cookies without the Secure flag.
 - Findings of the new checks carry the detector type, category A-O, ISO/IEC 27002:2022 controls, confidence, effort and the readiness stage of the fix (JSON report).
-- Reference project test (`tests/test_corpus.py`): a real PHP application with 27 known problems.
+- Reference project test (`tests/test_corpus.py`): a real PHP application with 27 known problems, and its fixed version, where the scanner must find nothing beyond what the project documents as left open.
+- Missing measures: sign-in without an attempt limit (critical without a second factor), response time that reveals existing accounts, uploads stored without an antivirus check, integrity hash or encryption, uploaded data that is never deleted, no upload quota, databases without backups, attempt limits checked without a lock, generated passwords and tokens with too little entropy, no global exception handler in plain PHP, password hashing or CREATE TABLE in a bootstrap file that runs on every request (PHP, with sign-in and upload checks for JavaScript and Python).
+- Confirmed measures: the JSON report lists the security measures found in the code with file and lines (prepared statements, output escaping, CSRF checks, session id renewal, security headers and others). The checks use them as evidence: a measure found nearby removes or lowers a finding.
+- File inventory: the JSON report lists entry points, configuration and secret files and what the project lacks (tests, CI, migrations, web server configuration, lock files). Scanner reports, database dumps and logs with internal IP addresses that `.gitignore` does not exclude are reported.
+- The `.goldeneye-check` folder now gets its own `.gitignore`, so reports are not committed by mistake.
+- PHP: the XSS rule accepts the common escaping helpers `e()`, `h()`, `esc()` and WordPress `esc_html()`, `esc_attr()`, `esc_url()`; ini files copied to `$PHP_INI_DIR/conf.d/` are taken into account.
 
 ## 0.1.0 (October 21, 2026)
 

@@ -85,6 +85,8 @@ def php_effective(ctx: Context, container) -> dict:
                 eff.update({k: (v, "production ini") for k, v in prod["settings"].items()})
         from ..config import dockerfile
         for src, dest, _line in dockerfile.copies(stage):
+            # the official images set ENV PHP_INI_DIR, and Dockerfiles often copy to "$PHP_INI_DIR/conf.d/"
+            dest = re.sub(r"\$\{?PHP_INI_DIR\}?", php["ini_dir"], dest.strip("\"'"))
             if not dest.startswith(php["ini_dir"]) or container.context is None:
                 continue
             path = (container.context / src).resolve()

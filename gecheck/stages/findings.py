@@ -1,11 +1,12 @@
 """Findings of the methodology checks: texts from i18n, category, controls, effort and stage from RULES."""
 
-from ..i18n import TEXTS, tri
+from ..i18n import LANGS, TEXTS
 from ..methodology import iso_for
 from ..model import Finding
 
 # key: (category, detector, cwe, confidence, effort, stage, extra ISO controls)
 RULES = {
+    # stage 5 and the configuration checks (step 1)
     "code_default_secret":   ("A", "pattern", "CWE-1393", "high", "hours", "localhost", []),
     "compose_default_secret": ("A", "config", "CWE-1393", "high", "hours", "localhost", []),
     "credentials_in_page":   ("A", "pattern", "CWE-798", "high", "hours", "localhost", []),
@@ -29,13 +30,47 @@ RULES = {
     "gin_debug":             ("I", "config", "CWE-489", "medium", "hours", "pilot", []),
     "go_pprof":              ("I", "pattern", "CWE-215", "high", "hours", "localhost", ["8.12"]),
     "go_http_timeouts":      ("O", "pattern", "CWE-400", "high", "hours", "pilot", []),
+    # stage 4: missing measures and code patterns (step 2)
+    "login_no_limit":        ("B", "absence", "CWE-307", "medium", "days", "pilot", []),
+    "login_timing":          ("B", "pattern", "CWE-208", "medium", "hours", "production", []),
+    "upload_unprotected":    ("F", "absence", "CWE-311", "medium", "days", "pilot", []),
+    "weak_generated_secret": ("G", "pattern", "CWE-331", "high", "hours", "pilot", []),
+    "limit_race":            ("H", "pattern", "CWE-362", "medium", "hours", "pilot", []),
+    "no_error_handler":      ("I", "absence", "CWE-755", "medium", "hours", "pilot", []),
+    "no_deletion":           ("K", "absence", "CWE-459", "medium", "days", "production", []),
+    "no_backup":             ("K", "absence", None, "medium", "days", "production", []),
+    "per_request_heavy":     ("O", "pattern", "CWE-400", "high", "hours", "pilot", []),
+    "no_quota":              ("O", "absence", "CWE-770", "medium", "hours", "production", []),
+    # stage 2: repository hygiene
+    "repo_artifact":         ("N", "absence", "CWE-538", "high", "hours", "localhost", []),
 }
 
+PREFIX = {key: "ge.code" for key in ("login_no_limit", "login_timing", "upload_unprotected",
+                                      "weak_generated_secret", "limit_race", "no_error_handler", "no_deletion",
+                                      "no_backup", "per_request_heavy", "no_quota")}
+PREFIX["repo_artifact"] = "ge.repo"
 
-def make(rule_key, severity, path, line=None, anchor=None, snippet=None, **kw) -> Finding:
-    category, detector, cwe, confidence, effort, stage, extra = RULES[rule_key]
-    return Finding(rule=f"ge.config.{rule_key.replace('_', '-')}", engine="config", severity=severity,
+
+def rule_id(rule_key: str) -> str:
+    return f"{PREFIX.get(rule_key, 'ge.config')}.{rule_key.replace('_', '-')}"
+
+
+def rule_key(rule: str) -> str:
+    """'ge.code.login-no-limit' -> 'login_no_limit'."""
+    return rule.rsplit(".", 1)[-1].replace("-", "_")
+
+
+def _fill(entry: dict, kw: dict) -> dict:
+    """A parameter may be a plain value or a {lang: value} dict for words that differ by language."""
+    return {lang: entry[lang].format(**{k: (v[lang] if isinstance(v, dict) else v) for k, v in kw.items()})
+            for lang in LANGS}
+
+
+def make(rule_key, severity, path, line=None, anchor=None, snippet=None, cwe=None, **kw) -> Finding:
+    category, detector, default_cwe, confidence, effort, stage, extra = RULES[rule_key]
+    return Finding(rule=rule_id(rule_key), engine="config", severity=severity,
                    category="secrets" if category == "A" else "config", file=path, line=line,
-                   title=tri(TEXTS[rule_key]["title"], **kw), fix=tri(TEXTS[rule_key]["fix"], **kw), cwe=cwe,
-                   anchor=anchor, snippet=snippet, detector=detector, category_code=category,
-                   iso=iso_for(category, extra), confidence=confidence, effort=effort, stage=stage)
+                   title=_fill(TEXTS[rule_key]["title"], kw), fix=_fill(TEXTS[rule_key]["fix"], kw),
+                   cwe=cwe or default_cwe, anchor=anchor, snippet=snippet, detector=detector,
+                   category_code=category, iso=iso_for(category, extra), confidence=confidence,
+                   effort=effort, stage=stage)

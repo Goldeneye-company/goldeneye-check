@@ -1,0 +1,193 @@
+# GHALAM: TLS proxy -> application -> PostgreSQL; antivirus, backup and maintenance.
+# Before the first start create the secrets: scripts/init-secrets.ps1 (Windows) or scripts/init-secrets.sh.
+#
+# Networks:
+#   edge     - proxy only, ports 80/443 are published;
+#   frontend - internal, proxy <-> application (the subnet is set in docker/apache/000-default.conf);
+#   backend  - internal, application <-> database/antivirus, no internet access;
+#   updates  - internet access only to update the antivirus databases.
+
+name: ghalam
+
+x-hardening: &hardening
+  security_opt:
+    - no-new-privileges:true
+  restart: unless-stopped
+
+x-app-env: &app-env
+  APP_ENV: ${APP_ENV:-production}
+  APP_BASE_URL: ${APP_BASE_URL:-https://localhost}
+  APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Almaty}
+  DB_HOST: db
+  DB_PORT: 5432
+  DB_NAME: ${DB_NAME:-ghalam}
+  DB_USER: ${APP_DB_USER:-ghalam_app}
+  DB_PASSWORD_FILE: /run/secrets/app_db_password
+  FILE_ENCRYPTION_KEY_FILE: /run/secrets/file_encryption_key
+  CLAMAV_ENABLED: ${CLAMAV_ENABLED:-true}
+  CLAMAV_REQUIRED: ${CLAMAV_REQUIRED:-true}
+  CLAMAV_HOST: clamav
+  STORAGE_QUOTA_MB: ${STORAGE_QUOTA_MB:-2048}
+  DOCUMENT_RETENTION_DAYS: ${DOCUMENT_RETENTION_DAYS:-30}
+  AUDIT_RETENTION_DAYS: ${AUDIT_RETENTION_DAYS:-365}
+  IP_RETENTION_DAYS: ${IP_RETENTION_DAYS:-90}
+
+services:
+  proxy:
+    <<: *hardening
+    image: caddy:2-alpine
+    ports:
+      # BIND_ADDRESS - IP of the server network interface the portal is reachable on (DEPLOY.md).
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTP_PORT:-80}:80"
+      - "${BIND_ADDRESS:-0.0.0.0}:${HTTPS_PORT:-443}:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+      TLS_MODE: ${TLS_MODE:-auto}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.1/32}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./docker/caddy/tls:/etc/caddy/tls:ro
+      - ./certs:/etc/caddy/certs:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    read_only: true
+    tmpfs: [/tmp]
+    networks: [edge, frontend]
+    depends_on: [app]
+    mem_limit: 256m
+    pids_limit: 200
+
+  app:
+    <<: *hardening
+    build: .
+    environment: *app-env
+    secrets: [app_db_password, file_encryption_key]
+    volumes:
+      - document-data:/var/www/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m
+      - /var/run/apache2:size=1m
+      - /var/lock/apache2:size=1m
+    cap_drop: [ALL]
+    networks: [frontend, backend]
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(@fsockopen(\"127.0.0.1\", 8080) ? 0 : 1);'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    mem_limit: 768m
+    cpus: 2
+    pids_limit: 300
+
+  maintenance:
+    <<: *hardening
+    build: .
+    command: ["php", "/var/www/bin/maintenance.php", "--loop"]
+    environment: *app-env
+    secrets: [app_db_password, file_encryption_key]
+    volumes:
+      - document-data:/var/www/data
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    networks: [backend]
+    depends_on:
+      db:
+        condition: service_healthy
+    mem_limit: 256m
+    pids_limit: 50
+
+  db:
+    <<: *hardening
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ghalam}
+      POSTGRES_USER: ${DB_SUPERUSER:-ghalam_admin}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      APP_DB_USER: ${APP_DB_USER:-ghalam_app}
+    secrets: [postgres_password, app_db_password]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks: [backend]
+    # The database port is not published. For debugging: docker compose exec db psql -U <DB_SUPERUSER> <DB_NAME>
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1g
+    pids_limit: 200
+
+  clamav:
+    <<: *hardening
+    image: clamav/clamav:stable
+    volumes:
+      - clamav-db:/var/lib/clamav
+      - ./docker/clamav/clamd.conf:/etc/clamav/clamd.conf:ro
+    networks: [backend, updates]
+    healthcheck:
+      test: ["CMD", "clamdcheck.sh"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 300s
+    mem_limit: 3g
+
+  backup:
+    <<: *hardening
+    build: ./docker/backup
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ghalam}
+      POSTGRES_USER: ${DB_SUPERUSER:-ghalam_admin}
+      BACKUP_INTERVAL_SECONDS: ${BACKUP_INTERVAL_SECONDS:-86400}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+    secrets: [postgres_password, backup_passphrase]
+    volumes:
+      - document-data:/data:ro
+      # Folder on the server: backups are taken from it to another medium (DEPLOY.md, section 10).
+      - ${BACKUP_DIR:-./backups}:/backups
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    cap_add: [DAC_READ_SEARCH]
+    networks: [backend]
+    depends_on:
+      db:
+        condition: service_healthy
+    mem_limit: 512m
+    pids_limit: 50
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  app_db_password:
+    file: ./secrets/app_db_password
+  file_encryption_key:
+    file: ./secrets/file_encryption_key
+  backup_passphrase:
+    file: ./secrets/backup_passphrase
+
+networks:
+  edge: {}
+  frontend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.10.0/24
+  backend:
+    internal: true
+  updates: {}
+
+volumes:
+  document-data:
+  postgres-data:
+  clamav-db:
+  caddy-data:
+  caddy-config:

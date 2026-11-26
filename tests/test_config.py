@@ -115,7 +115,8 @@ class RuleMetadataTest(unittest.TestCase):
         for key, (category, detector, cwe, *_rest) in RULES.items():
             self.assertIn(category, CATEGORIES, key)
             # no CWE fits a missing backup; every other rule has one
-            self.assertTrue(cwe.startswith("CWE-") if key != "no_backup" else cwe is None, key)
+            no_cwe = ("no_backup", "declared_not_implemented")
+            self.assertTrue(cwe.startswith("CWE-") if key not in no_cwe else cwe is None, key)
             for part in ("title", "fix"):
                 for lang in LANGS:
                     self.assertTrue(TEXTS[key][part][lang], f"{key} {part} {lang}")

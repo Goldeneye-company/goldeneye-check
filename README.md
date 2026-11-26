@@ -112,6 +112,12 @@ Pro adds 15 rules for services with payments and user accounts. It works in this
 
 The score starts at 100. Each critical finding subtracts 25, high 10, medium 4, low 1. Vulnerable dependencies lower the score by 30 at most. Grade A is 90 and above, B is 75 and above, C is below 75 or any high finding, D is below 50 or any critical finding, F is below 25.
 
+The second number is coverage: the share of the 15 check categories (secrets, sign-in, sessions, object access, input and output, files, cryptography, limits, errors, logging, data lifecycle, HTTP headers, infrastructure, repository hygiene, availability) that the scanner checks for the languages of your project. Grade A needs coverage of 80% or more; below 60% the score is marked preliminary. A problem not found in a category that was not checked does not mean it is absent.
+
+## Report
+
+The report follows the order of a security review: the readiness verdict and the three problems to fix first, the security measures found in the code, what the README states against what the code implements, the findings with their fix, ISO/IEC 27002:2022 controls, effort and readiness stage, a short ISO/IEC 27001 Annex A summary, a roadmap (before showing the project outside localhost, before a pilot, before production), the routes with the measures each of them has, and the list of what was not checked. The ISO summary assesses the code, not compliance of the organisation.
+
 ## GitHub Actions
 
 ```yaml

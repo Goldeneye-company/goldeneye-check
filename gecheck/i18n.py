@@ -221,14 +221,14 @@ UI = {
     "skipped": {"ru": "Не выполнено", "kk": "Орындалмады", "en": "Skipped"},
     "limits_title": {"ru": "Что не проверялось", "kk": "Не тексерілмеді", "en": "Not checked"},
     "limits": {
-        "ru": "Логика прав доступа (например, может ли один пользователь открыть данные другого), настройки облачных сервисов и платёжных систем, работа под нагрузкой. Исходный код никуда не отправлялся. Для проверки зависимостей в базу OSV были отправлены названия и версии пакетов.",
-        "kk": "Қол жеткізу құқықтарының логикасы (мысалы, бір пайдаланушы екіншісінің деректерін аша ала ма), бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Бастапқы код ешқайда жіберілмеді. Тәуелділіктерді тексеру үшін OSV базасына пакеттердің атаулары мен нұсқалары жіберілді.",
-        "en": "Access-control logic (for example, whether one user can open another user's data), cloud and payment settings, behaviour under load. Source code was not sent anywhere. Package names and versions were sent to the OSV database for the dependency check.",
+        "ru": "Логика доступа без ИИ проверяется частично (вход, владелец объекта, роли администратора), без смысла бизнес-правил. Не проверялись настройки облачных сервисов и платёжных систем, работа под нагрузкой. Исходный код никуда не отправлялся. Для проверки зависимостей в базу OSV были отправлены названия и версии пакетов.",
+        "kk": "Қол жеткізу логикасы ЖИ-сіз ішінара тексеріледі (кіру, нысан иесі, әкімші рөлдері), бизнес ережелерінің мағынасынсыз. Тексерілмегендер: бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Бастапқы код ешқайда жіберілмеді. Тәуелділіктерді тексеру үшін OSV базасына пакеттердің атаулары мен нұсқалары жіберілді.",
+        "en": "Access logic is checked only partly without AI (sign-in, object owner, administrator roles), without the meaning of business rules. Not checked: cloud and payment settings, behaviour under load. Source code was not sent anywhere. Package names and versions were sent to the OSV database for the dependency check.",
     },
     "limits_offline": {
-        "ru": "Логика прав доступа (например, может ли один пользователь открыть данные другого), настройки облачных сервисов и платёжных систем, работа под нагрузкой. Проверка выполнялась без доступа к сети.",
-        "kk": "Қол жеткізу құқықтарының логикасы (мысалы, бір пайдаланушы екіншісінің деректерін аша ала ма), бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Тексеру желіге қосылмай орындалды.",
-        "en": "Access-control logic (for example, whether one user can open another user's data), cloud and payment settings, behaviour under load. The check ran without network access.",
+        "ru": "Логика доступа без ИИ проверяется частично (вход, владелец объекта, роли администратора), без смысла бизнес-правил. Не проверялись настройки облачных сервисов и платёжных систем, работа под нагрузкой. Проверка выполнялась без доступа к сети.",
+        "kk": "Қол жеткізу логикасы ЖИ-сіз ішінара тексеріледі (кіру, нысан иесі, әкімші рөлдері), бизнес ережелерінің мағынасынсыз. Тексерілмегендер: бұлттық сервистер мен төлем жүйелерінің баптаулары, жүктеме кезіндегі жұмыс. Тексеру желіге қосылмай орындалды.",
+        "en": "Access logic is checked only partly without AI (sign-in, object owner, administrator roles), without the meaning of business rules. Not checked: cloud and payment settings, behaviour under load. The check ran without network access.",
     },
     "pro_title": {"ru": "Проверка Pro", "kk": "Pro тексеруі", "en": "Pro check"},
     "pro_text": {

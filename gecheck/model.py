@@ -37,6 +37,9 @@ class Finding:
     confidence: Optional[str] = None
     effort: Optional[str] = None
     stage: Optional[str] = None
+    # Stage 8: rules of findings that together make a worse attack; the project's README admits the problem
+    chain: list = field(default_factory=list)
+    known: bool = False
 
     def fingerprint(self) -> str:
         base = self.anchor if self.anchor is not None else re.sub(r"\s+", " ", (self.snippet or "")).strip()

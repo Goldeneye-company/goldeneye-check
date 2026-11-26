@@ -60,7 +60,10 @@ def to_sarif(result, lang="en", include_snippets=False) -> dict:
             "locations": [_location(f, include_snippets)],
             "partialFingerprints": {"goldeneye/v1": f.fingerprint()},
             "properties": {"severity": f.severity, "category": f.category, "engine": f.engine,
-                           "inGitHistory": f.in_history},
+                           "inGitHistory": f.in_history,
+                           **({"categoryCode": f.category_code, "iso27002": f.iso, "detector": f.detector,
+                               "confidence": f.confidence, "effort": f.effort, "stage": f.stage,
+                               "known": f.known} if f.category_code else {})},
         })
     run = {
         "tool": {"driver": {
@@ -77,7 +80,9 @@ def to_sarif(result, lang="en", include_snippets=False) -> dict:
             "toolExecutionNotifications": [{"level": "warning", "message": {"text": w}} for w in result.warnings],
         }],
         "results": results,
-        "properties": {"kind": result.kind, "score": result.score, "grade": result.grade},
+        "properties": {"kind": result.kind, "score": result.score, "grade": result.grade,
+                       **({"coverage": result.coverage, "preliminary": result.preliminary}
+                          if getattr(result, "coverage", None) is not None else {})},
     }
     if result.git.get("commit"):
         # versionControlProvenance would need the repository URL, which reports never include

@@ -17,11 +17,32 @@ CODE_WORDS = {
                    "en": "a file with internal IP addresses"},
     "account_change": {"ru": "смены пароля", "kk": "құпиясөзді ауыстыру", "en": "password change"},
     "account_disable": {"ru": "отключения учётной записи", "kk": "тіркелгіні өшіру", "en": "account disabling"},
+    "proxy_plan": {"ru": "README планирует reverse proxy: за ним у всех клиентов один IP прокси, и лимит по IP "
+                         "блокирует всех сразу или никого.",
+                   "kk": "README reverse proxy жоспарлайды: оның артында барлық клиенттің IP-і бірдей, ал IP бойынша "
+                         "шек бәрін бірден бұғаттайды немесе ешкімді бұғаттамайды.",
+                   "en": "The README plans a reverse proxy: behind it every client has the proxy IP, and a limit per IP "
+                         "blocks everyone at once or nobody."},
     "inline_handlers": {"ru": "; на страницах есть inline-обработчики", "kk": "; беттерде inline өңдеушілер бар",
                         "en": "; pages use inline handlers"},
 }
 
 ROUTE_TEXTS = {
+    "declared_not_implemented": {
+        "title": {
+            "ru": "Документация обещает меру, которой нет в коде: «{text}»",
+            "kk": "Құжаттама кодта жоқ шараны уәде етеді: «{text}»",
+            "en": "The documentation promises a measure the code does not have: \"{text}\"",
+        },
+        "fix": {
+            "ru": "Реализуйте меру или уберите её из документации. Пользователи и аудиторы полагаются на то, что "
+                  "написано в README, и не ищут другую защиту.",
+            "kk": "Шараны іске асырыңыз немесе оны құжаттамадан алып тастаңыз. Пайдаланушылар мен аудиторлар "
+                  "README-де жазылғанға сүйенеді және басқа қорғанысты іздемейді.",
+            "en": "Implement the measure or remove it from the documentation. Users and auditors rely on what the README "
+                  "says and do not look for other protection.",
+        },
+    },
     "no_account_management": {
         "title": {
             "ru": "Нет {missing}",

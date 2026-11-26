@@ -56,6 +56,8 @@ RULES = {
     "session_no_timeout":    ("C", "absence", "CWE-613", "medium", "hours", "pilot", []),
     "csp_missing":           ("L", "absence", "CWE-693", "high", "hours", "production", []),
     "error_path_unhandled":  ("I", "pattern", "CWE-755", "medium", "hours", "pilot", []),
+    # stage 6: a measure the README states and the code does not implement (category of the claim)
+    "declared_not_implemented": ("N", "absence", None, "high", "days", "pilot", []),
 }
 
 PREFIX = {key: "ge.code" for key in ("login_no_limit", "login_timing", "no_account_management", "upload_unprotected",
@@ -65,6 +67,7 @@ PREFIX = {key: "ge.code" for key in ("login_no_limit", "login_timing", "no_accou
 PREFIX.update({key: "ge.route" for key in ("route_no_audit", "route_no_store", "object_no_owner", "csrf_missing",
                                            "logout_get", "token_in_query", "host_header_url", "error_path_unhandled")})
 PREFIX["repo_artifact"] = "ge.repo"
+PREFIX["declared_not_implemented"] = "ge.docs"
 
 
 def rule_id(rule_key: str) -> str:
@@ -82,8 +85,10 @@ def _fill(entry: dict, kw: dict) -> dict:
             for lang in LANGS}
 
 
-def make(rule_key, severity, path, line=None, anchor=None, snippet=None, cwe=None, **kw) -> Finding:
+def make(rule_key, severity, path, line=None, anchor=None, snippet=None, cwe=None, category_override=None,
+         **kw) -> Finding:
     category, detector, default_cwe, confidence, effort, stage, extra = RULES[rule_key]
+    category = category_override or category
     return Finding(rule=rule_id(rule_key), engine="config", severity=severity,
                    category="secrets" if category == "A" else "config", file=path, line=line,
                    title=_fill(TEXTS[rule_key]["title"], kw), fix=_fill(TEXTS[rule_key]["fix"], kw),

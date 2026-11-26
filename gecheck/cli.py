@@ -211,7 +211,10 @@ CONFIRM = ("You may only check your own site or a site whose owner has agreed.\n
 def _summary(result, written, fail_on):
     c = result.counts
     print()
-    print(f"Security score: {result.score}/100, grade {result.grade}")
+    print(f"Security score: {result.score}/100, grade {result.grade}"
+          + (" (preliminary)" if getattr(result, "preliminary", False) else ""))
+    if getattr(result, "coverage", None) is not None:
+        print(f"Coverage: {result.coverage}% of the categories A-O checked for this stack")
     print(f"Total findings: {len(result.findings)} ("
           + ", ".join(f"{s}: {c[s]}" for s in SEVERITIES) + ")")
     for w in result.warnings:

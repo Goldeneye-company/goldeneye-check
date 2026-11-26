@@ -22,6 +22,11 @@
 - System model: the JSON report describes assets (tables with passwords, documents, logs), subjects, entry points with the matrix, and trust boundaries.
 - Java and Go: rules for SQL and command injection, path traversal, SSRF, XSS, open redirects, Java deserialization, XXE, Spring Security with CSRF turned off or every request allowed, passwords without a slow hash, Go TLS without certificate verification.
 - The reference test now enforces the methodology criteria on every commit.
+- Report in the order of a security review: readiness verdict and the three problems to fix first, confirmed measures with lines, the README statements with their status (implemented, implemented with flaws, not implemented), findings with category, ISO/IEC 27002:2022 controls, readiness stage and effort, a short ISO/IEC 27001 Annex A summary, a roadmap by readiness stage, the routes table, coverage and limitations. HTML and Markdown in three languages; JSON and SARIF carry the same fields.
+- Coverage: the share of categories A-O checked for the project's languages. Grade A needs 80% coverage; below 60% the score is marked preliminary.
+- The README is read for the purpose of the system, stated measures and admitted limitations. A stated measure that the code does not have is a finding; problems the README admits are marked as known; a planned reverse proxy is noted next to limits counted per IP.
+- Findings that make a worse attack together are linked (a default password and a sign-in without an attempt limit).
+- Findings of opengrep, gitleaks, osv-scanner and the built-in checks get a category, ISO controls and a readiness stage too.
 - The `.goldeneye-check` folder now gets its own `.gitignore`, so reports are not committed by mistake.
 - PHP: the XSS rule accepts the common escaping helpers `e()`, `h()`, `esc()` and WordPress `esc_html()`, `esc_attr()`, `esc_url()`; ini files copied to `$PHP_INI_DIR/conf.d/` are taken into account.
 

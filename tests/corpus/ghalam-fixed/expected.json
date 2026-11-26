@@ -3,6 +3,11 @@
   "baseline": {"critical": 0, "high": 0, "medium": 0, "low": 0},
   "strict": true,
   "criteria": {"max_findings": 0},
+  "declared": {"mfa": "implemented", "roles": "implemented", "antivirus": "implemented", "encryption": "implemented",
+               "integrity": "implemented", "random_secrets": "implemented", "attempt_limit": "implemented",
+               "audit_log": "implemented", "backup": "implemented", "retention": "implemented", "https": "implemented",
+               "csp": "implemented", "no_cache": "implemented"},
+  "verdict": "ready",
   "findings": [],
   "accepted": [
     {"rule": "ge.config.image-unpinned", "where": [["Dockerfile", 3], ["docker/backup/Dockerfile", 2]],

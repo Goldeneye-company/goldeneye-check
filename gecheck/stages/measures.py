@@ -136,6 +136,7 @@ PROBES = {
     "retention": ("K", ["CWE-212"],
                   r"retention|\bcron\b|crontab|--loop|celery|APScheduler|@Scheduled|schedule:run|maintenance\.php"),
     "quota": ("O", ["CWE-770"], r"disk_free_space\s*\(|\bquota\b|SUM\s*\(\s*\w*size|storage_limit|max_storage"),
+    "audit_log": ("J", ["CWE-778"], r"\baudit\w*\s*\(|\badd_?log\s*\(|log_?event\s*\(|INSERT\s+INTO\s+\w*(audit|log)\w*"),
 }
 # found in configuration, scripts and compose files as well as in code
 EVERYWHERE = ("antivirus", "retention", "backup")

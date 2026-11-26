@@ -21,6 +21,7 @@ def scan(root: Path, warnings: list, extras: dict = None):
                   + absence.scan(ctx, sources, found_measures) + inventory.check(inv)
                   + matrix.scan(ctx, sources, cells, measures.by_key(found_measures)))
     if extras is not None:
+        extras["ctx"] = ctx
         extras["measures"] = found_measures
         extras["inventory"] = inv
         extras["model"] = system.build(ctx, sources, cells, candidates)

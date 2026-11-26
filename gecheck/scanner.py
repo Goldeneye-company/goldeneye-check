@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 from . import __version__
+from .assessment import assess
 from .engines import builtin, config, gitleaks, opengrep, osv
 from .engines.base import EngineMissing
 from .model import SEV_RANK, SEVERITIES, Finding
@@ -37,6 +38,8 @@ class ScanResult:
     measures: list = field(default_factory=list)  # confirmed measures (methodology, stage 7)
     inventory: object = None  # file inventory (methodology, stage 2)
     model: Optional[dict] = None  # system model and route x measure matrix (methodology, stage 3)
+    coverage: Optional[int] = None  # percent of categories A-O checked for the stack (code scans)
+    assessment: Optional[dict] = None  # stages 1, 6, 8, 9, 10 (assessment.py)
 
     @property
     def counts(self):
@@ -66,9 +69,15 @@ class ScanResult:
             return "D"
         if c["high"] or d["critical"] or s < 75:
             return "C"
-        if s < 90:
+        # A needs the checks to cover at least 80% of the categories for this stack (methodology, section 7)
+        if s < 90 or (self.coverage is not None and self.coverage < 80):
             return "B"
         return "A"
+
+    @property
+    def preliminary(self) -> bool:
+        """The score is preliminary when less than 60% of the categories could be checked."""
+        return self.coverage is not None and self.coverage < 60
 
     @property
     def project_id(self) -> str:
@@ -157,8 +166,13 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
 
     findings = _dedupe(findings)
     findings.sort(key=lambda f: (SEV_RANK.get(f.severity, 9), f.file, f.line or 0))
-    return ScanResult(root=root, findings=findings, warnings=warnings, engines=engines,
-                      started_at=started.isoformat(timespec="seconds"),
-                      duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options,
-                      measures=extras.get("measures", []), inventory=extras.get("inventory"),
-                      model=extras.get("model"))
+    result = ScanResult(root=root, findings=findings, warnings=warnings, engines=engines,
+                        started_at=started.isoformat(timespec="seconds"),
+                        duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options,
+                        measures=extras.get("measures", []), inventory=extras.get("inventory"),
+                        model=extras.get("model"))
+    try:
+        assess(result, extras)
+    except Exception as exc:  # the report without the assessment is still useful
+        warnings.append(f"assessment failed: {str(exc)[:200]}")
+    return result

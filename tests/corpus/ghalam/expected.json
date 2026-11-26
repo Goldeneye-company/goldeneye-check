@@ -3,6 +3,8 @@
   "baseline": {"critical": 3, "high": 7, "medium": 8, "low": 7},
   "strict": true,
   "criteria": {"critical": "all", "high": "all", "medium": 8, "max_grade": "D"},
+  "declared": {"random_secrets": "flawed", "attempt_limit": "flawed", "audit_log": "flawed", "secrets_excluded": "flawed"},
+  "verdict": "block_localhost",
   "findings": [
     {"id": "K-1", "severity": "critical", "category": "A", "title": "Demo credentials shown on the sign-in form and used as defaults",
      "where": [["public/index.php", 29], ["docker-compose.yml", 8], ["src/bootstrap.php", 59], ["docker-compose.yml", 13], ["docker-compose.yml", 28], ["src/bootstrap.php", 21]]},

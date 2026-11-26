@@ -93,9 +93,12 @@ def compare(result, expected: dict) -> dict:
         hit = any(m.file == rel and set(m.lines) & set(lines) and set(m.cwe) & set(measure["cwe"])
                   for m in result.measures for rel, lines in measure["where"])
         (recognised if hit else unrecognised).append(measure["id"])
+    a = result.assessment or {}
+    declared = {row["claim"].key: row["status"] for row in a.get("declared", [])}
     return {"found": found, "missed": missed, "false_positives": false_positives,
             "total": total, "got": got, "grade": result.grade, "score": result.score,
-            "unexpected": unexpected, "recognised": recognised, "unrecognised": unrecognised}
+            "unexpected": unexpected, "recognised": recognised, "unrecognised": unrecognised,
+            "declared": declared, "verdict": a.get("verdict")}
 
 
 def criteria_met(cmp: dict, criteria: dict) -> list:
@@ -157,6 +160,11 @@ class GhalamCorpusTest(unittest.TestCase):
         """Stage 7: every measure the manual review confirmed is in the scanner's list of confirmed measures."""
         self.assertEqual(self.cmp["unrecognised"], [])
 
+    def test_declared_and_verdict(self):
+        """Stage 6 statuses of the README statements and the readiness verdict."""
+        self.assertEqual(self.cmp["declared"], self.expected["declared"])
+        self.assertEqual(self.cmp["verdict"], self.expected["verdict"])
+
     def test_methodology_criteria(self):
         if not self.expected.get("strict"):
             self.skipTest("criteria are enforced from version 0.2.0 (strict: true)")
@@ -175,6 +183,10 @@ class GhalamFixedCorpusTest(unittest.TestCase):
 
     def test_no_findings(self):
         self.assertEqual([f"{f.rule} {f.file}:{f.line}" for f in self.cmp["unexpected"]], [])
+
+    def test_declared_and_verdict(self):
+        self.assertEqual(self.cmp["declared"], self.expected["declared"])
+        self.assertEqual(self.cmp["verdict"], self.expected["verdict"])
 
 
 if __name__ == "__main__":

@@ -5,8 +5,14 @@ import json
 from pathlib import Path
 
 from . import RULES_VERSION, __version__
+from . import report_sections as rs
+from .assessment import to_json as assessment_json
 from .i18n import CATEGORY, SEVERITY, UI, t
 from .model import SEVERITIES
+
+
+def _assessed(result) -> bool:
+    return bool(getattr(result, "assessment", None))
 
 SCHEMA = "goldeneye-check/report@1"
 
@@ -23,7 +29,8 @@ def to_json(result, include_snippets=False) -> dict:
         }
         if f.category_code:
             item.update({"detector": f.detector, "category_code": f.category_code, "iso": f.iso,
-                         "confidence": f.confidence, "effort": f.effort, "stage": f.stage})
+                         "confidence": f.confidence, "effort": f.effort, "stage": f.stage,
+                         "known": f.known, "chain": f.chain})
         if include_snippets and f.snippet:
             item["snippet"] = f.snippet
         findings.append(item)
@@ -38,7 +45,9 @@ def to_json(result, include_snippets=False) -> dict:
                  "options": {"history": result.options.history, "deps": result.options.deps,
                              "offline": result.options.offline, "snippets": include_snippets}},
         "summary": {"score": result.score, "grade": result.grade, "total": len(result.findings),
-                    "counts": result.counts},
+                    "counts": result.counts, "coverage": getattr(result, "coverage", None),
+                    "preliminary": bool(getattr(result, "preliminary", False))},
+        "assessment": assessment_json(result) or None,
         "warnings": result.warnings,
         "notice": result.notice,
         "findings": findings,
@@ -80,8 +89,16 @@ def to_markdown(result, lang="en") -> str:
         + ", ".join(f"{sev[s].lower()}: {c[s]}" for s in SEVERITIES) + ")",
         "",
     ]
+    if _assessed(result):
+        lines += rs.md_summary_extra(result, lang)
+        top = result.assessment["top"]
+        if top:
+            lines += [f"**{t(UI, 'fix_first', lang)}:**", ""]
+            lines += [f"{i}. {f.text('title', lang)} — `{rs.where(f)}`" for i, f in enumerate(top, 1)] + [""]
     if result.notice:
         lines += [f"> {result.notice.get(lang) or result.notice.get('en', '')}", ""]
+    if _assessed(result):
+        lines += rs.md_before_findings(result, lang)
     if not result.findings:
         lines += [t(UI, "none", lang), ""]
     for s in SEVERITIES:
@@ -97,7 +114,12 @@ def to_markdown(result, lang="en") -> str:
             lines.append(f"- {t(UI, 'how_to_fix', lang)}: {f.text('fix', lang)}")
             if f.cwe:
                 lines.append(f"- {f.cwe}")
+            tags = rs.finding_tags(f, lang) if _assessed(result) else []
+            if tags:
+                lines.append("- " + " · ".join(tags))
             lines.append("")
+    if _assessed(result):
+        lines += rs.md_after_findings(result, lang)
     limits = _limits_key(result)
     lines += [f"## {t(UI, 'limits_title', lang)}", "", t(UI, limits, lang), ""]
     if _offer_pro(result):
@@ -164,7 +186,7 @@ def to_html(result, lang="en") -> str:
     c = result.counts
     parts = [f"""<!doctype html><html lang="{lang}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>GoldenEye Check: {e(result.root.name)}</title><style>{CSS}</style></head><body><main class="wrap">
+<title>GoldenEye Check: {e(result.root.name)}</title><style>{CSS}{rs.EXTRA_CSS}</style></head><body><main class="wrap">
 <div class="brand"><i></i>GOLDENEYE CHECK</div>
 <h1>{e(t(UI, 'report_title_site' if result.kind == 'site' else 'report_title', lang))}</h1>
 <div class="meta"><span>{e(t(UI, _subject(result), lang))}: <b>{e(result.root.name)}</b></span>
@@ -173,7 +195,8 @@ def to_html(result, lang="en") -> str:
         parts.append(f"<span>{e(t(UI, 'commit', lang))}: {e(result.git['commit'])}</span>")
     parts.append("</div>")
 
-    top = [f for f in result.findings if f.severity in ("critical", "high")][:3]
+    top = result.assessment["top"] if _assessed(result) else \
+        [f for f in result.findings if f.severity in ("critical", "high")][:3]
     top_html = "".join(f"<li>{e(f.text('title', lang))} <span class='loc'>({e(_where(f, lang))})</span></li>" for f in top)
     counts_html = "".join(
         f"<div class='count c-{s}'><b>{c[s]}</b><small>{e(t(SEVERITY, s, lang))}</small></div>" for s in SEVERITIES)
@@ -181,6 +204,7 @@ def to_html(result, lang="en") -> str:
 <div class="card"><p class="label">{e(t(UI, 'score', lang))}</p>
 <div class="score"><b>{result.score}</b><span>/ 100</span><span class="grade" title="{e(t(UI, 'grade', lang))}">{result.grade}</span></div></div>
 <div class="card"><p class="label">{e(t(UI, 'total', lang))}: {len(result.findings)}</p><div class="counts">{counts_html}</div>
+{rs.html_summary_extra(result, lang) if _assessed(result) else ""}
 {f"<p class='label' style='margin-top:18px'>{e(t(UI, 'fix_first', lang))}</p><ol class='top'>{top_html}</ol>" if top else ""}
 </div></section>""")
 
@@ -190,6 +214,11 @@ def to_html(result, lang="en") -> str:
     if result.warnings:
         items = "".join(f"<li>{e(w)}</li>" for w in result.warnings)
         parts.append(f"<div class='card warn'><p class='label'>{e(t(UI, 'skipped', lang))}</p><ul class='note'>{items}</ul></div>")
+
+    if _assessed(result):
+        parts.append(rs.html_before_findings(result, lang))
+        if result.findings:
+            parts.append(f"<h2>{e(rs.r('s_findings', lang))}</h2>")
 
     if not result.findings:
         parts.append(f"<div class='card'><p>{e(t(UI, 'none', lang))}</p></div>")
@@ -208,6 +237,8 @@ def to_html(result, lang="en") -> str:
             tags.append(f"<span class='tag'>{e(f.engine)}</span>")
             if f.in_history:
                 tags.append(f"<span class='tag hist'>{e(t(UI, 'in_history', lang))}</span>")
+            if _assessed(result):
+                tags += [f"<span class='tag'>{e(x)}</span>" for x in rs.finding_tags(f, lang)]
             detail = f"<p class='note'>{e(f.text('detail', lang))}</p>" if f.detail else ""
             snippet = f"<pre>{e(f.snippet)}</pre>" if f.snippet else ""
             parts.append(f"""<article class="f" style="border-left-color:{SEV_COLOR[s]}">
@@ -215,6 +246,8 @@ def to_html(result, lang="en") -> str:
 <div class="tags">{''.join(tags)}</div>{detail}{snippet}
 <p class="fix"><b>{e(t(UI, 'how_to_fix', lang))}:</b> {e(f.text('fix', lang))}</p></article>""")
 
+    if _assessed(result):
+        parts.append(rs.html_after_findings(result, lang))
     limits = _limits_key(result)
     parts.append(f"""<h2>{e(t(UI, 'limits_title', lang))}</h2><p class="note">{e(t(UI, limits, lang))}</p>""")
     if _offer_pro(result):

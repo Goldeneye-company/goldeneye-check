@@ -68,7 +68,8 @@ def cmd_scan(args):
         if pro_dir is False:
             return EXIT_ERROR
     options = Options(history=not args.no_history, deps=not args.no_deps, offline=args.offline,
-                      pro_rules=pro_dir, pro_version=(pro_res or {}).get("version", ""))
+                      pro_rules=pro_dir, pro_version=(pro_res or {}).get("version", ""),
+                      pro_compliance=(pro_res or {}).get("compliance"))
     try:
         result = run(root, options)
     finally:
@@ -284,7 +285,8 @@ def main(argv=None):
     p.add_argument("path", nargs="?", default=".", help="project folder (default: current folder)")
     p.add_argument("--lang", choices=LANGS, default="en", help="report language")
     p.add_argument("--out", help="where to save reports (default: <project>/.goldeneye-check)")
-    p.add_argument("--format", default="html,md,json", help="html, md, json, sarif, comma-separated")
+    p.add_argument("--format", default="html,md,json",
+                   help="html, md, json, sarif, pdf (Pro: report for auditors), comma-separated")
     p.add_argument("--no-history", action="store_true", help="do not search git history for secrets")
     p.add_argument("--no-deps", action="store_true", help="do not check dependencies")
     p.add_argument("--offline", action="store_true", help="check dependencies without network access")

@@ -22,29 +22,44 @@ def coverage(languages) -> dict:
             "percent": round(100 * len(cats) / len(CATEGORIES))}
 
 
-def controls(findings: list, measures: list, cov: dict) -> dict:
+ORDER = ("not_done", "partial", "not_assessed", "done")
+
+
+def category_statuses(findings: list, measures: list, cov: dict) -> dict:
+    """Status of each category A-O: done, partial, not_done or not_assessed."""
     by_cat_findings, by_cat_measures = {}, set()
     for f in findings:
         if f.category_code:
             by_cat_findings.setdefault(f.category_code, []).append(f)
     for m in measures:
         by_cat_measures.add(m.category)
+    out = {}
+    for cat in CATEGORIES:
+        found = by_cat_findings.get(cat, [])
+        if cat not in cov["categories"]:
+            out[cat] = "not_assessed"
+        elif not found:
+            out[cat] = "done"
+        elif any(f.severity in SEV_BLOCKING for f in found) and cat not in by_cat_measures:
+            out[cat] = "not_done"
+        else:
+            out[cat] = "partial"
+    return out
+
+
+def worst(statuses) -> str:
+    """The status of a control or requirement from the statuses of its categories."""
+    statuses = list(statuses)
+    return min(statuses, key=ORDER.index) if statuses else "not_assessed"
+
+
+def controls(findings: list, measures: list, cov: dict) -> dict:
+    by_category = category_statuses(findings, measures, cov)
     statuses = {}
     for cat, info in CATEGORIES.items():
-        if cat not in cov["categories"]:
-            status = "not_assessed"
-        else:
-            found = by_cat_findings.get(cat, [])
-            if not found:
-                status = "done"
-            elif any(f.severity in SEV_BLOCKING for f in found) and cat not in by_cat_measures:
-                status = "not_done"
-            else:
-                status = "partial"
         for control in info["iso"]:
-            statuses.setdefault(control, []).append(status)
-    order = ("not_done", "partial", "not_assessed", "done")
-    result = {c: min(s, key=order.index) for c, s in statuses.items()}
+            statuses.setdefault(control, []).append(by_category[cat])
+    result = {c: worst(s) for c, s in statuses.items()}
     counts = {s: sum(1 for v in result.values() if v == s) for s in ("done", "partial", "not_done", "not_assessed")}
     return {"total": len(result), "counts": counts, "statuses": result,
             "process_review": list(PROCESS_CONTROLS)}

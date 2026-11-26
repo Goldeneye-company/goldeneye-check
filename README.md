@@ -99,7 +99,7 @@ Things the program cannot check (spending limits, two-factor authentication, bac
 
 ## Pro
 
-Pro adds 15 rules for services with payments and user accounts. It works in this same program: buy a package of checks at [goldeneye.kz/en/check](https://goldeneye.kz/en/check/), run `gecheck login`, and `gecheck scan` will offer to add the Pro rules. The rules are downloaded from the server for one check and deleted after it. Only your email and an anonymised project ID are sent to the server.
+Pro adds 15 rules for services with payments and user accounts, and the compliance part of the report: the table of ISO/IEC 27002:2022 controls with the lines of code that support each of them and the findings against them, the requirements of Kazakhstan (the Unified requirements in the field of ICT and information security) with their status, a self-assessment checklist of organisational controls, and a report for management and auditors (`report-audit.html`; with `--format pdf` also `report-audit.pdf`, printed by an installed Edge, Chrome or Chromium). It works in this same program: buy a package of checks at [goldeneye.kz/en/check](https://goldeneye.kz/en/check/), run `gecheck login`, and `gecheck scan` will offer to add the Pro rules. The rules and the compliance tables are downloaded from the server for one check and deleted after it. Only your email and an anonymised project ID are sent to the server.
 
 | Command | Purpose |
 |---|---|

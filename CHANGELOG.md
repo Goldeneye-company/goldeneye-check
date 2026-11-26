@@ -27,6 +27,7 @@
 - The README is read for the purpose of the system, stated measures and admitted limitations. A stated measure that the code does not have is a finding; problems the README admits are marked as known; a planned reverse proxy is noted next to limits counted per IP.
 - Findings that make a worse attack together are linked (a default password and a sign-in without an attempt limit).
 - Findings of opengrep, gitleaks, osv-scanner and the built-in checks get a category, ISO controls and a readiness stage too.
+- Pro: the server sends compliance tables with the Pro rules. The report then shows every ISO/IEC 27002:2022 control with its status, the lines that support it and the findings against it, the requirements of Kazakhstan with their status, and a self-assessment checklist of organisational controls. `report-audit.html` is a report for management and auditors; `--format pdf` prints it to `report-audit.pdf` with an installed Edge, Chrome or Chromium. The JSON report carries the statuses and references, not the texts of the tables.
 - The `.goldeneye-check` folder now gets its own `.gitignore`, so reports are not committed by mistake.
 - PHP: the XSS rule accepts the common escaping helpers `e()`, `h()`, `esc()` and WordPress `esc_html()`, `esc_attr()`, `esc_url()`; ini files copied to `$PHP_INI_DIR/conf.d/` are taken into account.
 

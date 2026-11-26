@@ -4,6 +4,7 @@ Findings of the older engines get their category, ISO controls and readiness sta
 roadmap and the ISO summary cover them too.
 """
 
+from . import pro_report
 from .methodology import CATEGORIES, classify
 from .model import SEV_RANK
 from .stages import declaration, iso, readme, roadmap, severity
@@ -37,6 +38,7 @@ def assess(result, extras: dict) -> None:
         "verdict": roadmap.verdict(result.findings),
         "top": roadmap.top(result.findings),
     }
+    result.pro = pro_report.build(result)
 
 
 def to_json(result) -> dict:

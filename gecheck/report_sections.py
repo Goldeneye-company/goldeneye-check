@@ -8,7 +8,7 @@ coverage and limitations.
 import html
 
 from .i18n_report import (ABSENT_NAMES, ASSET_KINDS, CATEGORY_NAMES, CONTROL_NAMES, EFFORT_NAMES, MEASURE_NAMES,
-                          PURPOSE_NAMES, REPORT_UI, STAGE_NAMES, SUBJECT_NAMES)
+                          PRO_UI, PURPOSE_NAMES, REPORT_UI, STAGE_NAMES, SUBJECT_NAMES)
 from .methodology import CODE_LANGS, STAGES
 
 e = html.escape
@@ -105,14 +105,91 @@ def html_before_findings(result, lang) -> str:
     return "".join(parts)
 
 
+def p(key, lang, **kw) -> str:
+    text = PRO_UI[key].get(lang) or PRO_UI[key]["en"]
+    return text.format(**kw) if kw else text
+
+
+def _t(entry, lang) -> str:
+    return (entry or {}).get(lang) or (entry or {}).get("en") or ""
+
+
+def evidence_items(control, lang, limit=4) -> list:
+    """Short lines: measures with lines, then findings with places."""
+    items = [f"✓ {name(MEASURE_NAMES, m.key, lang)} — {m.file}: {_lines(m.lines, 4)}" for m in control["measures"][:limit]]
+    items += [f"✗ {f.text('title', lang)} — {where(f)}" for f in control["findings"][:limit]]
+    return items
+
+
+def html_pro(result, lang) -> str:
+    pro = result.pro
+    rows = []
+    for c in pro["controls"]:
+        ev = "".join(f"<div>{e(x)}</div>" for x in evidence_items(c, lang)) or "—"
+        rows.append(f"<tr><td><b>{e(c['id'])}</b> {e(_t(c['title'], lang))}<div class='loc'>{e(_t(c['shows'], lang))}</div></td>"
+                    f"<td class='st-{c['status']}'>{e(p('status_' + c['status'], lang))}</td><td class='ev'>{ev}</td></tr>")
+    counts = pro["counts"]
+    national = pro["national"]
+    note = "" if national.get("verified") else f"<p class='note'>{e(_t(national.get('note'), lang))}</p>"
+    parts = [f"<h2>{e(p('s_iso_table', lang))}</h2><div class='card tbl'>"
+             f"<p>{e(r('iso_text', lang, total=len(pro['controls']), **counts))}</p>{note}"
+             f"<table><tr><th>{e(p('col_control', lang))}</th><th>{e(p('col_status', lang))}</th>"
+             f"<th>{e(p('col_evidence', lang))}</th></tr>{''.join(rows)}</table>"
+             f"<p class='note'>{e(r('iso_note', lang).split('. ')[0])}.</p></div>"]
+    kz = []
+    for req in pro["requirements"]:
+        partial = f"<div class='loc'>{e(p('partial_req', lang))}</div>" if req.get("partial") else ""
+        found = "".join(f"<div>✗ {e(f.text('title', lang))} — {e(where(f))}</div>" for f in req["findings"][:3]) or "—"
+        kz.append(f"<tr><td><b>{e(req['ref'])}</b> {e(_t(req['text'], lang))}{partial}</td>"
+                  f"<td>{e(', '.join(req['controls']))}</td><td class='st-{req['status']}'>"
+                  f"{e(p('status_' + req['status'], lang))}</td><td class='ev'>{found}</td></tr>")
+    sources = "".join(f"<p class='note'><b>{e(_t(s.get('title'), lang))}</b>. {e(_t(s.get('applies'), lang))}</p>"
+                      for s in pro["sources"])
+    parts.append(f"<h2>{e(p('s_kz', lang))}</h2><div class='card tbl'>{sources}<table><tr><th>{e(p('col_req', lang))}</th>"
+                 f"<th>ISO</th><th>{e(p('col_status', lang))}</th><th>{e(p('col_evidence', lang))}</th></tr>"
+                 f"{''.join(kz)}</table><p class='note'>{e(p('kz_note', lang))}</p></div>")
+    items = "".join(f"<tr><td>{e(i['control'])}</td><td>{e(_t(i['question'], lang))}</td>"
+                    f"<td class='loc'>{e(_t(i['evidence'], lang))}</td><td class='answer'></td></tr>" for i in pro["checklist"])
+    parts.append(f"<h2>{e(p('s_checklist', lang))}</h2><div class='card tbl'><p class='note'>{e(p('checklist_note', lang))}</p>"
+                 f"<table><tr><th>ISO</th><th>{e(p('col_question', lang))}</th><th>{e(p('col_proof', lang))}</th>"
+                 f"<th>{e(p('col_answer', lang))}</th></tr>{items}</table></div>")
+    return "".join(parts)
+
+
+def md_pro(result, lang) -> list:
+    pro = result.pro
+    out = [f"## {p('s_iso_table', lang)}", "", r("iso_text", lang, total=len(pro["controls"]), **pro["counts"]), ""]
+    if not pro["national"].get("verified"):
+        out += [_t(pro["national"].get("note"), lang), ""]
+    out += [f"| {p('col_control', lang)} | {p('col_status', lang)} | {p('col_evidence', lang)} |", "|---|---|---|"]
+    for c in pro["controls"]:
+        ev = "<br>".join(x.replace("|", "\\|") for x in evidence_items(c, lang, 3)) or "—"
+        out.append(f"| {c['id']} {_t(c['title'], lang)} | {p('status_' + c['status'], lang)} | {ev} |")
+    out += ["", f"## {p('s_kz', lang)}", ""]
+    for s in pro["sources"]:
+        out += [f"**{_t(s.get('title'), lang)}**. {_t(s.get('applies'), lang)}", ""]
+    out += [f"| {p('col_req', lang)} | ISO | {p('col_status', lang)} |", "|---|---|---|"]
+    for req in pro["requirements"]:
+        mark = " *" if req.get("partial") else ""
+        out.append(f"| {req['ref']} {_t(req['text'], lang)}{mark} | {', '.join(req['controls'])} | "
+                   f"{p('status_' + req['status'], lang)} |")
+    out += ["", f"\\* {p('partial_req', lang)}. {p('kz_note', lang)}", "", f"## {p('s_checklist', lang)}", "",
+            p("checklist_note", lang), ""]
+    out += [f"- [ ] **{i['control']}** {_t(i['question'], lang)} — {_t(i['evidence'], lang)}" for i in pro["checklist"]]
+    return out + [""]
+
+
 def html_after_findings(result, lang) -> str:
     a = result.assessment
     parts = []
     c = a["controls"]
-    names = "".join(f"<li>{e(x)} {e(name(CONTROL_NAMES, x, lang))}</li>" for x in c["process_review"])
-    parts.append(f"<h2>{e(r('s_iso', lang))}</h2><div class='card'><p>{e(r('iso_text', lang, total=c['total'], **c['counts']))}</p>"
-                 f"<p class='note'>{e(r('process_review', lang))}</p><ul class='note'>{names}</ul>"
-                 f"<p class='note'>{e(r('iso_note', lang))}</p></div>")
+    if result.pro:
+        parts.append(html_pro(result, lang))
+    else:
+        names = "".join(f"<li>{e(x)} {e(name(CONTROL_NAMES, x, lang))}</li>" for x in c["process_review"])
+        parts.append(f"<h2>{e(r('s_iso', lang))}</h2><div class='card'><p>{e(r('iso_text', lang, total=c['total'], **c['counts']))}</p>"
+                     f"<p class='note'>{e(r('process_review', lang))}</p><ul class='note'>{names}</ul>"
+                     f"<p class='note'>{e(r('iso_note', lang))}</p></div>")
     stages = []
     for stage in STAGES:
         items = a["roadmap"].get(stage) or []
@@ -182,7 +259,9 @@ ul.plain{margin:0;padding-left:18px}ul.plain li{margin:4px 0}
 .tbl{overflow-x:auto}.tbl table{border-collapse:collapse;width:100%;font-size:14px}
 .tbl th,.tbl td{border-bottom:1px solid var(--rule);padding:6px 8px;text-align:left;vertical-align:top}
 .tbl th{font-size:12px;color:var(--muted);font-weight:600}
-.st-implemented{color:var(--green)}.st-flawed{color:var(--high)}.st-missing{color:var(--crit)}
+.st-implemented,.st-done{color:var(--green)}.st-flawed,.st-partial{color:var(--high)}
+.st-missing,.st-not_done{color:var(--crit)}.st-not_assessed{color:var(--muted)}
+.tbl td.ev{font-size:13px}.tbl td.ev div{margin:2px 0}.tbl td.answer{min-width:120px}
 .card h3{font-size:15px;margin:14px 0 4px}.card h3:first-child{margin-top:0}
 """
 
@@ -221,10 +300,14 @@ def md_before_findings(result, lang) -> list:
 def md_after_findings(result, lang) -> list:
     a = result.assessment
     c = a["controls"]
-    out = [f"## {r('s_iso', lang)}", "", r("iso_text", lang, total=c["total"], **c["counts"]), "",
-           r("process_review", lang), ""]
-    out += [f"- {x} {name(CONTROL_NAMES, x, lang)}" for x in c["process_review"]]
-    out += ["", r("iso_note", lang), "", f"## {r('s_roadmap', lang)}", ""]
+    if result.pro:
+        out = md_pro(result, lang)
+    else:
+        out = [f"## {r('s_iso', lang)}", "", r("iso_text", lang, total=c["total"], **c["counts"]), "",
+               r("process_review", lang), ""]
+        out += [f"- {x} {name(CONTROL_NAMES, x, lang)}" for x in c["process_review"]]
+        out += ["", r("iso_note", lang), ""]
+    out += [f"## {r('s_roadmap', lang)}", ""]
     for stage in STAGES:
         items = a["roadmap"].get(stage) or []
         if not items:

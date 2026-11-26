@@ -21,6 +21,7 @@ class Options:
     offline: bool = False
     pro_rules: Optional[Path] = None  # folder with Pro rules from the server
     pro_version: str = ""
+    pro_compliance: Optional[dict] = None  # Pro tables from the server: ISO controls, Kazakhstan, checklist
 
 
 @dataclass
@@ -40,6 +41,7 @@ class ScanResult:
     model: Optional[dict] = None  # system model and route x measure matrix (methodology, stage 3)
     coverage: Optional[int] = None  # percent of categories A-O checked for the stack (code scans)
     assessment: Optional[dict] = None  # stages 1, 6, 8, 9, 10 (assessment.py)
+    pro: Optional[dict] = None  # Pro sections: ISO table, Kazakhstan requirements, checklist (pro_report.py)
 
     @property
     def counts(self):

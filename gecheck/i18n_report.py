@@ -86,6 +86,99 @@ REPORT_UI = {
     "purpose": {"ru": "Система работает с", "kk": "Жүйе жұмыс істейтін деректер", "en": "The system handles"},
 }
 
+PRO_UI = {
+    "status_done": {"ru": "поддерживается", "kk": "қолдайды", "en": "supported"},
+    "status_partial": {"ru": "частично", "kk": "ішінара", "en": "partly"},
+    "status_not_done": {"ru": "не поддерживается", "kk": "қолдамайды", "en": "not supported"},
+    "status_not_assessed": {"ru": "не оценивалось", "kk": "бағаланбаған", "en": "not assessed"},
+    "s_iso_table": {"ru": "Меры ISO/IEC 27002:2022", "kk": "ISO/IEC 27002:2022 шаралары", "en": "ISO/IEC 27002:2022 controls"},
+    "col_control": {"ru": "Мера", "kk": "Шара", "en": "Control"},
+    "col_status": {"ru": "Статус", "kk": "Мәртебе", "en": "Status"},
+    "col_evidence": {"ru": "Подтверждения и находки", "kk": "Растаулар мен табылғандар", "en": "Evidence and findings"},
+    "col_shows": {"ru": "Что показывает код", "kk": "Код нені көрсетеді", "en": "What the code shows"},
+    "s_kz": {"ru": "Требования Республики Казахстан", "kk": "Қазақстан Республикасының талаптары",
+             "en": "Requirements of the Republic of Kazakhstan"},
+    "col_req": {"ru": "Требование", "kk": "Талап", "en": "Requirement"},
+    "partial_req": {"ru": "код показывает часть требования, остальное проверяется по документам",
+                    "kk": "код талаптың бір бөлігін көрсетеді, қалғаны құжаттар бойынша тексеріледі",
+                    "en": "the code shows part of the requirement, the rest is checked through documents"},
+    "kz_note": {"ru": "Формулировки требований — пересказ, а не текст нормативного акта. Проверьте актуальную "
+                      "редакцию на adilet.zan.kz.",
+                "kk": "Талаптардың тұжырымдары — нормативтік акт мәтіні емес, мазмұндамасы. Өзекті редакцияны "
+                      "adilet.zan.kz сайтынан тексеріңіз.",
+                "en": "The requirements are paraphrased, not the text of the act. Check the current edition at adilet.zan.kz."},
+    "s_checklist": {"ru": "Чек-лист самооценки организационных мер", "kk": "Ұйымдастырушылық шараларды өзін-өзі бағалау чек-парағы",
+                    "en": "Self-assessment checklist of organisational controls"},
+    "checklist_note": {"ru": "Код не показывает эти меры. Ответьте на вопросы и приложите доказательства: аудитор "
+                             "спросит именно их.",
+                       "kk": "Код бұл шараларды көрсетпейді. Сұрақтарға жауап беріп, дәлелдерді қоса беріңіз: аудитор "
+                             "дәл соларды сұрайды.",
+                       "en": "The code does not show these controls. Answer the questions and attach the evidence: this is "
+                             "what an auditor will ask for."},
+    "col_question": {"ru": "Вопрос", "kk": "Сұрақ", "en": "Question"},
+    "col_answer": {"ru": "Ответ", "kk": "Жауап", "en": "Answer"},
+    "col_proof": {"ru": "Что показать", "kk": "Не көрсету керек", "en": "What to show"},
+    "audit_title": {"ru": "Отчёт о проверке безопасности исходного кода", "kk": "Бастапқы код қауіпсіздігін тексеру есебі",
+                    "en": "Source code security review report"},
+    "audit_for": {"ru": "для руководства и аудитора", "kk": "басшылық пен аудиторға арналған", "en": "for management and auditors"},
+    "a_summary": {"ru": "1. Краткий вывод", "kk": "1. Қысқаша қорытынды", "en": "1. Summary"},
+    "a_scope": {"ru": "2. Объект и метод проверки", "kk": "2. Тексеру нысаны мен әдісі", "en": "2. Scope and method"},
+    "a_measures": {"ru": "3. Подтверждённые меры защиты", "kk": "3. Расталған қорғау шаралары", "en": "3. Confirmed security measures"},
+    "a_iso": {"ru": "4. Меры ISO/IEC 27002:2022", "kk": "4. ISO/IEC 27002:2022 шаралары", "en": "4. ISO/IEC 27002:2022 controls"},
+    "a_kz": {"ru": "5. Требования Республики Казахстан", "kk": "5. Қазақстан Республикасының талаптары",
+             "en": "5. Requirements of the Republic of Kazakhstan"},
+    "a_findings": {"ru": "6. Находки", "kk": "6. Табылғандар", "en": "6. Findings"},
+    "a_declared": {"ru": "7. Заявлено в документации и реализовано", "kk": "7. Құжаттамада мәлімделген және іске асырылған",
+                   "en": "7. Stated in the documentation and implemented"},
+    "a_checklist": {"ru": "8. Чек-лист самооценки организационных мер", "kk": "8. Ұйымдастырушылық шараларды өзін-өзі бағалау",
+                    "en": "8. Self-assessment of organisational controls"},
+    "a_limits": {"ru": "9. Ограничения", "kk": "9. Шектеулер", "en": "9. Limitations"},
+    "method": {"ru": "Проверка выполнена программой GoldenEye Check по методике из 10 этапов: контекст из документации, "
+                     "инвентаризация файлов, модель системы и маршрутов, проверка 15 категорий (опасные конструкции и "
+                     "отсутствие ожидаемых мер), неявная конфигурация образов, сверка заявленного с реализованным, отсев "
+                     "ложных срабатываний, оценка критичности, сопоставление с ISO/IEC 27002:2022, рекомендации. "
+                     "Исходный код не покидал компьютер, на котором выполнялась проверка.",
+               "kk": "Тексеру GoldenEye Check бағдарламасымен 10 кезеңнен тұратын әдістеме бойынша орындалды: құжаттамадан "
+                     "контекст, файлдарды түгендеу, жүйе мен маршруттар моделі, 15 санатты тексеру (қауіпті құрылымдар және "
+                     "күтілген шаралардың болмауы), бейнелердің жасырын конфигурациясы, мәлімделгенді іске асырылғанмен "
+                     "салыстыру, жалған іске қосылуларды іріктеу, сындарлылықты бағалау, ISO/IEC 27002:2022-мен салыстыру, "
+                     "ұсынымдар. Бастапқы код тексеру орындалған компьютерден шыққан жоқ.",
+               "en": "The review was done with GoldenEye Check following a 10-stage method: context from the documentation, file "
+                     "inventory, a model of the system and its routes, checks in 15 categories (dangerous constructs and missing "
+                     "measures), implicit configuration of images, statements against implementation, removal of false "
+                     "positives, criticality, mapping to ISO/IEC 27002:2022, recommendations. The source code did not leave the "
+                     "computer the check ran on."},
+    "tools": {"ru": "Инструменты", "kk": "Құралдар", "en": "Tools"},
+    "data_versions": {"ru": "Таблицы соответствия", "kk": "Сәйкестік кестелері", "en": "Mapping tables"},
+    "disclaimer": {"ru": "Отчёт описывает состояние исходного кода на дату проверки. Он не является заключением о "
+                         "соответствии ISO/IEC 27001 или СТ РК ISO/IEC 27001 и не заменяет испытания на соответствие "
+                         "требованиям информационной безопасности в аккредитованной лаборатории.",
+                   "kk": "Есеп тексеру күніндегі бастапқы кодтың жай-күйін сипаттайды. Ол ISO/IEC 27001 немесе ҚР СТ "
+                         "ISO/IEC 27001 талаптарына сәйкестік туралы қорытынды емес және аккредиттелген зертханадағы "
+                         "ақпараттық қауіпсіздік талаптарына сәйкестікке сынақтарды алмастырмайды.",
+                   "en": "The report describes the source code on the date of the check. It is not a statement of compliance "
+                         "with ISO/IEC 27001 or СТ РК ISO/IEC 27001 and does not replace information security compliance "
+                         "tests in an accredited laboratory."},
+    "pdf_missing": {"ru": "PDF не создан: не найден браузер Edge, Chrome или Chromium. Откройте report-audit.html и "
+                          "сохраните его как PDF через печать.",
+                    "kk": "PDF жасалмады: Edge, Chrome немесе Chromium браузері табылмады. report-audit.html ашып, оны "
+                          "басып шығару арқылы PDF ретінде сақтаңыз.",
+                    "en": "PDF not created: Edge, Chrome or Chromium was not found. Open report-audit.html and save it as PDF "
+                          "with Print."},
+    "pdf_pro_only": {"ru": "Отчёт для аудитора в PDF входит в GoldenEye Check Pro.",
+                     "kk": "Аудиторға арналған PDF есеп GoldenEye Check Pro құрамына кіреді.",
+                     "en": "The PDF report for auditors is part of GoldenEye Check Pro."},
+    "project": {"ru": "Проект", "kk": "Жоба", "en": "Project"},
+    "check_date": {"ru": "Дата проверки", "kk": "Тексеру күні", "en": "Date of the check"},
+    "score_line": {"ru": "Индекс защищённости: {score}/100, оценка {grade}.", "kk": "Қорғалу индексі: {score}/100, баға {grade}.",
+                   "en": "Security score: {score}/100, grade {grade}."},
+    "languages": {"ru": "Языки", "kk": "Тілдер", "en": "Languages"},
+    "col_severity": {"ru": "Критичность", "kk": "Сындарлылық", "en": "Severity"},
+    "col_finding": {"ru": "Находка и исправление", "kk": "Табылған және түзету", "en": "Finding and fix"},
+    "issued": {"ru": "Таблицы Pro выданы аккаунту {account} {date}", "kk": "Pro кестелері {account} аккаунтына {date} берілді",
+               "en": "Pro tables issued to account {account} on {date}"},
+}
+
 STAGE_NAMES = {
     "localhost": {"ru": "До показа за пределами localhost", "kk": "localhost-тан тыс көрсетпес бұрын",
                   "en": "Before showing outside localhost"},

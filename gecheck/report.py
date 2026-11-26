@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from . import RULES_VERSION, __version__
+from . import pro_report
 from . import report_sections as rs
 from .assessment import to_json as assessment_json
 from .i18n import CATEGORY, SEVERITY, UI, t
@@ -55,6 +56,7 @@ def to_json(result, include_snippets=False) -> dict:
                      for m in getattr(result, "measures", None) or []],
         "inventory": result.inventory.to_json() if getattr(result, "inventory", None) else None,
         "model": getattr(result, "model", None),
+        "pro": pro_report.to_json(getattr(result, "pro", None)),
     }
 
 
@@ -293,5 +295,18 @@ def write_reports(result, out_dir: Path, formats, lang="en", include_snippets=Fa
         p.write_text(json.dumps(to_sarif(result, lang, include_snippets), ensure_ascii=False, indent=2),
                      encoding="utf-8")
         written.append(p)
+    if getattr(result, "pro", None) and formats & {"html", "pdf"}:
+        from .audit import to_audit_html
+        p = out_dir / "report-audit.html"
+        p.write_text(to_audit_html(result, lang), encoding="utf-8")
+        written.append(p)
+        if "pdf" in formats:
+            pdf = out_dir / "report-audit.pdf"
+            if pro_report.print_pdf(p, pdf):
+                written.append(pdf)
+            else:
+                result.warnings.append(rs.p("pdf_missing", lang))
+    elif "pdf" in formats:
+        result.warnings.append(rs.p("pdf_pro_only", lang))
     return written
 

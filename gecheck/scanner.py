@@ -36,6 +36,7 @@ class ScanResult:
     notice: Optional[dict] = None  # message above the list of findings, per language
     measures: list = field(default_factory=list)  # confirmed measures (methodology, stage 7)
     inventory: object = None  # file inventory (methodology, stage 2)
+    model: Optional[dict] = None  # system model and route x measure matrix (methodology, stage 3)
 
     @property
     def counts(self):
@@ -159,4 +160,5 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
     return ScanResult(root=root, findings=findings, warnings=warnings, engines=engines,
                       started_at=started.isoformat(timespec="seconds"),
                       duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options,
-                      measures=extras.get("measures", []), inventory=extras.get("inventory"))
+                      measures=extras.get("measures", []), inventory=extras.get("inventory"),
+                      model=extras.get("model"))

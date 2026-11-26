@@ -59,11 +59,18 @@ def _matches(finding, rel, line, category=None) -> bool:
 
 
 def compare(result, expected: dict) -> dict:
-    found, missed = [], []
-    for item in expected["findings"]:
-        hit = any(_matches(f, rel, line, item.get("category"))
-                  for f in result.findings for rel, line in item["where"])
-        (found if hit else missed).append(item)
+    # one finding counts for one expected problem: exact lines first, then file-level places
+    found, missed, used = [], [], set()
+    items = sorted(expected["findings"], key=lambda i: all(line is None for _rel, line in i["where"]))
+    for item in items:
+        hit = next((n for n, f in enumerate(result.findings) if n not in used
+                    and any(_matches(f, rel, line, item.get("category")) for rel, line in item["where"])), None)
+        if hit is not None:
+            used.add(hit)
+        (found if hit is not None else missed).append(item)
+    order = {i["id"]: n for n, i in enumerate(expected["findings"])}
+    found.sort(key=lambda i: order[i["id"]])
+    missed.sort(key=lambda i: order[i["id"]])
 
     false_positives = []
     for measure in expected.get("confirmed", []):

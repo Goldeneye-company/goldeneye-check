@@ -15,6 +15,212 @@ CODE_WORDS = {
              "en": "a database dump or copy"},
     "private_ip": {"ru": "файл с внутренними IP-адресами", "kk": "ішкі IP-мекенжайлары бар файл",
                    "en": "a file with internal IP addresses"},
+    "account_change": {"ru": "смены пароля", "kk": "құпиясөзді ауыстыру", "en": "password change"},
+    "account_disable": {"ru": "отключения учётной записи", "kk": "тіркелгіні өшіру", "en": "account disabling"},
+    "inline_handlers": {"ru": "; на страницах есть inline-обработчики", "kk": "; беттерде inline өңдеушілер бар",
+                        "en": "; pages use inline handlers"},
+}
+
+ROUTE_TEXTS = {
+    "no_account_management": {
+        "title": {
+            "ru": "Нет {missing}",
+            "kk": "Мыналар жоқ: {missing}",
+            "en": "No {missing}",
+        },
+        "fix": {
+            "ru": "Добавьте смену пароля с проверкой текущего и политикой (не короче 12 символов, не из списка "
+                  "распространённых) и отключение учётной записи администратором. Иначе уволенный сотрудник сохраняет "
+                  "доступ, а утёкший пароль нельзя заменить.",
+            "kk": "Ағымдағысын тексеретін және саясаты бар (кемінде 12 таңба, кең тараған тізімнен емес) құпиясөзді "
+                  "ауыстыруды және әкімшінің тіркелгіні өшіруін қосыңыз. Әйтпесе жұмыстан шыққан қызметкер қолжетімділікті "
+                  "сақтайды, ал ағып кеткен құпиясөзді ауыстыру мүмкін емес.",
+            "en": "Add a password change that checks the current password and a policy (at least 12 characters, not a "
+                  "common password) and let an administrator disable an account. Otherwise a former employee keeps "
+                  "access, and a leaked password cannot be replaced.",
+        },
+    },
+    "route_no_audit": {
+        "title": {
+            "ru": "Действия пользователей не записываются в журнал: {routes}",
+            "kk": "Пайдаланушы әрекеттері журналға жазылмайды: {routes}",
+            "en": "User actions are not logged: {routes}",
+        },
+        "fix": {
+            "ru": "Записывайте вход, выход, неудачные попытки и каждое изменение данных: кто (id учётной записи), что, "
+                  "над каким объектом, когда и с какого IP. Журнал только на добавление, копия во внешнюю систему. "
+                  "Без журнала инцидент нельзя расследовать, а ISO/IEC 27001 (мера 8.15) требует доказательств.",
+            "kk": "Кіруді, шығуды, сәтсіз әрекеттерді және деректердің әр өзгерісін жазыңыз: кім (тіркелгі id), не, "
+                  "қандай нысанмен, қашан және қай IP-ден. Журнал тек қосуға арналған, көшірмесі сыртқы жүйеде. "
+                  "Журналсыз оқиғаны тексеру мүмкін емес, ал ISO/IEC 27001 (8.15 шарасы) дәлел талап етеді.",
+            "en": "Log sign-in, sign-out, failed attempts and every data change: who (account id), what, on which object, "
+                  "when and from which IP. Keep the log append-only with a copy in an external system. Without a log an "
+                  "incident cannot be investigated, and ISO/IEC 27001 (control 8.15) asks for evidence.",
+        },
+    },
+    "route_no_store": {
+        "title": {
+            "ru": "Ответы с паролями или файлами без Cache-Control: no-store: {routes}",
+            "kk": "Құпиясөздер немесе файлдар бар жауаптар Cache-Control: no-store-сыз: {routes}",
+            "en": "Responses with passwords or files have no Cache-Control: no-store: {routes}",
+        },
+        "fix": {
+            "ru": "Отправляйте header('Cache-Control: no-store') на страницах с паролями, токенами и при выдаче файлов, "
+                  "лучше сразу для всех страниц после входа. Иначе браузер и прокси сохраняют их на диске, и следующий "
+                  "пользователь компьютера откроет их кнопкой «Назад».",
+            "kk": "Құпиясөздер мен токендер бар беттерде және файл берген кезде header('Cache-Control: no-store') "
+                  "жіберіңіз, жақсысы кіруден кейінгі барлық бет үшін. Әйтпесе браузер мен прокси оларды дискіде сақтайды, "
+                  "ал компьютердің келесі пайдаланушысы оларды «Артқа» батырмасымен ашады.",
+            "en": "Send header('Cache-Control: no-store') on pages with passwords and tokens and when serving files, better "
+                  "for every page after sign-in. Otherwise the browser and proxies keep them on disk, and the next person at "
+                  "the computer opens them with the Back button.",
+        },
+    },
+    "object_no_owner": {
+        "title": {
+            "ru": "Объект берётся по id из запроса без проверки владельца: {routes}",
+            "kk": "Нысан сұраудағы id бойынша иесін тексерусіз алынады: {routes}",
+            "en": "Objects are taken by an id from the request without an owner check: {routes}",
+        },
+        "fix": {
+            "ru": "Добавьте в запрос условие владельца: WHERE id = ? AND owner_id = ? (администратору можно без него) "
+                  "и проверяйте, что изменена ровно одна строка. Иначе любой вошедший пользователь меняет чужие "
+                  "объекты, подставив другой id (IDOR).",
+            "kk": "Сұрауға иесінің шартын қосыңыз: WHERE id = ? AND owner_id = ? (әкімшіге онсыз болады) және дәл бір "
+                  "жол өзгергенін тексеріңіз. Әйтпесе кірген кез келген пайдаланушы басқа id қойып, бөтен нысандарды "
+                  "өзгертеді (IDOR).",
+            "en": "Add the owner condition to the query: WHERE id = ? AND owner_id = ? (administrators may skip it) and check "
+                  "that exactly one row changed. Otherwise any signed-in user changes other people's objects by sending "
+                  "another id (IDOR).",
+        },
+    },
+    "csrf_missing": {
+        "title": {
+            "ru": "Изменение данных без проверки CSRF-токена: {routes}",
+            "kk": "Деректерді CSRF-токенін тексерусіз өзгерту: {routes}",
+            "en": "Data changes without a CSRF token check: {routes}",
+        },
+        "fix": {
+            "ru": "Принимайте изменения только методом POST и сверяйте скрытое поле формы с токеном в сессии через "
+                  "hash_equals. Иначе чужой сайт отправит форму от имени вошедшего пользователя.",
+            "kk": "Өзгерістерді тек POST әдісімен қабылдаңыз және форманың жасырын өрісін сессиядағы токенмен hash_equals "
+                  "арқылы салыстырыңыз. Әйтпесе бөгде сайт кірген пайдаланушының атынан форма жібереді.",
+            "en": "Accept changes only by POST and compare a hidden form field with the token in the session using "
+                  "hash_equals. Otherwise another site submits a form on behalf of the signed-in user.",
+        },
+    },
+    "logout_get": {
+        "title": {
+            "ru": "Выход выполняется GET-запросом без CSRF-токена",
+            "kk": "Шығу CSRF-токенсіз GET сұрауымен орындалады",
+            "en": "Sign-out runs on a GET request without a CSRF token",
+        },
+        "fix": {
+            "ru": "Сделайте выход формой с методом POST и CSRF-токеном. Сейчас картинка или ссылка на чужой странице "
+                  "завершает сессию пользователя.",
+            "kk": "Шығуды POST әдісі мен CSRF-токені бар форма етіңіз. Қазір бөгде беттегі сурет немесе сілтеме "
+                  "пайдаланушы сессиясын аяқтайды.",
+            "en": "Make sign-out a POST form with a CSRF token. Right now an image or a link on another page ends the "
+                  "user's session.",
+        },
+    },
+    "token_in_query": {
+        "title": {
+            "ru": "Секретный токен передаётся в адресной строке и попадает в журналы",
+            "kk": "Құпия токен мекенжай жолында беріледі және журналдарға түседі",
+            "en": "A secret token is passed in the URL and ends up in logs",
+        },
+        "fix": {
+            "ru": "Уберите строку запроса из журнала веб-сервера и прокси (Apache: LogFormat с %U вместо %r) или "
+                  "передавайте токен в теле POST-запроса. Адрес с токеном остаётся в журналах, истории браузера и Referer.",
+            "kk": "Веб-сервер мен прокси журналынан сұрау жолын алып тастаңыз (Apache: %r орнына %U бар LogFormat) немесе "
+                  "токенді POST сұрауының денесінде беріңіз. Токені бар мекенжай журналдарда, браузер тарихында және "
+                  "Referer-де қалады.",
+            "en": "Remove the query string from the web server and proxy logs (Apache: a LogFormat with %U instead of %r) "
+                  "or send the token in the body of a POST request. A URL with a token stays in logs, browser history "
+                  "and the Referer header.",
+        },
+    },
+    "host_header_url": {
+        "title": {
+            "ru": "Ссылка строится из заголовка Host",
+            "kk": "Сілтеме Host тақырыбынан құрылады",
+            "en": "A link is built from the Host header",
+        },
+        "fix": {
+            "ru": "Берите адрес сайта из конфигурации (APP_BASE_URL), а не из запроса. Подменённый Host даёт ссылку "
+                  "на чужой сервер в письмах и на страницах.",
+            "kk": "Сайт мекенжайын сұраудан емес, конфигурациядан алыңыз (APP_BASE_URL). Ауыстырылған Host хаттар мен "
+                  "беттерде бөгде серверге сілтеме береді.",
+            "en": "Take the site address from the configuration (APP_BASE_URL), not from the request. A forged Host header "
+                  "puts a link to another server into emails and pages.",
+        },
+    },
+    "secret_in_session": {
+        "title": {
+            "ru": "Пароль или токен хранится в сессии открытым текстом",
+            "kk": "Құпиясөз немесе токен сессияда ашық мәтінмен сақталады",
+            "en": "A password or token is kept in the session in plain text",
+        },
+        "fix": {
+            "ru": "Показывайте секрет в том же ответе, где он создан, и не сохраняйте его. Файлы сессий лежат на диске "
+                  "сервера, и их копия раскрывает все такие секреты.",
+            "kk": "Құпияны жасалған жауапта көрсетіңіз және оны сақтамаңыз. Сессия файлдары сервер дискісінде жатады, "
+                  "олардың көшірмесі осындай барлық құпияны ашады.",
+            "en": "Show the secret in the response that creates it and do not store it. Session files lie on the server "
+                  "disk, and a copy of them exposes every such secret.",
+        },
+    },
+    "session_no_timeout": {
+        "title": {
+            "ru": "У сессии нет тайм-аута бездействия и абсолютного срока",
+            "kk": "Сессияда әрекетсіздік тайм-ауты мен абсолютті мерзім жоқ",
+            "en": "Sessions have no idle timeout and no absolute lifetime",
+        },
+        "fix": {
+            "ru": "Храните в сессии время входа и последнего действия и завершайте её после 15–30 минут бездействия "
+                  "и 8–12 часов с момента входа. Иначе украденная или забытая сессия действует неделями.",
+            "kk": "Сессияда кіру және соңғы әрекет уақытын сақтап, 15–30 минут әрекетсіздіктен және кіргеннен кейін "
+                  "8–12 сағаттан соң аяқтаңыз. Әйтпесе ұрланған немесе ұмытылған сессия апталап жұмыс істейді.",
+            "en": "Keep the sign-in time and the last activity in the session and end it after 15-30 minutes of inactivity "
+                  "and 8-12 hours after sign-in. Otherwise a stolen or forgotten session works for weeks.",
+        },
+    },
+    "csp_missing": {
+        "title": {
+            "ru": "Нет заголовка Content-Security-Policy{inline}",
+            "kk": "Content-Security-Policy тақырыбы жоқ{inline}",
+            "en": "No Content-Security-Policy header{inline}",
+        },
+        "fix": {
+            "ru": "Отправляйте Content-Security-Policy: default-src 'self'; script-src 'self'; frame-ancestors 'none' "
+                  "и перенесите inline-обработчики (onclick) в отдельный JS-файл. CSP не даёт выполнить внедрённый "
+                  "скрипт, если экранирование где-то пропущено.",
+            "kk": "Content-Security-Policy: default-src 'self'; script-src 'self'; frame-ancestors 'none' жіберіңіз және "
+                  "inline өңдеушілерді (onclick) бөлек JS файлына көшіріңіз. Экрандау бір жерде өткізіліп кетсе, CSP "
+                  "енгізілген скриптті орындауға жол бермейді.",
+            "en": "Send Content-Security-Policy: default-src 'self'; script-src 'self'; frame-ancestors 'none' and move "
+                  "inline handlers (onclick) to a separate JS file. CSP stops an injected script when escaping is missed "
+                  "somewhere.",
+        },
+    },
+    "error_path_unhandled": {
+        "title": {
+            "ru": "Несуществующий {var} вызывает необработанное исключение",
+            "kk": "Жоқ {var} өңделмеген ерекше жағдай тудырады",
+            "en": "A non-existent {var} raises an unhandled exception",
+        },
+        "fix": {
+            "ru": "Проверяйте, что объект существует и доступен, до записи: SELECT по id и ответ 404, если его нет. "
+                  "Сейчас число проходит проверку типа, а ошибка внешнего ключа уходит пользователю с текстом SQL.",
+            "kk": "Жазудан бұрын нысанның бар екенін және қолжетімді екенін тексеріңіз: id бойынша SELECT және ол жоқ "
+                  "болса 404 жауабы. Қазір сан түр тексеруінен өтеді, ал сыртқы кілт қатесі пайдаланушыға SQL мәтінімен "
+                  "кетеді.",
+            "en": "Check that the object exists and is accessible before writing: a SELECT by id and a 404 when it is "
+                  "missing. Right now the number passes the type check, and the foreign key error reaches the user with "
+                  "the SQL text.",
+        },
+    },
 }
 
 CODE_TEXTS = {

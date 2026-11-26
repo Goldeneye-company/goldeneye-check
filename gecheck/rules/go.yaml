@@ -1,0 +1,221 @@
+# Rules for Go (net/http, gin, chi, gorilla/mux).
+
+rules:
+  - id: ge.go.sql-injection
+    languages: [go]
+    mode: taint
+    severity: ERROR
+    message: SQL query built from request data
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-89
+        title:
+          ru: "SQL-инъекция в запросе к базе данных"
+          kk: "Дерекқорға сұраныстағы SQL-инъекция"
+          en: "SQL injection in a database query"
+        fix:
+          ru: "Передавайте значения параметрами: db.Query(\"... WHERE name = $1\", name). Не собирайте SQL через fmt.Sprintf и +."
+          kk: "Мәндерді параметр ретінде беріңіз: db.Query(\"... WHERE name = $1\", name). SQL-ді fmt.Sprintf және + арқылы құрастырмаңыз."
+          en: "Pass values as parameters: db.Query(\"... WHERE name = $1\", name). Do not build SQL with fmt.Sprintf or +."
+    pattern-sources: &go_sources
+      - pattern: $R.FormValue(...)
+      - pattern: $R.PostFormValue(...)
+      - pattern: $R.URL.Query().Get(...)
+      - pattern: $R.URL.Query()
+      - pattern: $R.Header.Get(...)
+      - pattern: mux.Vars(...)
+      - pattern: chi.URLParam(...)
+      - patterns:
+          - pattern-either:
+              - pattern-inside: |
+                  func $F(..., $C *gin.Context, ...) { ... }
+              - pattern-inside: |
+                  func(..., $C *gin.Context, ...) { ... }
+              - pattern-inside: |
+                  func $F(..., $C echo.Context, ...) error { ... }
+              - pattern-inside: |
+                  func(..., $C echo.Context, ...) error { ... }
+          - pattern-either:
+              - pattern: $C.Query(...)
+              - pattern: $C.DefaultQuery(...)
+              - pattern: $C.Param(...)
+              - pattern: $C.PostForm(...)
+              - pattern: $C.GetHeader(...)
+              - pattern: $C.QueryParam(...)
+              - pattern: $C.FormValue(...)
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: $DB.Query($Q, ...)
+              - pattern: $DB.QueryRow($Q, ...)
+              - pattern: $DB.Exec($Q, ...)
+              - pattern: $DB.QueryContext($CTX, $Q, ...)
+              - pattern: $DB.QueryRowContext($CTX, $Q, ...)
+              - pattern: $DB.ExecContext($CTX, $Q, ...)
+              - pattern: $DB.Raw($Q, ...)
+              - pattern: $DB.Select($DEST, $Q, ...)
+              - pattern: $DB.Get($DEST, $Q, ...)
+          - focus-metavariable: $Q
+
+  - id: ge.go.command-injection
+    languages: [go]
+    mode: taint
+    severity: ERROR
+    message: OS command from request data
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-78
+        title:
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
+        fix:
+          ru: "Не передавайте данные запроса в sh -c. Вызывайте программу со списком аргументов exec.Command(\"ping\", \"-c\", \"1\", host) и проверяйте значение по списку допустимых."
+          kk: "Сұрау деректерін sh -c-ге бермеңіз. Бағдарламаны exec.Command(\"ping\", \"-c\", \"1\", host) аргументтер тізімімен шақырып, мәнді рұқсат етілген тізім бойынша тексеріңіз."
+          en: "Do not pass request data to sh -c. Call the program with an argument list exec.Command(\"ping\", \"-c\", \"1\", host) and check the value against an allowlist."
+    pattern-sources: *go_sources
+    pattern-sinks:
+      - pattern: exec.Command(...)
+      - pattern: exec.CommandContext(...)
+
+  - id: ge.go.path-traversal
+    languages: [go]
+    mode: taint
+    severity: WARNING
+    message: File path from request data
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-22
+        title:
+          ru: "Путь к файлу из данных запроса (обход каталогов)"
+          kk: "Сұрау деректерінен алынған файл жолы (каталогтарды айналып өту)"
+          en: "File path from request data (path traversal)"
+        fix:
+          ru: "Берите только имя файла через filepath.Base(name), соберите путь от базового каталога и проверьте, что результат filepath.Clean остаётся внутри него. В Go 1.24+ используйте os.OpenRoot."
+          kk: "Тек файл атауын filepath.Base(name) арқылы алыңыз, жолды негізгі каталогтан құрастырып, filepath.Clean нәтижесі оның ішінде қалатынын тексеріңіз. Go 1.24+ нұсқасында os.OpenRoot қолданыңыз."
+          en: "Take only the file name with filepath.Base(name), build the path from a base folder and check that the filepath.Clean result stays inside it. With Go 1.24+ use os.OpenRoot."
+    pattern-sources: *go_sources
+    pattern-sanitizers:
+      - pattern: filepath.Base(...)
+    pattern-sinks:
+      - pattern: os.Open(...)
+      - pattern: os.OpenFile(...)
+      - pattern: os.ReadFile(...)
+      - pattern: os.Create(...)
+      - pattern: os.Remove(...)
+      - pattern: ioutil.ReadFile(...)
+      - patterns:
+          - pattern: http.ServeFile($W, $REQ, $P)
+          - focus-metavariable: $P
+      - pattern: $C.File(...)
+
+  - id: ge.go.ssrf
+    languages: [go]
+    mode: taint
+    severity: WARNING
+    message: Outgoing request to a URL from request data
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-918
+        title:
+          ru: "Запрос сервера по адресу из данных пользователя (SSRF)"
+          kk: "Пайдаланушы деректеріндегі мекенжай бойынша сервер сұрауы (SSRF)"
+          en: "Server request to a URL from user data (SSRF)"
+        fix:
+          ru: "Разрешайте только адреса из списка допустимых хостов и запрещайте внутренние сети (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254), проверяя IP после разрешения имени в Dialer.Control."
+          kk: "Тек рұқсат етілген хосттар тізіміндегі мекенжайларға рұқсат беріп, атауды шешкеннен кейін Dialer.Control-да IP-ді тексеріп, ішкі желілерге тыйым салыңыз (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254)."
+          en: "Allow only addresses from a list of permitted hosts and block internal networks (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254), checking the IP after name resolution in Dialer.Control."
+    pattern-sources: *go_sources
+    pattern-sinks:
+      - pattern: http.Get(...)
+      - pattern: http.Head(...)
+      - patterns:
+          - pattern-either:
+              - pattern: http.Post($U, ...)
+              - pattern: http.NewRequest($M, $U, ...)
+              - pattern: http.NewRequestWithContext($CTX, $M, $U, ...)
+          - focus-metavariable: $U
+
+  - id: ge.go.xss
+    languages: [go]
+    mode: taint
+    severity: WARNING
+    message: Request data written to the response without escaping
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-79
+        title:
+          ru: "Вывод данных пользователя без экранирования (XSS)"
+          kk: "Пайдаланушы деректерін экрандаусыз шығару (XSS)"
+          en: "Unescaped user input in HTML (XSS)"
+        fix:
+          ru: "Выводите HTML через html/template, а в остальных случаях экранируйте html.EscapeString(value). template.HTML с данными запроса отключает экранирование."
+          kk: "HTML-ді html/template арқылы шығарыңыз, қалған жағдайда html.EscapeString(value) экрандаңыз. Сұрау деректері бар template.HTML экрандауды өшіреді."
+          en: "Output HTML through html/template, otherwise escape with html.EscapeString(value). template.HTML with request data turns escaping off."
+    pattern-sources: *go_sources
+    pattern-sanitizers:
+      - pattern: html.EscapeString(...)
+      - pattern: template.HTMLEscapeString(...)
+      - pattern: strconv.Atoi(...)
+    pattern-sinks:
+      - pattern: fmt.Fprintf($W, ...)
+      - pattern: fmt.Fprint($W, ...)
+      - pattern: io.WriteString($W, ...)
+      - pattern: $W.Write([]byte(...))
+      - pattern: template.HTML(...)
+
+  - id: ge.go.open-redirect
+    languages: [go]
+    mode: taint
+    severity: WARNING
+    message: Redirect to an address from request data
+    metadata:
+      ge:
+        severity: medium
+        category: injection
+        cwe: CWE-601
+        title:
+          ru: "Перенаправление на адрес из запроса"
+          kk: "Сұраудағы мекенжайға қайта бағыттау"
+          en: "Redirect to an address from the request"
+        fix:
+          ru: "Перенаправляйте только на относительные пути своего приложения (начинаются с одного /) или на адреса из списка допустимых."
+          kk: "Тек өз қосымшаңыздың салыстырмалы жолдарына (бір / белгісінен басталады) немесе рұқсат етілген тізімдегі мекенжайларға бағыттаңыз."
+          en: "Redirect only to relative paths of your application (starting with a single /) or to addresses from an allowlist."
+    pattern-sources: *go_sources
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: http.Redirect($W, $REQ, $U, ...)
+              - pattern: $C.Redirect($CODE, $U)
+          - focus-metavariable: $U
+
+  - id: ge.go.tls-insecure
+    languages: [go]
+    severity: ERROR
+    message: TLS certificate verification turned off
+    metadata:
+      ge:
+        severity: high
+        category: config
+        cwe: CWE-295
+        title:
+          ru: "Проверка TLS-сертификата отключена"
+          kk: "TLS сертификатын тексеру өшірілген"
+          en: "TLS certificate verification is turned off"
+        fix:
+          ru: "Уберите InsecureSkipVerify: true. Для внутреннего CA добавьте его сертификат в RootCAs. Без проверки любой в сети подменяет сервер и читает трафик."
+          kk: "InsecureSkipVerify: true алып тастаңыз. Ішкі CA үшін оның сертификатын RootCAs-қа қосыңыз. Тексерусіз желідегі кез келген адам серверді алмастырып, трафикті оқиды."
+          en: "Remove InsecureSkipVerify: true. For an internal CA add its certificate to RootCAs. Without verification anyone on the network can impersonate the server and read the traffic."
+    pattern: |
+      tls.Config{..., InsecureSkipVerify: true, ...}

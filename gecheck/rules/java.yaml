@@ -1,0 +1,321 @@
+# Rules for Java (Spring MVC, Spring Boot, servlets).
+
+rules:
+  - id: ge.java.sql-injection
+    languages: [java]
+    mode: taint
+    severity: ERROR
+    message: SQL query built from request data
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-89
+        title:
+          ru: "SQL-инъекция в запросе к базе данных"
+          kk: "Дерекқорға сұраныстағы SQL-инъекция"
+          en: "SQL injection in a database query"
+        fix:
+          ru: "Используйте параметры: jdbc.queryForList(\"... WHERE name = ?\", name) или PreparedStatement с setString. В JPA: :name и setParameter. Не склеивайте SQL из данных запроса."
+          kk: "Параметрлерді қолданыңыз: jdbc.queryForList(\"... WHERE name = ?\", name) немесе setString бар PreparedStatement. JPA-да: :name және setParameter. SQL-ді сұрау деректерінен құрастырмаңыз."
+          en: "Use parameters: jdbc.queryForList(\"... WHERE name = ?\", name) or a PreparedStatement with setString. In JPA: :name and setParameter. Do not build SQL from request data."
+    pattern-sources: &java_sources
+      - patterns:
+          - pattern-either:
+              - pattern-inside: |
+                  $RT $M(..., @RequestParam $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @RequestParam(...) $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @PathVariable $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @PathVariable(...) $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @RequestBody $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @RequestHeader(...) $T $X, ...) { ... }
+              - pattern-inside: |
+                  $RT $M(..., @CookieValue(...) $T $X, ...) { ... }
+          - pattern: $X
+      - pattern: (HttpServletRequest $R).getParameter(...)
+      - pattern: (HttpServletRequest $R).getParameterValues(...)
+      - pattern: (HttpServletRequest $R).getHeader(...)
+      - pattern: (HttpServletRequest $R).getQueryString()
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: (Statement $S).executeQuery($Q)
+              - pattern: (Statement $S).execute($Q)
+              - pattern: (Statement $S).executeUpdate($Q)
+              - pattern: (Statement $S).addBatch($Q)
+              - pattern: (Connection $C).prepareStatement($Q, ...)
+              - pattern: (JdbcTemplate $J).$F($Q, ...)
+              - pattern: (NamedParameterJdbcTemplate $J).$F($Q, ...)
+              - pattern: $EM.createQuery($Q, ...)
+              - pattern: $EM.createNativeQuery($Q, ...)
+          - focus-metavariable: $Q
+
+  - id: ge.java.command-injection
+    languages: [java]
+    mode: taint
+    severity: ERROR
+    message: OS command from request data
+    metadata:
+      ge:
+        severity: critical
+        category: injection
+        cwe: CWE-78
+        title:
+          ru: "Внедрение команд ОС"
+          kk: "Операциялық жүйе командаларын енгізу"
+          en: "OS command injection"
+        fix:
+          ru: "Не передавайте данные запроса в команду. Если без внешней программы нельзя, используйте new ProcessBuilder(\"ping\", \"-c\", \"1\", host) со списком аргументов без sh -c и проверяйте значение по списку допустимых."
+          kk: "Сұрау деректерін командаға бермеңіз. Сыртқы бағдарламасыз болмаса, sh -c-сыз аргументтер тізімі бар new ProcessBuilder(\"ping\", \"-c\", \"1\", host) қолданып, мәнді рұқсат етілген тізім бойынша тексеріңіз."
+          en: "Do not pass request data to a command. If an external program is unavoidable, use new ProcessBuilder(\"ping\", \"-c\", \"1\", host) with an argument list and no sh -c, and check the value against an allowlist."
+    pattern-sources: *java_sources
+    pattern-sinks:
+      - pattern: Runtime.getRuntime().exec(...)
+      - pattern: (Runtime $RT).exec(...)
+      - pattern: new ProcessBuilder(...)
+
+  - id: ge.java.path-traversal
+    languages: [java]
+    mode: taint
+    severity: WARNING
+    message: File path from request data
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-22
+        title:
+          ru: "Путь к файлу из данных запроса (обход каталогов)"
+          kk: "Сұрау деректерінен алынған файл жолы (каталогтарды айналып өту)"
+          en: "File path from request data (path traversal)"
+        fix:
+          ru: "Берите только имя файла: Paths.get(name).getFileName(), соберите путь от базового каталога и проверьте base.resolve(name).normalize().startsWith(base). Иначе ../ открывает любой файл сервера."
+          kk: "Тек файл атауын алыңыз: Paths.get(name).getFileName(), жолды негізгі каталогтан құрастырып, base.resolve(name).normalize().startsWith(base) тексеріңіз. Әйтпесе ../ сервердің кез келген файлын ашады."
+          en: "Take only the file name: Paths.get(name).getFileName(), build the path from a base folder and check base.resolve(name).normalize().startsWith(base). Otherwise ../ opens any file on the server."
+    pattern-sources: *java_sources
+    pattern-sanitizers:
+      - pattern: FilenameUtils.getName(...)
+      - pattern: $P.getFileName()
+    pattern-sinks:
+      - pattern: new File(...)
+      - pattern: new FileInputStream(...)
+      - pattern: new FileOutputStream(...)
+      - pattern: new FileReader(...)
+      - pattern: Paths.get(...)
+      - pattern: Path.of(...)
+      - pattern: new FileSystemResource(...)
+
+  - id: ge.java.ssrf
+    languages: [java]
+    mode: taint
+    severity: WARNING
+    message: Outgoing request to a URL from request data
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-918
+        title:
+          ru: "Запрос сервера по адресу из данных пользователя (SSRF)"
+          kk: "Пайдаланушы деректеріндегі мекенжай бойынша сервер сұрауы (SSRF)"
+          en: "Server request to a URL from user data (SSRF)"
+        fix:
+          ru: "Разрешайте только адреса из списка допустимых хостов и запрещайте внутренние сети (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254). Иначе через сервер можно обратиться к внутренним сервисам и метаданным облака."
+          kk: "Тек рұқсат етілген хосттар тізіміндегі мекенжайларға рұқсат беріп, ішкі желілерге тыйым салыңыз (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254). Әйтпесе сервер арқылы ішкі сервистер мен бұлт метадеректеріне жүгінуге болады."
+          en: "Allow only addresses from a list of permitted hosts and block internal networks (127.0.0.0/8, 10.0.0.0/8, 169.254.169.254). Otherwise the server can be used to reach internal services and cloud metadata."
+    pattern-sources: *java_sources
+    pattern-sinks:
+      - pattern: new URL(...)
+      - pattern: URI.create(...)
+      - patterns:
+          - pattern-either:
+              - pattern: (RestTemplate $T).$M($U, ...)
+              - pattern: $WC.get().uri($U, ...)
+          - focus-metavariable: $U
+
+  - id: ge.java.xss
+    languages: [java]
+    mode: taint
+    severity: WARNING
+    message: Request data written to the response without escaping
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-79
+        title:
+          ru: "Вывод данных пользователя без экранирования (XSS)"
+          kk: "Пайдаланушы деректерін экрандаусыз шығару (XSS)"
+          en: "Unescaped user input in HTML (XSS)"
+        fix:
+          ru: "Выводите данные через шаблон с автоэкранированием (Thymeleaf th:text) или HtmlUtils.htmlEscape(value)."
+          kk: "Деректерді автоэкрандауы бар шаблон (Thymeleaf th:text) немесе HtmlUtils.htmlEscape(value) арқылы шығарыңыз."
+          en: "Output data through a template with auto-escaping (Thymeleaf th:text) or HtmlUtils.htmlEscape(value)."
+    pattern-sources: *java_sources
+    pattern-sanitizers:
+      - pattern: HtmlUtils.htmlEscape(...)
+      - pattern: StringEscapeUtils.escapeHtml4(...)
+      - pattern: Encode.forHtml(...)
+      - pattern: Integer.parseInt(...)
+    pattern-sinks:
+      - pattern: (HttpServletResponse $R).getWriter().write(...)
+      - pattern: (HttpServletResponse $R).getWriter().print(...)
+      - pattern: (HttpServletResponse $R).getWriter().println(...)
+      - pattern: (PrintWriter $P).write(...)
+      - pattern: (PrintWriter $P).print(...)
+      - pattern: (PrintWriter $P).println(...)
+
+  - id: ge.java.open-redirect
+    languages: [java]
+    mode: taint
+    severity: WARNING
+    message: Redirect to an address from request data
+    metadata:
+      ge:
+        severity: medium
+        category: injection
+        cwe: CWE-601
+        title:
+          ru: "Перенаправление на адрес из запроса"
+          kk: "Сұраудағы мекенжайға қайта бағыттау"
+          en: "Redirect to an address from the request"
+        fix:
+          ru: "Перенаправляйте только на относительные пути своего приложения или на адреса из списка допустимых. Открытое перенаправление используют в фишинговых ссылках."
+          kk: "Тек өз қосымшаңыздың салыстырмалы жолдарына немесе рұқсат етілген тізімдегі мекенжайларға бағыттаңыз. Ашық қайта бағыттау фишингтік сілтемелерде қолданылады."
+          en: "Redirect only to relative paths of your application or to addresses from an allowlist. Open redirects are used in phishing links."
+    pattern-sources: *java_sources
+    pattern-sinks:
+      - pattern: (HttpServletResponse $R).sendRedirect(...)
+      - pattern: new RedirectView(...)
+      - patterns:
+          - pattern: '"redirect:" + $X'
+          - focus-metavariable: $X
+
+  - id: ge.java.deserialization
+    languages: [java]
+    severity: ERROR
+    message: Java deserialization of a stream
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-502
+        title:
+          ru: "Десериализация Java-объектов из потока"
+          kk: "Ағыннан Java нысандарын десериализациялау"
+          en: "Java object deserialization from a stream"
+        fix:
+          ru: "Не десериализуйте данные извне через ObjectInputStream или XMLDecoder: используйте JSON с явными классами. Если без этого нельзя, задайте ObjectInputFilter со списком разрешённых классов."
+          kk: "Сырттан келген деректерді ObjectInputStream немесе XMLDecoder арқылы десериализацияламаңыз: нақты кластары бар JSON қолданыңыз. Онсыз болмаса, рұқсат етілген кластар тізімі бар ObjectInputFilter орнатыңыз."
+          en: "Do not deserialize external data with ObjectInputStream or XMLDecoder: use JSON with explicit classes. If you have to, set an ObjectInputFilter with a list of allowed classes."
+    patterns:
+      - pattern-either:
+          - pattern: (ObjectInputStream $O).readObject()
+          - pattern: (XMLDecoder $D).readObject()
+          - pattern: new XMLDecoder(...).readObject()
+      - pattern-not-inside: |
+          $O.setObjectInputFilter(...);
+          ...
+
+  - id: ge.java.xxe
+    languages: [java]
+    severity: WARNING
+    message: XML parser without protection from external entities
+    metadata:
+      ge:
+        severity: high
+        category: injection
+        cwe: CWE-611
+        title:
+          ru: "XML-парсер без защиты от внешних сущностей (XXE)"
+          kk: "Сыртқы мәндерден қорғаусыз XML талдауышы (XXE)"
+          en: "XML parser without protection from external entities (XXE)"
+        fix:
+          ru: "Отключите DOCTYPE: factory.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true). Иначе XML из запроса читает файлы сервера и делает запросы во внутреннюю сеть."
+          kk: "DOCTYPE-ты өшіріңіз: factory.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true). Әйтпесе сұраудағы XML сервер файлдарын оқып, ішкі желіге сұрау жасайды."
+          en: "Turn off DOCTYPE: factory.setFeature(\"http://apache.org/xml/features/disallow-doctype-decl\", true). Otherwise XML from a request reads server files and makes requests into the internal network."
+    patterns:
+      - pattern-either:
+          - pattern: $F = DocumentBuilderFactory.newInstance();
+          - pattern: $F = SAXParserFactory.newInstance();
+          - pattern: $F = XMLInputFactory.newInstance();
+      - pattern-not-inside: |
+          $F = $FACTORY.newInstance();
+          ...
+          $F.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      - pattern-not-inside: |
+          $F = $FACTORY.newInstance();
+          ...
+          $F.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
+  - id: ge.java.csrf-disabled
+    languages: [java]
+    severity: WARNING
+    message: Spring Security CSRF protection turned off
+    metadata:
+      ge:
+        severity: medium
+        category: config
+        cwe: CWE-352
+        title:
+          ru: "Защита Spring Security от CSRF отключена"
+          kk: "Spring Security-дің CSRF-тен қорғауы өшірілген"
+          en: "Spring Security CSRF protection is turned off"
+        fix:
+          ru: "Оставьте CSRF включённым для страниц с cookie-сессией. Отключать можно только для API, где вход идёт по заголовку Authorization, а не по cookie."
+          kk: "Cookie-сессиясы бар беттер үшін CSRF-ті қосулы қалдырыңыз. Тек кіру cookie арқылы емес, Authorization тақырыбы арқылы жүретін API үшін өшіруге болады."
+          en: "Keep CSRF on for pages with a cookie session. Turn it off only for APIs that sign in with the Authorization header, not with cookies."
+    pattern-either:
+      - pattern: $H.csrf().disable()
+      - pattern: $H.csrf($C -> $C.disable())
+      - pattern: $H.csrf(AbstractHttpConfigurer::disable)
+      - pattern: $H.csrf(CsrfConfigurer::disable)
+
+  - id: ge.java.permit-all
+    languages: [java]
+    severity: WARNING
+    message: Every request is allowed without sign-in
+    metadata:
+      ge:
+        severity: high
+        category: auth
+        cwe: CWE-284
+        title:
+          ru: "Spring Security пропускает все запросы без входа"
+          kk: "Spring Security барлық сұрауларды кірусіз өткізеді"
+          en: "Spring Security lets every request through without sign-in"
+        fix:
+          ru: "Замените anyRequest().permitAll() на anyRequest().authenticated() и откройте явно только публичные пути: requestMatchers(\"/login\", \"/public/**\").permitAll()."
+          kk: "anyRequest().permitAll() орнына anyRequest().authenticated() жазып, тек жария жолдарды нақты ашыңыз: requestMatchers(\"/login\", \"/public/**\").permitAll()."
+          en: "Replace anyRequest().permitAll() with anyRequest().authenticated() and open only the public paths explicitly: requestMatchers(\"/login\", \"/public/**\").permitAll()."
+    pattern: $X.anyRequest().permitAll()
+
+  - id: ge.java.weak-password-encoder
+    languages: [java]
+    severity: ERROR
+    message: Passwords stored without a slow hash
+    metadata:
+      ge:
+        severity: high
+        category: auth
+        cwe: CWE-916
+        title:
+          ru: "Пароли хранятся открытым текстом или быстрым хешем"
+          kk: "Құпиясөздер ашық мәтінмен немесе жылдам хешпен сақталады"
+          en: "Passwords are stored in plain text or with a fast hash"
+        fix:
+          ru: "Используйте BCryptPasswordEncoder или Argon2PasswordEncoder (PasswordEncoderFactories.createDelegatingPasswordEncoder()). MD5, SHA-1 и SHA-256 без соли и итераций перебираются за минуты."
+          kk: "BCryptPasswordEncoder немесе Argon2PasswordEncoder қолданыңыз (PasswordEncoderFactories.createDelegatingPasswordEncoder()). Тұзсыз және итерациясыз MD5, SHA-1 және SHA-256 бірнеше минутта іріктеледі."
+          en: "Use BCryptPasswordEncoder or Argon2PasswordEncoder (PasswordEncoderFactories.createDelegatingPasswordEncoder()). MD5, SHA-1 and SHA-256 without salt and iterations are brute-forced in minutes."
+    pattern-either:
+      - pattern: NoOpPasswordEncoder.getInstance()
+      - pattern: new MessageDigestPasswordEncoder(...)
+      - pattern: new StandardPasswordEncoder(...)
+      - pattern: new Md5PasswordEncoder(...)
+      - pattern: new ShaPasswordEncoder(...)
+      - pattern: new LdapShaPasswordEncoder(...)

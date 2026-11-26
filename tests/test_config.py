@@ -206,7 +206,8 @@ class ConfigChecksTest(Project):
     def test_safe_configuration_is_quiet(self):
         self.write("docker-compose.yml", SAFE_COMPOSE)
         self.write("Dockerfile", SAFE_DOCKERFILE)
-        self.write("docker/php/app.ini", "expose_php = Off\nsession.use_strict_mode = 1\ndate.timezone = UTC\n")
+        self.write("docker/php/app.ini", "expose_php = Off\nsession.use_strict_mode = 1\ndate.timezone = UTC\n"
+                                         "session.gc_maxlifetime = 1800\n")
         self.write("docker/apache/security.conf", "ServerTokens Prod\nServerSignature Off\n")
         self.write("index.php", "<?php\nset_exception_handler(function ($e) { error_log((string) $e); });\n"
                                 "session_start();\n$t = date('Y-m-d H:i:s');\n")

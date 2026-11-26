@@ -43,6 +43,9 @@ class Block:
         m = FUNC_NAME.search(self.header)
         if m:
             return m.group(1) or m.group(2)
+        m = re.search(r"\b(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?(?:function\b|\(|\w+\s*=>)", self.header)
+        if m:
+            return m.group(1)
         m = re.search(r"(\w+)\s*\([^()]*\)\s*(:[^{]*)?$", self.header.strip())
         return m.group(1) if m and self.is_function else None
 

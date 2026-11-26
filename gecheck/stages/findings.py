@@ -33,6 +33,7 @@ RULES = {
     # stage 4: missing measures and code patterns (step 2)
     "login_no_limit":        ("B", "absence", "CWE-307", "medium", "days", "pilot", []),
     "login_timing":          ("B", "pattern", "CWE-208", "medium", "hours", "production", []),
+    "no_account_management": ("B", "absence", "CWE-620", "medium", "days", "pilot", ["5.16", "5.18"]),
     "upload_unprotected":    ("F", "absence", "CWE-311", "medium", "days", "pilot", []),
     "weak_generated_secret": ("G", "pattern", "CWE-331", "high", "hours", "pilot", []),
     "limit_race":            ("H", "pattern", "CWE-362", "medium", "hours", "pilot", []),
@@ -43,11 +44,26 @@ RULES = {
     "no_quota":              ("O", "absence", "CWE-770", "medium", "hours", "production", []),
     # stage 2: repository hygiene
     "repo_artifact":         ("N", "absence", "CWE-538", "high", "hours", "localhost", []),
+    # stage 4 on routes: the route x measure matrix (step 3)
+    "route_no_audit":        ("J", "absence", "CWE-778", "medium", "days", "pilot", []),
+    "route_no_store":        ("L", "absence", "CWE-525", "medium", "hours", "pilot", []),
+    "object_no_owner":       ("D", "absence", "CWE-639", "medium", "days", "pilot", []),
+    "csrf_missing":          ("E", "absence", "CWE-352", "medium", "hours", "pilot", []),
+    "logout_get":            ("E", "pattern", "CWE-352", "high", "hours", "production", []),
+    "token_in_query":        ("J", "pattern", "CWE-598", "medium", "hours", "production", ["8.12"]),
+    "host_header_url":       ("E", "pattern", "CWE-644", "medium", "hours", "production", []),
+    "secret_in_session":     ("G", "pattern", "CWE-312", "medium", "hours", "production", []),
+    "session_no_timeout":    ("C", "absence", "CWE-613", "medium", "hours", "pilot", []),
+    "csp_missing":           ("L", "absence", "CWE-693", "high", "hours", "production", []),
+    "error_path_unhandled":  ("I", "pattern", "CWE-755", "medium", "hours", "pilot", []),
 }
 
-PREFIX = {key: "ge.code" for key in ("login_no_limit", "login_timing", "upload_unprotected",
+PREFIX = {key: "ge.code" for key in ("login_no_limit", "login_timing", "no_account_management", "upload_unprotected",
                                       "weak_generated_secret", "limit_race", "no_error_handler", "no_deletion",
-                                      "no_backup", "per_request_heavy", "no_quota")}
+                                      "no_backup", "per_request_heavy", "no_quota", "secret_in_session",
+                                      "session_no_timeout", "csp_missing")}
+PREFIX.update({key: "ge.route" for key in ("route_no_audit", "route_no_store", "object_no_owner", "csrf_missing",
+                                           "logout_get", "token_in_query", "host_header_url", "error_path_unhandled")})
 PREFIX["repo_artifact"] = "ge.repo"
 
 

@@ -280,8 +280,31 @@ def check_per_request(sources: Sources) -> list:
     return out
 
 
+PASSWORD_CHANGE = re.compile(r"change_?password|changePassword|password_?reset|reset_?password|resetPassword|"
+                             r"UPDATE\s+\w+\s+SET\s+[^;]*password|set_password\s*\(|PasswordResetView|"
+                             r"update\(\s*\{[^}]*password", re.I)
+ACCOUNT_DISABLE = re.compile(r"is_active|isActive|\bdisabled\b|deactivat|locked_at|is_blocked|\bbanned\b|suspend", re.I)
+# the project keeps passwords of people, not only hashes of one-time codes
+USER_PASSWORDS = re.compile(r"(password_hash|hash_password|bcrypt\w*\.hash\w*|generate_password_hash|make_password)\s*\("
+                            r"\s*[^,)]*pass|^\s*[\"`]?password(_hash)?[\"`]?\s+(TEXT|VARCHAR|CHAR)", re.I | re.M)
+
+
+def check_account_management(sources: Sources) -> list:
+    """Category B: accounts with passwords but no way to change a password or disable an account."""
+    checks = sources.find(PASSWORD_CHECK)
+    if not checks or not sources.has(USER_PASSWORDS, sources.code + sources.other):
+        return []
+    missing = [w for w, rx in (("change", PASSWORD_CHANGE), ("disable", ACCOUNT_DISABLE)) if not sources.has(rx)]
+    if not missing:
+        return []
+    rel, line = checks[0]
+    return [make("no_account_management", "low", rel, line, anchor="accounts",
+                 missing={lang: ", ".join(CODE_WORDS["account_" + w][lang] for w in missing) for lang in LANGS})]
+
+
 def scan(ctx: Context, sources: Sources, measures: list) -> list:
     m = by_key(measures)
-    return (check_login(sources) + check_uploads(sources, m) + check_generated_secrets(sources)
+    return (check_login(sources) + check_account_management(sources) + check_uploads(sources, m)
+            + check_generated_secrets(sources)
             + check_limit_races(sources) + check_error_handler(sources, m) + check_backup(ctx, m)
             + check_per_request(sources))

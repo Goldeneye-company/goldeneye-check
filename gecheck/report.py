@@ -45,6 +45,7 @@ def to_json(result, include_snippets=False) -> dict:
         "measures": [{"key": m.key, "category_code": m.category, "cwe": m.cwe, "file": m.file, "lines": m.lines}
                      for m in getattr(result, "measures", None) or []],
         "inventory": result.inventory.to_json() if getattr(result, "inventory", None) else None,
+        "model": getattr(result, "model", None),
     }
 
 

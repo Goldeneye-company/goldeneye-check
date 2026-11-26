@@ -1,7 +1,7 @@
 {
   "about": "Expected results for the ghalam corpus (methodology, section 8). A finding counts as found when the scanner reports any of its 'where' locations; a location without a line matches any finding in that file. 'category' is checked once findings carry category codes.",
-  "baseline": {"critical": 3, "high": 5, "medium": 5, "low": 4},
-  "strict": false,
+  "baseline": {"critical": 3, "high": 7, "medium": 8, "low": 7},
+  "strict": true,
   "criteria": {"critical": "all", "high": "all", "medium": 8, "max_grade": "D"},
   "findings": [
     {"id": "K-1", "severity": "critical", "category": "A", "title": "Demo credentials shown on the sign-in form and used as defaults",

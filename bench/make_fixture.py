@@ -79,6 +79,21 @@ CASES = {
     "S07": ("public/contact.php", "line", "Safe: htmlspecialchars"),
     "S08": (".env.example", "line", "Safe: example without real keys"),
     "S09": ("public/contact.php", "line", "Safe: command after an is_numeric check"),
+    "V30": ("java/src/main/java/shop/OrderController.java", "line", "Java: SQL injection with @RequestParam"),
+    "V31": ("java/src/main/java/shop/OrderController.java", "line", "Java: command injection with @PathVariable"),
+    "V32": ("java/src/main/java/shop/OrderController.java", "line", "Java: path traversal"),
+    "V33": ("java/src/main/java/shop/OrderController.java", "line", "Java: XML parser without XXE protection"),
+    "V34": ("java/src/main/java/shop/SecurityConfig.java", "line", "Spring Security: every request allowed"),
+    "V35": ("java/src/main/java/shop/SecurityConfig.java", "line", "Spring Security: NoOpPasswordEncoder"),
+    "V36": ("go/main.go", "line", "Go: SQL injection with fmt.Sprintf"),
+    "V37": ("go/main.go", "line", "Go: command injection through sh -c"),
+    "V38": ("go/main.go", "line", "Go: XSS through fmt.Fprintf"),
+    "V39": ("go/main.go", "line", "gin: path traversal with c.Query"),
+    "V40": ("go/main.go", "line", "Go: TLS verification turned off"),
+    "S10": ("java/src/main/java/shop/OrderController.java", "line", "Safe: Java query with a parameter"),
+    "S11": ("java/src/main/java/shop/OrderController.java", "line", "Safe: XML parser with DOCTYPE turned off"),
+    "S12": ("go/main.go", "line", "Safe: Go query with a parameter"),
+    "S13": ("go/main.go", "line", "Safe: Go output through html.EscapeString"),
 }
 
 USERS_JS = """const express = require("express");
@@ -231,6 +246,129 @@ if (is_numeric($port)) {
 }
 """
 
+ORDER_JAVA = """package shop;
+
+import java.io.FileInputStream;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class OrderController {
+    private final JdbcTemplate jdbc;
+
+    public OrderController(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
+
+    @GetMapping("/orders")
+    public Object orders(@RequestParam("email") String email) {
+        return jdbc.queryForList("SELECT * FROM orders WHERE email = '" + email + "'"); // GE:V30
+    }
+
+    @GetMapping("/orders-safe")
+    public Object ordersSafe(@RequestParam("email") String email) {
+        return jdbc.queryForList("SELECT * FROM orders WHERE email = ?", email); // GE:S10
+    }
+
+    @PostMapping("/ping/{host}")
+    public String ping(@PathVariable String host) throws Exception {
+        Runtime.getRuntime().exec("ping -c 1 " + host); // GE:V31
+        return "ok";
+    }
+
+    @GetMapping("/invoice")
+    public byte[] invoice(@RequestParam String name) throws Exception {
+        return new FileInputStream("/srv/invoices/" + name).readAllBytes(); // GE:V32
+    }
+
+    @PostMapping("/import")
+    public String importXml(@RequestBody String xml) throws Exception {
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance(); // GE:V33
+        f.newDocumentBuilder();
+        return "ok";
+    }
+
+    @PostMapping("/import-safe")
+    public String importSafe(@RequestBody String xml) throws Exception {
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance(); // GE:S11
+        f.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        return "ok";
+    }
+}
+"""
+
+SECURITY_JAVA = """package shop;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain chain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(a -> a.anyRequest().permitAll()); // GE:V34
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance(); // GE:V35
+    }
+}
+"""
+
+MAIN_GO = """package main
+
+import (
+	"crypto/tls"
+	"database/sql"
+	"fmt"
+	"html"
+	"net/http"
+	"os/exec"
+
+	"github.com/gin-gonic/gin"
+)
+
+var db *sql.DB
+
+func search(w http.ResponseWriter, r *http.Request) {
+	name := r.FormValue("name")
+	rows, _ := db.Query(fmt.Sprintf("SELECT * FROM items WHERE name = '%s'", name)) // GE:V36
+	defer rows.Close()
+	safe, _ := db.Query("SELECT * FROM items WHERE name = $1", name) // GE:S12
+	defer safe.Close()
+	fmt.Fprintf(w, "<h1>%s</h1>", html.EscapeString(name)) // GE:S13
+	fmt.Fprintf(w, "<p>Results for %s</p>", name) // GE:V38
+}
+
+func lookup(w http.ResponseWriter, r *http.Request) {
+	host := r.URL.Query().Get("host")
+	out, _ := exec.Command("sh", "-c", "nslookup "+host).Output() // GE:V37
+	w.Write(out)
+}
+
+func download(c *gin.Context) {
+	c.File("/srv/files/" + c.Query("name")) // GE:V39
+}
+
+func client() *http.Client {
+	return &http.Client{Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}} // GE:V40
+}
+
+func main() {
+	http.HandleFunc("/search", search)
+	http.HandleFunc("/lookup", lookup)
+	r := gin.Default()
+	r.GET("/download", download)
+	_ = client()
+	http.ListenAndServe(":8080", nil)
+}
+"""
+
 MIGRATION_SQL = """create table public.profiles (  -- GE:V23
   id uuid primary key references auth.users,
   full_name text,
@@ -326,6 +464,9 @@ def build(root: Path):
     write(root, "app/api/summary/route.ts", SUMMARY_ROUTE)
     write(root, "api/main.py", MAIN_PY)
     write(root, "public/contact.php", CONTACT_PHP)
+    write(root, "java/src/main/java/shop/OrderController.java", ORDER_JAVA)
+    write(root, "java/src/main/java/shop/SecurityConfig.java", SECURITY_JAVA)
+    write(root, "go/main.go", MAIN_GO)
     write(root, "supabase/migrations/001_init.sql", MIGRATION_SQL)
     write(root, "firestore.rules", FIRESTORE_RULES)
     write(root, "docker-compose.yml", COMPOSE)

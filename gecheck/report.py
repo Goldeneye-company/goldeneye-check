@@ -57,6 +57,7 @@ def to_json(result, include_snippets=False) -> dict:
         "inventory": result.inventory.to_json() if getattr(result, "inventory", None) else None,
         "model": getattr(result, "model", None),
         "pro": pro_report.to_json(getattr(result, "pro", None)),
+        "semantic": getattr(result, "semantic", None),
     }
 
 

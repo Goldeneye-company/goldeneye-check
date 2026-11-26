@@ -245,7 +245,14 @@ def coverage_items(result, lang) -> list:
     absent = result.inventory.absent if result.inventory else []
     if absent:
         items.append(r("absent_files", lang) + " " + ", ".join(name(ABSENT_NAMES, x, lang) for x in absent))
-    items.append(r("semantic_off", lang))
+    s = getattr(result, "semantic", None) or {}
+    if s.get("status") == "done":
+        items.append(r("semantic_done", lang, model=s["model"], routes=s["routes"], findings=s.get("findings", 0),
+                       dropped=s.get("dropped", 0)))
+        if s.get("skipped"):
+            items.append(r("semantic_skipped", lang, names=", ".join(s["skipped"][:10])))
+    else:
+        items.append(r("semantic_off", lang))
     return items
 
 

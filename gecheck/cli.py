@@ -49,6 +49,17 @@ def _open_report(written, no_open):
         pass
 
 
+def _confirm_ai(description: str) -> bool:
+    """Says what is sent; asks when a person runs the program. In scripts and CI --ai itself is the consent."""
+    print(description)
+    if not _interactive():
+        return True
+    try:
+        return input("Send it? (yes/no): ").strip().lower() in YES
+    except EOFError:
+        return False
+
+
 def cmd_scan(args):
     import shutil
 
@@ -67,9 +78,14 @@ def cmd_scan(args):
         pro_dir, pro_res = _pro_rules(root, forced=args.pro)
         if pro_dir is False:
             return EXIT_ERROR
+    out_dir = Path(args.out).resolve() if args.out else root / ".goldeneye-check"
     options = Options(history=not args.no_history, deps=not args.no_deps, offline=args.offline,
                       pro_rules=pro_dir, pro_version=(pro_res or {}).get("version", ""),
-                      pro_compliance=(pro_res or {}).get("compliance"))
+                      pro_compliance=(pro_res or {}).get("compliance"),
+                      pro_semantic=(pro_res or {}).get("semantic"),
+                      ai=args.ai or args.ai_dry_run, ai_model=args.ai_model, ai_budget=args.ai_budget * 1000,
+                      ai_dry_run=out_dir / "ai-payload.md" if args.ai_dry_run else None,
+                      ai_confirm=_confirm_ai)
     try:
         result = run(root, options)
     finally:
@@ -79,8 +95,13 @@ def cmd_scan(args):
         until = (pro_res.get("free_until") or "")[:10]
         key = "pro_used_charged" if pro_res.get("charged") else "pro_used_free"
         result.notice = tri(UI[key], balance=pro_res.get("balance", 0), until=until)
+    if result.semantic and result.semantic.get("status") == "dry_run":
+        print(f"AI analysis was not run. What would be sent: {result.semantic['payload_file']}")
+    elif result.semantic and result.semantic.get("status") == "done":
+        cost = result.semantic.get("cost_usd")
+        print(f"AI analysis: {result.semantic['findings']} findings"
+              + (f", about ${cost:.2f} of API usage on your account" if cost is not None else ""))
 
-    out_dir = Path(args.out).resolve() if args.out else root / ".goldeneye-check"
     formats = {f.strip() for f in args.format.split(",") if f.strip()}
     written = write_reports(result, out_dir, formats, args.lang, include_snippets=args.include_snippets)
     code = _summary(result, written, args.fail_on)
@@ -287,6 +308,13 @@ def main(argv=None):
     p.add_argument("--out", help="where to save reports (default: <project>/.goldeneye-check)")
     p.add_argument("--format", default="html,md,json",
                    help="html, md, json, sarif, pdf (Pro: report for auditors), comma-separated")
+    p.add_argument("--ai", action="store_true",
+                   help="Pro: AI review of access logic, races and the README with your Anthropic API key "
+                        "(code goes to the Anthropic API, not to goldeneye.kz)")
+    p.add_argument("--ai-model", help="model for --ai (default: the one Pro recommends)")
+    p.add_argument("--ai-budget", type=int, default=400, help="at most this many KB of code to send with --ai")
+    p.add_argument("--ai-dry-run", action="store_true",
+                   help="write what --ai would send to ai-payload.md in the report folder, send nothing")
     p.add_argument("--no-history", action="store_true", help="do not search git history for secrets")
     p.add_argument("--no-deps", action="store_true", help="do not check dependencies")
     p.add_argument("--offline", action="store_true", help="check dependencies without network access")

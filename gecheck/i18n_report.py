@@ -80,6 +80,18 @@ REPORT_UI = {
                            "тексеріледі; мағыналық талдау — GoldenEye Check Pro-да.",
                      "en": "Access logic, races and free text of the documentation are checked only partly without AI; "
                            "semantic analysis is in GoldenEye Check Pro."},
+    "semantic_done": {"ru": "Смысловой анализ (ИИ): модель {model}, проверено маршрутов: {routes}, находок: {findings}, "
+                            "отброшено как не подтверждённые кодом: {dropped}. Код отправлялся в API Anthropic ключом "
+                            "клиента, на goldeneye.kz — нет.",
+                      "kk": "Мағыналық талдау (ЖИ): {model} моделі, тексерілген маршруттар: {routes}, табылғандар: {findings}, "
+                            "кодпен расталмаған деп алынып тасталды: {dropped}. Код клиент кілтімен Anthropic API-ге "
+                            "жіберілді, goldeneye.kz-ке жіберілмеді.",
+                      "en": "Semantic analysis (AI): model {model}, routes reviewed: {routes}, findings: {findings}, dropped as "
+                            "not confirmed by the code: {dropped}. The code was sent to the Anthropic API with the "
+                            "customer's key, not to goldeneye.kz."},
+    "semantic_skipped": {"ru": "Не отправлены в смысловой анализ из-за лимита объёма: {names}.",
+                         "kk": "Көлем шегіне байланысты мағыналық талдауға жіберілмеді: {names}.",
+                         "en": "Not sent to the semantic analysis because of the size limit: {names}."},
     "known": {"ru": "известна из README", "kk": "README-ден белгілі", "en": "admitted in the README"},
     "chain": {"ru": "вместе с", "kk": "бірге", "en": "together with"},
     "effort": {"ru": "трудоёмкость", "kk": "еңбек сыйымдылығы", "en": "effort"},

@@ -22,6 +22,8 @@ def scan(root: Path, warnings: list, extras: dict = None):
                   + matrix.scan(ctx, sources, cells, measures.by_key(found_measures)))
     if extras is not None:
         extras["ctx"] = ctx
+        extras["sources"] = sources
+        extras["cells"] = cells
         extras["measures"] = found_measures
         extras["inventory"] = inv
         extras["model"] = system.build(ctx, sources, cells, candidates)

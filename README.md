@@ -107,6 +107,12 @@ Pro adds 15 rules for services with payments and user accounts, and the complian
 | `gecheck balance` | show how many Pro checks are left |
 | `gecheck scan . --pro` | add the Pro rules without asking, for scripts and CI (the token can be passed in `GECHECK_TOKEN`) |
 | `gecheck scan . --no-pro` | do not offer the Pro rules |
+| `gecheck scan . --pro --ai` | add the AI review (see below) |
+| `gecheck scan . --pro --ai-dry-run` | write what the AI review would send to `ai-payload.md`, send nothing |
+
+### AI review (Pro)
+
+Some problems need an understanding of what the code means: whether one user can reach another user's records, what a visitor sees before entering a password, whether a link and its password end up in the same message, whether two parallel requests can break a limit, and what the README promises in its own words. With `--ai` the program sends the route handlers it found, the functions they call and the README to Claude through the Anthropic API, **with your own API key** (`ANTHROPIC_API_KEY` or `ant auth login`; you pay Anthropic for the tokens, usually well under a dollar per project). The code goes to the Anthropic API, not to goldeneye.kz; the server only sends the instructions for the model. Before sending, the program says how many files and lines will go and asks for confirmation; in scripts and CI the `--ai` flag itself is the consent. Values of default passwords and strings that look like keys are masked. Every answer is checked before it becomes a finding: it must point to a line that was sent and quote it, and problems the static checks already report are dropped. Needs Python 3.10 or newer and `pip install "goldeneye-check[ai]"`.
 
 ## Score
 

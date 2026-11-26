@@ -112,7 +112,9 @@ def _lines_in(sources: Sources, route: Route, rx: re.Pattern) -> list:
 def _global_no_store(sources: Sources, routes: list, ctx: Context) -> bool:
     """no-store set outside the route handlers (a header function, middleware, web server or proxy config)."""
     inside = {(rel, i) for r in routes for rel, s, e in r.body for i in range(s, e + 1)}
-    for rel, i in sources.find(NO_STORE, sources.code + sources.other):
+    # code and server or proxy configuration; data files (JSON) that mention the header do not set it
+    config = [r for r in sources.other if not r.lower().endswith((".json", ".csv", ".lock"))]
+    for rel, i in sources.find(NO_STORE, sources.code + config):
         if (rel, i) not in inside:
             return True
     return False

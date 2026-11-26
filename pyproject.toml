@@ -12,6 +12,10 @@ license = { text = "Apache-2.0" }
 authors = [{ name = "Goldeneye LLP", email = "info@goldeneye.kz" }]
 dependencies = []
 
+[project.optional-dependencies]
+# Pro AI analysis (--ai): the official Anthropic SDK, Python 3.10 or newer
+ai = ["anthropic>=2.14; python_version >= '3.10'"]
+
 [project.urls]
 Homepage = "https://goldeneye.kz/en/check/"
 Repository = "https://github.com/Goldeneye-company/goldeneye-check"

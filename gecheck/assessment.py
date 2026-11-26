@@ -20,6 +20,16 @@ def assess(result, extras: dict) -> None:
     docs = readme.build(ctx)
     measures = by_key(result.measures)
     rows = declaration.assess(docs, result.findings, measures)
+    # statements the semantic layer found in free text (stage 1 and 6 in depth)
+    seen = {(r["claim"].file, r["claim"].line) for r in rows}
+    for n, c in enumerate(extras.get("ai_claims") or [], 1):
+        if (c["file"], c["line"]) in seen:
+            continue
+        seen.add((c["file"], c["line"]))
+        claim = readme.Claim(f"ai:{n}", c["category"], c["file"], c["line"], c["text"])
+        docs.claims.append(claim)
+        rows.append({"claim": claim, "status": c["status"], "findings": [], "source": "semantic",
+                     "reason": c.get("reason")})
     result.findings += declaration.findings_for(rows)
     result.findings.sort(key=lambda f: (SEV_RANK.get(f.severity, 9), f.file, f.line or 0))
     severity.apply(result.findings, docs)
@@ -54,7 +64,8 @@ def to_json(result) -> dict:
         "docs": a["docs"].to_json(),
         "declared": [{"claim": r["claim"].key, "category_code": r["claim"].category, "file": r["claim"].file,
                       "line": r["claim"].line, "text": r["claim"].text, "status": r["status"],
-                      "findings": r["findings"]} for r in a["declared"]],
+                      "findings": r["findings"], "source": r.get("source", "dictionary")} for r in a["declared"]],
+        "semantic": {k: v for k, v in (result.semantic or {}).items()} or None,
         "iso": {"standard": "ISO/IEC 27002:2022", "total": a["controls"]["total"], "counts": a["controls"]["counts"],
                 "process_review": a["controls"]["process_review"]},
         "roadmap": {stage: [f.fingerprint() for f in items] for stage, items in a["roadmap"].items()},

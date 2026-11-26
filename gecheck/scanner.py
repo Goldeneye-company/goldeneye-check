@@ -22,6 +22,13 @@ class Options:
     pro_rules: Optional[Path] = None  # folder with Pro rules from the server
     pro_version: str = ""
     pro_compliance: Optional[dict] = None  # Pro tables from the server: ISO controls, Kazakhstan, checklist
+    pro_semantic: Optional[dict] = None  # Pro instructions for the semantic layer
+    ai: bool = False  # run the semantic layer (Pro, the customer's Anthropic key)
+    ai_model: Optional[str] = None
+    ai_budget: int = 400_000  # characters of code and documentation sent at most
+    ai_dry_run: Optional[Path] = None  # write what would be sent to this file instead of sending
+    ai_confirm: Optional[object] = None  # callable(description) -> bool, asked before sending
+    ai_client: Optional[object] = None  # an Anthropic client to use instead of the default one (tests)
 
 
 @dataclass
@@ -42,6 +49,7 @@ class ScanResult:
     coverage: Optional[int] = None  # percent of categories A-O checked for the stack (code scans)
     assessment: Optional[dict] = None  # stages 1, 6, 8, 9, 10 (assessment.py)
     pro: Optional[dict] = None  # Pro sections: ISO table, Kazakhstan requirements, checklist (pro_report.py)
+    semantic: Optional[dict] = None  # summary of the semantic layer run (semantic.py)
 
     @property
     def counts(self):
@@ -134,6 +142,44 @@ def _git_info(root: Path) -> dict:
     return info
 
 
+def _semantic(findings: list, extras: dict, options: Options, warnings: list):
+    """The semantic layer (Pro): adds findings to the list and README statements to extras. Returns a summary."""
+    import importlib.util
+
+    from . import semantic
+    from .stages import readme
+
+    if not options.pro_semantic:
+        warnings.append("AI analysis is part of GoldenEye Check Pro: run gecheck login and add --pro.")
+        return None
+    ctx, cells = extras.get("ctx"), extras.get("cells")
+    if ctx is None or cells is None:
+        return None
+    model = options.ai_model or options.pro_semantic.get("model") or semantic.DEFAULT_MODEL
+    payload = semantic.build_payload(ctx, extras["sources"], cells, findings, extras.get("measures", []),
+                                     readme.build(ctx), options.ai_budget)
+    base = {"model": model, "routes": payload.routes, "skipped": payload.skipped, "lines": payload.lines,
+            "files": len(payload.sent)}
+    if options.ai_dry_run:
+        Path(options.ai_dry_run).parent.mkdir(parents=True, exist_ok=True)
+        Path(options.ai_dry_run).write_text(semantic.dry_run(payload, options.pro_semantic), encoding="utf-8")
+        return {**base, "status": "dry_run", "payload_file": str(options.ai_dry_run)}
+    if options.ai_client is None and importlib.util.find_spec("anthropic") is None:
+        warnings.append('AI analysis needs the Anthropic SDK (Python 3.10+): pip install "goldeneye-check[ai]"')
+        return {**base, "status": "not_installed"}
+    if options.ai_confirm is not None and not options.ai_confirm(semantic.describe(payload, model)):
+        return {**base, "status": "declined"}
+    out = semantic.run(options.pro_semantic, payload, findings, warnings, model=model, client=options.ai_client)
+    findings += out["findings"]
+    extras["ai_claims"] = out["claims"]
+    u = out["usage"]
+    return {**base, "status": "failed" if out.get("failed") else "done",
+            "findings": len(out["findings"]), "claims": len(out["claims"]),
+            "dropped": out["dropped"], "cost_usd": out["cost_usd"],
+            "tokens": {"input": u.input_tokens, "output": u.output_tokens, "cache_read": u.cache_read,
+                       "cache_write": u.cache_write}}
+
+
 def run(root: Path, options: Options = None, log=print) -> ScanResult:
     options = options or Options()
     root = Path(root).resolve()
@@ -167,12 +213,16 @@ def run(root: Path, options: Options = None, log=print) -> ScanResult:
             warnings.append(f"{name} failed: {str(exc)[:200]}")
 
     findings = _dedupe(findings)
+    summary = None
+    if options.ai:
+        log("  AI analysis…")
+        summary = _semantic(findings, extras, options, warnings)
     findings.sort(key=lambda f: (SEV_RANK.get(f.severity, 9), f.file, f.line or 0))
     result = ScanResult(root=root, findings=findings, warnings=warnings, engines=engines,
                         started_at=started.isoformat(timespec="seconds"),
                         duration=round(time.monotonic() - t0, 1), git=_git_info(root), options=options,
                         measures=extras.get("measures", []), inventory=extras.get("inventory"),
-                        model=extras.get("model"))
+                        model=extras.get("model"), semantic=summary)
     try:
         assess(result, extras)
     except Exception as exc:  # the report without the assessment is still useful
